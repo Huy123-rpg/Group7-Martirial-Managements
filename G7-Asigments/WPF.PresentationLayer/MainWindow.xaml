@@ -53,6 +53,13 @@
                 <Button Content="Tổng quan"
                         Style="{StaticResource SidebarMenuItem}"
                         Command="{Binding NavDashboardCommand}"/>
+                <Button Content="Nhập kho"
+                Style="{StaticResource SidebarMenuItem}"
+                Command="{Binding NavGoodsReceiptCommand}"/>
+
+                <Button Content="Xuất kho"
+                Style="{StaticResource SidebarMenuItem}"
+                Command="{Binding NavGoodsIssueCommand}"/>
 
                 <Button Content="Người dùng"
                         Style="{StaticResource SidebarMenuItem}"

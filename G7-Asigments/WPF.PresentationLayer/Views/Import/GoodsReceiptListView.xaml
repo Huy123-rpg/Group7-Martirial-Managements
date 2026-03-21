@@ -1,27 +1,47 @@
 <UserControl x:Class="WPF.PresentationLayer.Views.Import.GoodsReceiptListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Import">
-    <UserControl.DataContext>
-        <vm:GoodsReceiptViewModel/>
-    </UserControl.DataContext>
-    <Grid Margin="16">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="#F5F7FA"
+             Height="521"
+             Width="818">
+
+    <Grid Margin="24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Width="220" Margin="0,0,0,8" HorizontalAlignment="Right"
-                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Receipts}"
-                  SelectedItem="{Binding Selected}"
-                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+
+        <TextBlock Text="Danh sách phiếu nhập"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="#1F2937"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,16">
+            <Button Content="Tải lại"
+                    Width="100"
+                    Height="36"
+                    Click="BtnRefresh_Click"/>
+            <Button Content="Thêm phiếu nhập"
+                    Width="140"
+                    Height="36"
+                    Margin="12,0,0,0"
+                    Click="BtnAdd_Click"/>
+        </StackPanel>
+
+        <DataGrid x:Name="dgGoodsReceipts"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Số GRN"     Binding="{Binding GrnNumber}"  Width="130"/>
-                <DataGridTextColumn Header="Nhà cung cấp" Binding="{Binding Supplier.SupplierName}" Width="200"/>
-                <DataGridTextColumn Header="Kho"        Binding="{Binding Warehouse.Name}" Width="150"/>
-                <DataGridTextColumn Header="Ngày nhận"  Binding="{Binding ReceiptDate, StringFormat=dd/MM/yyyy}" Width="110"/>
-                <DataGridTextColumn Header="Tổng tiền"  Binding="{Binding TotalAmount, StringFormat=N0}" Width="120"/>
-                <DataGridTextColumn Header="Trạng thái" Binding="{Binding StatusId}"  Width="100"/>
+                <DataGridTextColumn Header="Mã phiếu" Binding="{Binding GrnNumber}" Width="150"/>
+                <DataGridTextColumn Header="Ngày nhập" Binding="{Binding ReceiptDate}" Width="150"/>
+                <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount}" Width="150"/>
+                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

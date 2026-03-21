@@ -50,6 +50,7 @@ public sealed class UnitOfWork
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
     public IRepository<SalesOrder> SalesOrders => new Repository<SalesOrder>(_context);
     public IRepository<GoodsIssue> GoodsIssues => new Repository<GoodsIssue>(_context);
-
+    public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
+    public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
     public int Save() => _context.SaveChanges();
 }

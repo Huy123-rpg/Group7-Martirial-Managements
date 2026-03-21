@@ -1,47 +1,77 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using WPF.PresentationLayer.Helpers;
+using WPF.PresentationLayer.Views;
 using WPF.PresentationLayer.Views.Auth;
+using WPF.PresentationLayer.Views.Export;
+using WPF.PresentationLayer.Views.Import;
 
 namespace WPF.PresentationLayer.ViewModels;
 
 public class MainViewModel : BaseViewModel
 {
-    // ─── Navigation State ────────────────────────────────────────────────────
     private object? _currentView;
     private string _currentPageTitle = string.Empty;
     private string _activeMenu = "dashboard";
 
-    public object? CurrentView        { get => _currentView;      set => SetField(ref _currentView, value); }
-    public string  CurrentPageTitle   { get => _currentPageTitle; set => SetField(ref _currentPageTitle, value); }
-    public string  ActiveMenu         { get => _activeMenu;       set => SetField(ref _activeMenu, value); }
+    public object? CurrentView
+    {
+        get => _currentView;
+        set => SetField(ref _currentView, value);
+    }
 
-    // ─── Session Info ────────────────────────────────────────────────────────
+    public string CurrentPageTitle
+    {
+        get => _currentPageTitle;
+        set => SetField(ref _currentPageTitle, value);
+    }
+
+    public string ActiveMenu
+    {
+        get => _activeMenu;
+        set => SetField(ref _activeMenu, value);
+    }
+
     public string CurrentUserName => SessionManager.CurrentUser?.FullName ?? string.Empty;
     public string CurrentUserRole => SessionManager.CurrentUser?.Role?.RoleName ?? string.Empty;
 
-    // ─── Nav Commands ─────────────────────────────────────────────────────────
-    public RelayCommand NavDashboardCommand       => new(() => Navigate(new Views.Admin.DashboardView(),       "Tổng quan",             "dashboard"));
-    public RelayCommand NavUserManagementCommand  => new(() => Navigate(new Views.Admin.UserManagementView(),  "Quản lý người dùng",    "users"));
-
-    // ─── Logout ───────────────────────────────────────────────────────────────
-    public RelayCommand LogoutCommand => new(Logout);
+    public RelayCommand NavDashboardCommand { get; }
+    public RelayCommand NavUserManagementCommand { get; }
+    public RelayCommand NavGoodsReceiptCommand { get; }
+    public RelayCommand NavGoodsIssueCommand { get; }
+    public RelayCommand LogoutCommand { get; }
 
     public MainViewModel()
     {
+        NavDashboardCommand = new RelayCommand(() =>
+            Navigate(new Views.Admin.DashboardView(), "Tổng quan", "dashboard"));
+
+        NavUserManagementCommand = new RelayCommand(() =>
+            Navigate(new Views.Admin.UserManagementView(), "Quản lý người dùng", "users"));
+
+        NavGoodsReceiptCommand = new RelayCommand(() =>
+            Navigate(new GoodsReceiptListView(), "Nhập kho", "goodsreceipt"));
+
+        NavGoodsIssueCommand = new RelayCommand(() =>
+            Navigate(new GoodsIssueListView(), "Xuất kho", "goodsissue"));
+
+        LogoutCommand = new RelayCommand(Logout);
+
         Navigate(new Views.Admin.DashboardView(), "Tổng quan", "dashboard");
     }
 
     private void Navigate(UserControl view, string title, string menuKey)
     {
-        CurrentView      = view;
+        CurrentView = view;
         CurrentPageTitle = title;
-        ActiveMenu       = menuKey;
+        ActiveMenu = menuKey;
     }
 
     private void Logout()
     {
         SessionManager.Logout();
+
         var login = new LoginWindow();
         login.Show();
 
