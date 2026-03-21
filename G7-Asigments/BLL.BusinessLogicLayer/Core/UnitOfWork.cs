@@ -10,6 +10,10 @@ namespace BLL.BusinessLogicLayer.Core;
 
 public sealed class UnitOfWork
 {
+    // ─── Connection String (set once by App before first use) ────────────────
+    public static string ConnectionString { get; set; } =
+        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
+
     // ─── Singleton ───────────────────────────────────────────────────────────
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
@@ -31,7 +35,8 @@ public sealed class UnitOfWork
     private UnitOfWork()
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
-            .UseSqlServer("Name=WarehouseDB")
+            .UseSqlServer(ConnectionString)
+            .UseSnakeCaseNamingConvention()
             .Options;
         _context = new WarehouseDbContext(options);
     }

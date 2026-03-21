@@ -126,5 +126,68 @@
             </Setter>
         </Style>
 
+        <!-- ── Sidebar Menu Item ─────────────────────────────────────── -->
+        <Style x:Key="SidebarMenuItem" TargetType="Button">
+            <Setter Property="Background"              Value="Transparent"/>
+            <Setter Property="Foreground"              Value="#BBBBBB"/>
+            <Setter Property="BorderThickness"         Value="0"/>
+            <Setter Property="Height"                  Value="44"/>
+            <Setter Property="FontSize"                Value="13"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor"                  Value="Hand"/>
+            <Setter Property="Padding"                 Value="24,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="3,0,0,0"
+                                BorderBrush="Transparent">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A2A2A"/>
+                            </Trigger>
+                            <Trigger Property="Tag" Value="active">
+                                <Setter TargetName="Bd" Property="Background"    Value="#2D2D2D"/>
+                                <Setter TargetName="Bd" Property="BorderBrush"   Value="#FFFFFF"/>
+                                <Setter Property="Foreground"                    Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Sidebar Logout Button ────────────────────────────────── -->
+        <Style x:Key="SidebarLogout" TargetType="Button">
+            <Setter Property="Background"              Value="Transparent"/>
+            <Setter Property="Foreground"              Value="#FF6B6B"/>
+            <Setter Property="BorderThickness"         Value="0"/>
+            <Setter Property="Height"                  Value="44"/>
+            <Setter Property="FontSize"                Value="13"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor"                  Value="Hand"/>
+            <Setter Property="Padding"                 Value="24,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2A2A2A"/>
+                                <Setter Property="Foreground" Value="#FF4444"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Application.Resources>
 </Application>
