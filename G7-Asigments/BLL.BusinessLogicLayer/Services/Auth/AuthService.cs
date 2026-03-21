@@ -20,11 +20,11 @@ public class AuthService : IAuthService
     private static bool VerifyPassword(string plain, string hash)
         => HashPassword(plain) == hash;
 
-    // ─── Login ────────────────────────────────────────────────────────────────
-    public User? Login(string username, string password)
+    // ─── Login (bằng email) ───────────────────────────────────────────────────
+    public User? Login(string email, string password)
     {
         var user = _uow.Users
-            .Find(u => u.Username == username && u.IsActive)
+            .Find(u => u.Email == email.Trim().ToLowerInvariant() && u.IsActive)
             .FirstOrDefault();
 
         if (user == null || !VerifyPassword(password, user.PasswordHash))
@@ -41,18 +41,19 @@ public class AuthService : IAuthService
             return false;
 
         user.PasswordHash = HashPassword(newPassword);
+        user.UpdatedAt = DateTimeOffset.UtcNow;
         _uow.Users.Update(user);
         _uow.Save();
         return true;
     }
 
     // ─── Register ────────────────────────────────────────────────────────────
-    public User? Register(string username, string password, string fullName, string email, byte roleId, out string error)
+    public User? Register(string fullName, string email, string password, byte roleId, out string error)
     {
         error = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)
-            || string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email)
+            || string.IsNullOrWhiteSpace(password))
         {
             error = "Vui lòng điền đầy đủ thông tin.";
             return null;
@@ -70,30 +71,26 @@ public class AuthService : IAuthService
             return null;
         }
 
-        bool usernameExists = _uow.Users.Find(u => u.Username == username).Any();
-        if (usernameExists)
-        {
-            error = "Tên đăng nhập đã tồn tại.";
-            return null;
-        }
+        string normalizedEmail = email.Trim().ToLowerInvariant();
 
-        bool emailExists = _uow.Users.Find(u => u.Email == email).Any();
+        bool emailExists = _uow.Users.Find(u => u.Email == normalizedEmail).Any();
         if (emailExists)
         {
             error = "Email đã được sử dụng.";
             return null;
         }
 
+        var now = DateTimeOffset.UtcNow;
         var newUser = new User
         {
-            Id = Guid.NewGuid(),
-            Username = username.Trim(),
+            Id           = Guid.NewGuid(),
+            FullName     = fullName.Trim(),
+            Email        = normalizedEmail,
             PasswordHash = HashPassword(password),
-            FullName = fullName.Trim(),
-            Email = email.Trim().ToLowerInvariant(),
-            RoleId = roleId,
-            IsActive = true,
-            CreatedAt = DateTimeOffset.UtcNow
+            RoleId       = roleId,
+            IsActive     = true,
+            CreatedAt    = now,
+            UpdatedAt    = now
         };
 
         _uow.Users.Add(newUser);

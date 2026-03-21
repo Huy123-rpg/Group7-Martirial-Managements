@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Auth"
         Title="Tạo tài khoản — Quản lý Kho"
-        Height="680" Width="460"
+        Height="580" Width="460"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BrushBackground}">
@@ -12,51 +12,36 @@
         <vm:RegisterViewModel/>
     </Window.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
               Width="380" Margin="0,24">
-
-            <!-- Card -->
             <Border Background="{StaticResource BrushSurface}"
                     BorderBrush="{StaticResource BrushBorder}"
                     BorderThickness="1"
                     CornerRadius="2"
                     Padding="40,36">
-
                 <StackPanel>
 
                     <!-- Header -->
                     <TextBlock Text="TẠO TÀI KHOẢN MỚI"
-                               FontSize="15"
-                               FontWeight="Bold"
+                               FontSize="15" FontWeight="Bold"
                                Foreground="{StaticResource BrushTextPrimary}"
                                HorizontalAlignment="Center"/>
-
                     <TextBlock Text="Điền đầy đủ thông tin để đăng ký"
                                FontSize="12"
                                Foreground="{StaticResource BrushTextSecondary}"
                                HorizontalAlignment="Center"
                                Margin="0,4,0,0"/>
 
-                    <!-- Divider -->
-                    <Rectangle Height="1"
-                               Fill="{StaticResource BrushBorder}"
-                               Margin="0,20,0,4"/>
+                    <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,20,0,4"/>
 
                     <!-- Full Name -->
                     <Label Content="HỌ VÀ TÊN" FontSize="11" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="100"/>
+                    <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100"/>
 
                     <!-- Email -->
                     <Label Content="EMAIL" FontSize="11" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="150"/>
-
-                    <!-- Username -->
-                    <Label Content="TÊN ĐĂNG NHẬP" FontSize="11" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="50"/>
+                    <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" MaxLength="150"/>
 
                     <!-- Password -->
                     <Label Content="MẬT KHẨU" FontSize="11" FontWeight="SemiBold"/>
@@ -93,7 +78,8 @@
                     <!-- Back to Login -->
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center"
-                                Margin="0,16,0,0">
+                                Margin="0,16,0,0"
+                                Visibility="{Binding BackToLoginVisibility}">
                         <TextBlock Text="Đã có tài khoản?  "
                                    FontSize="12"
                                    Foreground="{StaticResource BrushTextSecondary}"

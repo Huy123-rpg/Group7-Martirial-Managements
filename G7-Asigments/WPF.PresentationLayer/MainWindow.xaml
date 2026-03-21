@@ -1,12 +1,118 @@
-﻿<Window x:Class="WPF.PresentationLayer.MainWindow"
+<Window x:Class="WPF.PresentationLayer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPF.PresentationLayer"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels"
+        Title="Quản lý Kho"
+        Height="700" Width="1100"
+        MinHeight="600" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BrushBackground}">
 
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ══════════════════ SIDEBAR ══════════════════ -->
+        <Grid Grid.Column="0" Background="#1A1A1A">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- App Title -->
+            <StackPanel Grid.Row="0" Margin="24,28,24,20">
+                <TextBlock Text="QUẢN LÝ KHO"
+                           Foreground="#FFFFFF"
+                           FontSize="14"
+                           FontWeight="Bold"/>
+                <TextBlock Text="Warehouse Management"
+                           Foreground="#666666"
+                           FontSize="11"
+                           Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <!-- Divider -->
+            <Rectangle Grid.Row="1" Height="1" Fill="#2D2D2D" Margin="0,0,0,8"/>
+
+            <!-- Menu Items -->
+            <StackPanel Grid.Row="2">
+                <TextBlock Text="MENU"
+                           Foreground="#555555"
+                           FontSize="10"
+                           FontWeight="SemiBold"
+                           Margin="24,12,0,8"/>
+
+                <Button Content="Tổng quan"
+                        Style="{StaticResource SidebarMenuItem}"
+                        Command="{Binding NavDashboardCommand}"/>
+
+                <Button Content="Người dùng"
+                        Style="{StaticResource SidebarMenuItem}"
+                        Command="{Binding NavUserManagementCommand}"/>
+            </StackPanel>
+
+            <!-- Bottom: User info + Logout -->
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Rectangle Grid.Row="0" Height="1" Fill="#2D2D2D"/>
+
+                <StackPanel Grid.Row="1" Margin="24,14,24,10">
+                    <TextBlock Text="{Binding CurrentUserName}"
+                               Foreground="#EEEEEE"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding CurrentUserRole}"
+                               Foreground="#777777"
+                               FontSize="11"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <Button Grid.Row="2"
+                        Content="Đăng xuất"
+                        Style="{StaticResource SidebarLogout}"
+                        Margin="0,0,0,16"
+                        Command="{Binding LogoutCommand}"/>
+            </Grid>
+        </Grid>
+
+        <!-- ══════════════════ MAIN AREA ══════════════════ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="54"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header Bar -->
+            <Border Grid.Row="0"
+                    Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="24,0">
+                    <TextBlock Text="{Binding CurrentPageTitle}"
+                               Foreground="{StaticResource BrushTextPrimary}"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Content Area -->
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentView}"/>
+        </Grid>
     </Grid>
 </Window>

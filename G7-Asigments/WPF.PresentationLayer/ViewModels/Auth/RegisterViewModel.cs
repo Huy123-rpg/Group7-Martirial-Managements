@@ -15,7 +15,6 @@ public class RegisterViewModel : BaseViewModel
     // ─── Fields ───────────────────────────────────────────────────────────────
     private string _fullName        = string.Empty;
     private string _email           = string.Empty;
-    private string _username        = string.Empty;
     private string _password        = string.Empty;
     private string _confirmPassword = string.Empty;
     private string _errorMessage    = string.Empty;
@@ -23,7 +22,6 @@ public class RegisterViewModel : BaseViewModel
 
     public string FullName        { get => _fullName;        set => SetField(ref _fullName, value); }
     public string Email           { get => _email;           set => SetField(ref _email, value); }
-    public string Username        { get => _username;        set => SetField(ref _username, value); }
     public string Password        { get => _password;        set => SetField(ref _password, value); }
     public string ConfirmPassword { get => _confirmPassword; set => SetField(ref _confirmPassword, value); }
 
@@ -44,6 +42,15 @@ public class RegisterViewModel : BaseViewModel
 
     // ─── Roles (exclude ADMIN) ────────────────────────────────────────────────
     public ObservableCollection<LkpUserRole> Roles { get; } = new();
+
+    /// <summary>
+    /// true  = standalone (sau khi tạo → chuyển sang LoginWindow)
+    /// false = admin mode (sau khi tạo → đóng dialog, quay lại caller)
+    /// </summary>
+    public bool IsStandalone { get; set; } = true;
+
+    public Visibility BackToLoginVisibility
+        => IsStandalone ? Visibility.Visible : Visibility.Collapsed;
 
     public RegisterViewModel()
     {
@@ -69,7 +76,6 @@ public class RegisterViewModel : BaseViewModel
     private bool CanRegister()
         => !string.IsNullOrWhiteSpace(FullName)
         && !string.IsNullOrWhiteSpace(Email)
-        && !string.IsNullOrWhiteSpace(Username)
         && !string.IsNullOrWhiteSpace(Password)
         && !string.IsNullOrWhiteSpace(ConfirmPassword)
         && SelectedRole != null;
@@ -83,7 +89,7 @@ public class RegisterViewModel : BaseViewModel
         }
 
         var user = _authService.Register(
-            Username, Password, FullName, Email,
+            FullName, Email, Password,
             SelectedRole!.RoleId, out string error);
 
         if (user == null)
@@ -93,12 +99,16 @@ public class RegisterViewModel : BaseViewModel
         }
 
         MessageBox.Show(
-            $"Tài khoản \"{Username}\" đã được tạo thành công.\nVui lòng đăng nhập.",
+            $"Tài khoản \"{Email}\" đã được tạo thành công." +
+            (IsStandalone ? "\nVui lòng đăng nhập." : string.Empty),
             "Đăng ký thành công",
             MessageBoxButton.OK,
             MessageBoxImage.None);
 
-        NavigateToLogin();
+        if (IsStandalone)
+            NavigateToLogin();
+        else
+            CloseCurrentWindow();
     }
 
     // ─── Navigate to Login ────────────────────────────────────────────────────
@@ -116,11 +126,7 @@ public class RegisterViewModel : BaseViewModel
     {
         foreach (Window w in Application.Current.Windows)
         {
-            if (w is Views.Auth.RegisterWindow)
-            {
-                w.Close();
-                return;
-            }
+            if (w is Views.Auth.RegisterWindow) { w.Close(); return; }
         }
     }
 }
