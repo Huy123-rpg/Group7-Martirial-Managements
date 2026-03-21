@@ -1,0 +1,73 @@
+<Window x:Class="WPF.PresentationLayer.Views.Auth.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Auth"
+        Title="Đăng nhập — Quản lý Kho"
+        Height="520" Width="460"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BrushBackground}">
+
+    <Window.DataContext>
+        <vm:LoginViewModel/>
+    </Window.DataContext>
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
+
+        <!-- Card -->
+        <Border Background="{StaticResource BrushSurface}"
+                BorderBrush="{StaticResource BrushBorder}"
+                BorderThickness="1"
+                CornerRadius="2"
+                Padding="40,36">
+
+            <StackPanel>
+
+                <!-- Header -->
+                <TextBlock Text="HỆ THỐNG QUẢN LÝ KHO"
+                           FontSize="15"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource BrushTextPrimary}"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Đăng nhập để tiếp tục"
+                           FontSize="12"
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           HorizontalAlignment="Center"
+                           Margin="0,4,0,0"/>
+
+                <!-- Divider -->
+                <Rectangle Height="1"
+                           Fill="{StaticResource BrushBorder}"
+                           Margin="0,20,0,4"/>
+
+                <!-- Username -->
+                <Label Content="TÊN ĐĂNG NHẬP" FontSize="11" FontWeight="SemiBold"/>
+                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="50"/>
+
+                <!-- Password -->
+                <Label Content="MẬT KHẨU" FontSize="11" FontWeight="SemiBold"/>
+                <PasswordBox x:Name="PasswordBox"
+                             MaxLength="100"/>
+
+                <!-- Error -->
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="{StaticResource BrushError}"
+                           FontSize="12"
+                           Margin="0,10,0,0"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding ErrorVisibility}"/>
+
+                <!-- Login Button -->
+                <Button Content="ĐĂNG NHẬP"
+                        Style="{StaticResource ButtonPrimary}"
+                        Margin="0,20,0,0"
+                        Command="{Binding LoginCommand}"
+                        CommandParameter="{Binding ElementName=PasswordBox}"/>
+
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
