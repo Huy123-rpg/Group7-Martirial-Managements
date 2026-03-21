@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BLL.BusinessLogicLayer/BLL.BusinessLogicLayer.csproj" />
+  <Project Path="DAL.DataAccessLayer/DAL.DataAccessLayer.csproj" />
+  <Project Path="G7-Asigments/G7-Asigments.csproj" />
+  <Project Path="WPF.PresentationLayer/WPF.PresentationLayer.csproj" />
+</Solution>

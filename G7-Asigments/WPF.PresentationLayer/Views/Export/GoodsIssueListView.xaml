@@ -1,0 +1,27 @@
+<UserControl x:Class="WPF.PresentationLayer.Views.Export.GoodsIssueListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Export">
+    <UserControl.DataContext>
+        <vm:GoodsIssueViewModel/>
+    </UserControl.DataContext>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="0" Width="220" Margin="0,0,0,8" HorizontalAlignment="Right"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Issues}"
+                  SelectedItem="{Binding Selected}"
+                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Số GI"       Binding="{Binding GiNumber}"   Width="130"/>
+                <DataGridTextColumn Header="Kho"         Binding="{Binding Warehouse.Name}" Width="150"/>
+                <DataGridTextColumn Header="Ngày xuất"   Binding="{Binding IssueDate, StringFormat=dd/MM/yyyy}" Width="110"/>
+                <DataGridTextColumn Header="Tổng tiền"   Binding="{Binding TotalAmount, StringFormat=N0}" Width="120"/>
+                <DataGridTextColumn Header="Trạng thái"  Binding="{Binding StatusId}"   Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
