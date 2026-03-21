@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models._Core;
+using DAL.DataAccessLayer.Model;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;

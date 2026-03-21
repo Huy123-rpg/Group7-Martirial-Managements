@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models._Core;
+using DAL.DataAccessLayer.Model;
 
 namespace BLL.BusinessLogicLayer.Services.Scheduling;
 
@@ -8,11 +8,11 @@ public class ScheduleService : IScheduleService
     private readonly UnitOfWork _uow = UnitOfWork.Instance;
 
     public IEnumerable<Schedule> GetAll() =>
-        _uow.Schedules.GetAll().OrderBy(s => s.ScheduledDate);
+        _uow.Schedules.GetAll().OrderBy(s => s.StartTime);
 
     public IEnumerable<Schedule> GetByWarehouse(Guid warehouseId) =>
         _uow.Schedules.Find(s => s.WarehouseId == warehouseId)
-                      .OrderBy(s => s.ScheduledDate);
+                      .OrderBy(s => s.StartTime);
 
     public IEnumerable<Schedule> Search(string keyword) =>
         _uow.Schedules.Find(s =>
@@ -43,7 +43,12 @@ public class ScheduleService : IScheduleService
         _uow.Save();
     }
 
-    public IEnumerable<Schedule> GetByDateRange(DateTime from, DateTime to) =>
-        _uow.Schedules.Find(s => s.ScheduledDate >= from && s.ScheduledDate <= to)
-                      .OrderBy(s => s.ScheduledDate);
+    public IEnumerable<Schedule> GetByDateRange(DateTime from, DateTime to)
+    {
+        var fromOffset = new DateTimeOffset(from);
+        var toOffset = new DateTimeOffset(to);
+
+        return _uow.Schedules.Find(s => s.StartTime >= fromOffset && s.StartTime <= toOffset)
+                             .OrderBy(s => s.StartTime);
+    }
 }

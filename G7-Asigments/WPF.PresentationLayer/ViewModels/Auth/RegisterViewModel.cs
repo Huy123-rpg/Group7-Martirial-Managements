@@ -1,6 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Auth;
-using DAL.DataAccessLayer.Models._Lookup;
+using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;

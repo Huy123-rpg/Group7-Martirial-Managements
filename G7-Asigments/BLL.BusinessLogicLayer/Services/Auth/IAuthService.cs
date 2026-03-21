@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models._Core;
+using DAL.DataAccessLayer.Model;
 
 namespace BLL.BusinessLogicLayer.Services.Auth;
 

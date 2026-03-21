@@ -1,5 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models._Export;
+using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Context;
 
 namespace BLL.BusinessLogicLayer.Services.Export;
 

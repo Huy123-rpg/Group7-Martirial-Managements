@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models._Import;
+using DAL.DataAccessLayer.Model;
 
 namespace BLL.BusinessLogicLayer.Services.Import;
 
