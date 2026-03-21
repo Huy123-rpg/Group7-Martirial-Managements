@@ -2,6 +2,7 @@ using DAL.DataAccessLayer.Context;
 using DAL.DataAccessLayer.Models._Core;
 using DAL.DataAccessLayer.Models._Export;
 using DAL.DataAccessLayer.Models._Import;
+using DAL.DataAccessLayer.Models._Lookup;
 using DAL.DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,7 @@ public sealed class UnitOfWork
 
     // ─── Repositories ────────────────────────────────────────────────────────
     public IRepository<User> Users => new Repository<User>(_context);
+    public IRepository<LkpUserRole> UserRoles => new Repository<LkpUserRole>(_context);
     public IRepository<Warehouse> Warehouses => new Repository<Warehouse>(_context);
     public IRepository<Product> Products => new Repository<Product>(_context);
     public IRepository<Supplier> Suppliers => new Repository<Supplier>(_context);
