@@ -8,87 +8,174 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <Style x:Key="StatCard" TargetType="Border">
-            <Setter Property="Background"      Value="{StaticResource BrushSurface}"/>
-            <Setter Property="BorderBrush"     Value="{StaticResource BrushBorder}"/>
+        <Style x:Key="DashboardCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius"    Value="2"/>
-            <Setter Property="Padding"         Value="24,20"/>
-            <Setter Property="Width"           Value="210"/>
-            <Setter Property="Margin"          Value="0,0,16,16"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+
+        <Style x:Key="StatValueText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#111827"/>
+        </Style>
+
+        <Style x:Key="StatLabelText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="Margin" Value="0,6,0,0"/>
+        </Style>
+
+        <Style x:Key="SectionTitleText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F8FAFC">
         <StackPanel Margin="28">
 
-            <!-- Section title -->
-            <TextBlock Text="Tổng quan hệ thống"
-                       FontSize="13"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource BrushTextSecondary}"
-                       Margin="0,0,0,16"/>
+            <!-- HEADER -->
+            <Border Style="{StaticResource DashboardCard}" Margin="0,0,0,20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="220"/>
+                    </Grid.ColumnDefinitions>
 
-            <!-- Stat Cards Row -->
+                    <StackPanel>
+                        <TextBlock Text="Dashboard quản lý kho"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"/>
+                        <TextBlock Text="Theo dõi nhanh người dùng, kho hàng, nhập xuất và tài chính hệ thống."
+                                   Margin="0,8,0,0"
+                                   FontSize="13"
+                                   Foreground="#6B7280"/>
+                    </StackPanel>
+
+                    <Border Grid.Column="1"
+                            Background="#F3F4F6"
+                            CornerRadius="8"
+                            Padding="16"
+                            HorizontalAlignment="Right">
+                        <StackPanel>
+                            <TextBlock Text="Trạng thái hệ thống"
+                                       FontSize="12"
+                                       Foreground="#6B7280"/>
+                            <TextBlock Text="Đang hoạt động"
+                                       Margin="0,6,0,0"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="#16A34A"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- SECTION 1 -->
+            <TextBlock Text="Tổng quan hệ thống" Style="{StaticResource SectionTitleText}"/>
+
             <WrapPanel>
-
-                <!-- Tổng người dùng -->
-                <Border Style="{StaticResource StatCard}">
+                <Border Style="{StaticResource DashboardCard}" Width="220">
                     <StackPanel>
-                        <TextBlock Text="{Binding TotalUsers}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Tổng người dùng"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="👤" FontSize="20"/>
+                        <TextBlock Text="{Binding TotalUsers}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Tổng người dùng" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Đang hoạt động -->
-                <Border Style="{StaticResource StatCard}">
+                <Border Style="{StaticResource DashboardCard}" Width="220">
                     <StackPanel>
-                        <TextBlock Text="{Binding ActiveUsers}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Tài khoản hoạt động"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="✅" FontSize="20"/>
+                        <TextBlock Text="{Binding ActiveUsers}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Tài khoản hoạt động" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Sản phẩm -->
-                <Border Style="{StaticResource StatCard}">
+                <Border Style="{StaticResource DashboardCard}" Width="220">
                     <StackPanel>
-                        <TextBlock Text="{Binding TotalProducts}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Sản phẩm"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="📦" FontSize="20"/>
+                        <TextBlock Text="{Binding TotalProducts}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Sản phẩm" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Kho -->
-                <Border Style="{StaticResource StatCard}">
+                <Border Style="{StaticResource DashboardCard}" Width="220">
                     <StackPanel>
-                        <TextBlock Text="{Binding TotalWarehouses}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Kho hàng"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="🏬" FontSize="20"/>
+                        <TextBlock Text="{Binding TotalWarehouses}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Kho hàng" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
-
             </WrapPanel>
+
+            <!-- SECTION 2 -->
+            <TextBlock Text="Hoạt động hôm nay" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
+
+            <WrapPanel>
+                <Border Style="{StaticResource DashboardCard}" Width="300">
+                    <StackPanel>
+                        <TextBlock Text="📥" FontSize="20"/>
+                        <TextBlock Text="{Binding TodayReceipts}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Phiếu nhập hôm nay" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource DashboardCard}" Width="300">
+                    <StackPanel>
+                        <TextBlock Text="📤" FontSize="20"/>
+                        <TextBlock Text="{Binding TodayIssues}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Phiếu xuất hôm nay" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- SECTION 3 -->
+            <TextBlock Text="Tài chính" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
+
+            <WrapPanel>
+                <Border Style="{StaticResource DashboardCard}" Width="300">
+                    <StackPanel>
+                        <TextBlock Text="💰" FontSize="20"/>
+                        <TextBlock Text="{Binding TotalReceiptAmount, StringFormat=N0}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Tổng tiền nhập" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource DashboardCard}" Width="300">
+                    <StackPanel>
+                        <TextBlock Text="💸" FontSize="20"/>
+                        <TextBlock Text="{Binding TotalIssueAmount, StringFormat=N0}" Style="{StaticResource StatValueText}"/>
+                        <TextBlock Text="Tổng tiền xuất" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- SECTION 4 -->
+            <TextBlock Text="Ghi chú vận hành" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
+
+            <Border Style="{StaticResource DashboardCard}" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="• Kiểm tra phiếu nhập và phiếu xuất phát sinh trong ngày."
+                               FontSize="13"
+                               Foreground="#374151"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="• Theo dõi số lượng sản phẩm và kho hàng để cập nhật dữ liệu đầy đủ."
+                               FontSize="13"
+                               Foreground="#374151"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="• Đảm bảo nghiệp vụ nhập/xuất được kiểm tra trước khi duyệt."
+                               FontSize="13"
+                               Foreground="#374151"/>
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

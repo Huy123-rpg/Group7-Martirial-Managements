@@ -3,11 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:WPF.PresentationLayer.Helpers"
+             xmlns:conv="clr-namespace:WPF.PresentationLayer.Helpers.Converters"
              mc:Ignorable="d"
              Background="#F5F7FA"
              Height="521"
              Width="818">
 
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+    
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -64,9 +70,9 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Sửa"
-                            Width="60"
-                            Margin="0,0,5,0"
-                            Click="BtnEdit_Click"/>
+                                        Width="60"
+                                        Margin="0,0,5,0"
+                                        Click="BtnEdit_Click"/>
 
                                 <Button Content="Xóa"
                             Width="60"

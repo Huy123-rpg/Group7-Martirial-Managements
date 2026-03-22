@@ -1,71 +1,69 @@
-﻿using BLL.BusinessLogicLayer.Core;
-using BLL.BusinessLogicLayer.Services.Export;
-using DAL.DataAccessLayer.Model;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using WPF.PresentationLayer.Helpers;
+using BLL.BusinessLogicLayer.Core;
+using BLL.BusinessLogicLayer.Services.Import;
+using DAL.DataAccessLayer.Model;
 using WPF.PresentationLayer.Models;
 
-namespace WPF.PresentationLayer.Views.Export;
+namespace WPF.PresentationLayer.Views.Import;
 
-public partial class GoodsIssueAddWindow : Window
+public partial class GoodsReceiptAddWindow : Window
 {
-    private readonly IGoodsIssueService _service;
+    private readonly IGoodsReceiptService _service;
     private readonly UnitOfWork _uow;
-    private GoodsIssue? _editingIssue;
+    private GoodsReceipt? _editingReceipt;
 
-    private ObservableCollection<GoodsIssueItemInput> _items = new();
+    private ObservableCollection<GoodsReceiptItemInput> _items = new();
     private List<Product> _products = new();
 
-    public GoodsIssueAddWindow()
+    public GoodsReceiptAddWindow()
     {
         InitializeComponent();
 
-        _service = new GoodsIssueService();
+        _service = new GoodsReceiptService();
         _uow = UnitOfWork.Instance;
 
         dpDate.SelectedDate = DateTime.Now;
-        txtCode.Text = GenerateIssueCode();
+        txtCode.Text = GenerateReceiptCode();
 
         LoadData();
         SetupItemGrid();
     }
 
-    public GoodsIssueAddWindow(GoodsIssue issue)
+    public GoodsReceiptAddWindow(GoodsReceipt receipt)
     {
         InitializeComponent();
 
-        _service = new GoodsIssueService();
+        _service = new GoodsReceiptService();
         _uow = UnitOfWork.Instance;
-        _editingIssue = issue;
+        _editingReceipt = receipt;
 
         LoadData();
         SetupItemGrid();
 
-        dpDate.SelectedDate = issue.IssueDate.ToDateTime(TimeOnly.MinValue);
-        txtCode.Text = issue.GiNumber;
-        txtNote.Text = issue.Notes;
+        dpDate.SelectedDate = receipt.ReceiptDate.ToDateTime(TimeOnly.MinValue);
+        txtCode.Text = receipt.GrnNumber;
+        txtNote.Text = receipt.Notes;
+        cbWarehouse.SelectedValue = receipt.WarehouseId;
+        cbSupplier.SelectedValue = receipt.SupplierId;
 
-        cbWarehouse.SelectedValue = issue.WarehouseId;
-        cbCustomer.SelectedValue = issue.CustomerId;
-
-        var detailItems = _uow.GoodsIssueItems.GetAll()
-            .Where(x => x.GiId == issue.Id)
+        var detailItems = _uow.GoodsReceiptItems.GetAll()
+            .Where(x => x.GrnId == receipt.Id)
             .ToList();
 
         foreach (var item in detailItems)
         {
             var product = _products.FirstOrDefault(p => p.Id == item.ProductId);
 
-            _items.Add(new GoodsIssueItemInput
+            _items.Add(new GoodsReceiptItemInput
             {
                 ProductId = item.ProductId,
                 ProductName = product?.ProductName ?? "",
-                QtyIssued = item.QtyIssued,
-                UnitPrice = item.UnitPrice ?? 0,
+                QtyReceived = item.QtyReceived,
+                UnitCost = item.UnitCost,
                 Notes = item.Notes
             });
         }
@@ -75,7 +73,7 @@ public partial class GoodsIssueAddWindow : Window
 
     private void LoadData()
     {
-        cbCustomer.ItemsSource = _uow.Customers.GetAll().ToList();
+        cbSupplier.ItemsSource = _uow.Suppliers.GetAll().ToList();
         cbWarehouse.ItemsSource = _uow.Warehouses.GetAll().ToList();
         _products = _uow.Products.GetAll().ToList();
     }
@@ -88,23 +86,25 @@ public partial class GoodsIssueAddWindow : Window
         if (col != null)
         {
             col.ItemsSource = _products;
+            col.SelectedValuePath = "Id";
+            col.DisplayMemberPath = "ProductName";
         }
 
         dgItems.CellEditEnding += (s, e) =>
             Dispatcher.BeginInvoke(new Action(RefreshTotal));
     }
 
-    private string GenerateIssueCode()
+    private string GenerateReceiptCode()
     {
-        return "GI" + DateTime.Now.ToString("yyyyMMddHHmmss");
+        return "GR" + DateTime.Now.ToString("yyyyMMddHHmmss");
     }
 
     private void BtnAddItem_Click(object sender, RoutedEventArgs e)
     {
-        _items.Add(new GoodsIssueItemInput
+        _items.Add(new GoodsReceiptItemInput
         {
-            QtyIssued = 1,
-            UnitPrice = 0
+            QtyReceived = 1,
+            UnitCost = 0
         });
 
         RefreshTotal();
@@ -112,7 +112,7 @@ public partial class GoodsIssueAddWindow : Window
 
     private void BtnDeleteItem_Click(object sender, RoutedEventArgs e)
     {
-        if (dgItems.SelectedItem is GoodsIssueItemInput selected)
+        if (dgItems.SelectedItem is GoodsReceiptItemInput selected)
         {
             _items.Remove(selected);
             RefreshTotal();
@@ -143,8 +143,8 @@ public partial class GoodsIssueAddWindow : Window
                 return;
             }
 
-            var existed = _uow.GoodsIssues.GetAll()
-                .Any(x => x.GiNumber == code && (_editingIssue == null || x.Id != _editingIssue.Id));
+            var existed = _uow.GoodsReceipts.GetAll()
+                .Any(x => x.GrnNumber == code && (_editingReceipt == null || x.Id != _editingReceipt.Id));
 
             if (existed)
             {
@@ -158,15 +158,21 @@ public partial class GoodsIssueAddWindow : Window
                 return;
             }
 
-            if (_items.Count == 0)
+            if (cbSupplier.SelectedValue == null)
             {
-                MessageBox.Show("Phiếu xuất phải có ít nhất 1 dòng chi tiết.");
+                MessageBox.Show("Chọn nhà cung cấp.");
                 return;
             }
 
-            if (_items.Any(x => x.ProductId == Guid.Empty || x.QtyIssued <= 0))
+            if (_items.Count == 0)
             {
-                MessageBox.Show("Kiểm tra lại sản phẩm và số lượng trong chi tiết.");
+                MessageBox.Show("Phiếu nhập phải có ít nhất 1 dòng chi tiết.");
+                return;
+            }
+
+            if (_items.Any(x => x.ProductId == Guid.Empty || x.QtyReceived <= 0))
+            {
+                MessageBox.Show("Kiểm tra lại sản phẩm và số lượng.");
                 return;
             }
 
@@ -176,49 +182,41 @@ public partial class GoodsIssueAddWindow : Window
                 MessageBox.Show("Không có user.");
                 return;
             }
-            if (_editingIssue == null && !PermissionHelper.CanCreateGoodsIssue)
-            {
-                MessageBox.Show("Bạn không có quyền tạo phiếu xuất.");
-                return;
-            }
-
-            if (_editingIssue != null && !PermissionHelper.CanEditGoodsIssue)
-            {
-                MessageBox.Show("Bạn không có quyền sửa phiếu xuất.");
-                return;
-            }
 
             var total = _items.Sum(x => x.LineTotal);
 
-            if (_editingIssue != null)
+            if (_editingReceipt != null)
             {
-                _editingIssue.GiNumber = code;
-                _editingIssue.IssueDate = DateOnly.FromDateTime(dpDate.SelectedDate ?? DateTime.Now);
-                _editingIssue.TotalAmount = total;
-                _editingIssue.Notes = txtNote.Text?.Trim();
-                _editingIssue.UpdatedAt = DateTimeOffset.UtcNow;
-                _editingIssue.WarehouseId = (Guid)cbWarehouse.SelectedValue;
-                _editingIssue.CustomerId = cbCustomer.SelectedValue != null ? (Guid?)cbCustomer.SelectedValue : null;
+                _editingReceipt.GrnNumber = code;
+                _editingReceipt.ReceiptDate = DateOnly.FromDateTime(dpDate.SelectedDate ?? DateTime.Now);
+                _editingReceipt.TotalAmount = total;
+                _editingReceipt.Notes = txtNote.Text?.Trim();
+                _editingReceipt.UpdatedAt = DateTimeOffset.UtcNow;
+                _editingReceipt.WarehouseId = (Guid)cbWarehouse.SelectedValue;
+                _editingReceipt.SupplierId = (Guid)cbSupplier.SelectedValue;
 
-                _service.Update(_editingIssue);
+                _service.Update(_editingReceipt);
 
-                var oldItems = _uow.GoodsIssueItems.GetAll().Where(x => x.GiId == _editingIssue.Id).ToList();
+                var oldItems = _uow.GoodsReceiptItems.GetAll()
+                    .Where(x => x.GrnId == _editingReceipt.Id)
+                    .ToList();
+
                 foreach (var old in oldItems)
                 {
-                    _uow.GoodsIssueItems.DeleteById(old.Id);
+                    _uow.GoodsReceiptItems.DeleteById(old.Id);
                 }
 
                 foreach (var item in _items)
                 {
-                    _uow.GoodsIssueItems.Add(new GoodsIssueItem
+                    _uow.GoodsReceiptItems.Add(new GoodsReceiptItem
                     {
                         Id = Guid.NewGuid(),
-                        GiId = _editingIssue.Id,
+                        GrnId = _editingReceipt.Id,
                         ProductId = item.ProductId,
-                        QtyIssued = item.QtyIssued,
-                        QtyRequested = item.QtyIssued,
-                        UnitPrice = item.UnitPrice,
-                        UnitCost = 0,
+                        QtyReceived = item.QtyReceived,
+                        QtyAccepted = item.QtyReceived,
+                        QtyRejected = 0,
+                        UnitCost = item.UnitCost,
                         Notes = item.Notes
                     });
                 }
@@ -228,34 +226,34 @@ public partial class GoodsIssueAddWindow : Window
             }
             else
             {
-                var issue = new GoodsIssue
+                var receipt = new GoodsReceipt
                 {
                     Id = Guid.NewGuid(),
-                    GiNumber = code,
-                    IssueDate = DateOnly.FromDateTime(dpDate.SelectedDate ?? DateTime.Now),
+                    GrnNumber = code,
+                    ReceiptDate = DateOnly.FromDateTime(dpDate.SelectedDate ?? DateTime.Now),
                     TotalAmount = total,
                     Notes = txtNote.Text?.Trim(),
                     CreatedAt = DateTimeOffset.UtcNow,
                     UpdatedAt = DateTimeOffset.UtcNow,
                     CreatedBy = currentUser.Id,
                     WarehouseId = (Guid)cbWarehouse.SelectedValue,
-                    CustomerId = cbCustomer.SelectedValue != null ? (Guid?)cbCustomer.SelectedValue : null,
+                    SupplierId = (Guid)cbSupplier.SelectedValue,
                     StatusId = 1
                 };
 
-                _service.Create(issue);
+                _service.Create(receipt);
 
                 foreach (var item in _items)
                 {
-                    _uow.GoodsIssueItems.Add(new GoodsIssueItem
+                    _uow.GoodsReceiptItems.Add(new GoodsReceiptItem
                     {
                         Id = Guid.NewGuid(),
-                        GiId = issue.Id,
+                        GrnId = receipt.Id,
                         ProductId = item.ProductId,
-                        QtyIssued = item.QtyIssued,
-                        QtyRequested = item.QtyIssued,
-                        UnitPrice = item.UnitPrice,
-                        UnitCost = 0,
+                        QtyReceived = item.QtyReceived,
+                        QtyAccepted = item.QtyReceived,
+                        QtyRejected = 0,
+                        UnitCost = item.UnitCost,
                         Notes = item.Notes
                     });
                 }

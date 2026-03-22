@@ -2,11 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels"
+        xmlns:local="clr-namespace:WPF.PresentationLayer.Helpers.Converters"
         Title="Quản lý Kho"
         Height="700" Width="1100"
         MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BrushBackground}">
+
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
 
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -52,18 +57,23 @@
 
                 <Button Content="Tổng quan"
                         Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavDashboardCommand}"/>
+                        Command="{Binding NavDashboardCommand}"
+                        Visibility="{Binding CanViewDashboard, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 <Button Content="Nhập kho"
-                Style="{StaticResource SidebarMenuItem}"
-                Command="{Binding NavGoodsReceiptCommand}"/>
+                        Style="{StaticResource SidebarMenuItem}"
+                        Command="{Binding NavGoodsReceiptCommand}"
+                        Visibility="{Binding CanViewGoodsReceipt, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                 <Button Content="Xuất kho"
-                Style="{StaticResource SidebarMenuItem}"
-                Command="{Binding NavGoodsIssueCommand}"/>
+                        Style="{StaticResource SidebarMenuItem}"
+                        Command="{Binding NavGoodsIssueCommand}"
+                        Visibility="{Binding CanViewGoodsIssue, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                 <Button Content="Người dùng"
                         Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavUserManagementCommand}"/>
+                        Command="{Binding NavUserManagementCommand}"
+                        Visibility="{Binding CanViewUsers, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                
             </StackPanel>
 
             <!-- Bottom: User info + Logout -->

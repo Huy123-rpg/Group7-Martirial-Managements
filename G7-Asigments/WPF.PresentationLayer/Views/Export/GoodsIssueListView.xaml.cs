@@ -3,6 +3,7 @@ using DAL.DataAccessLayer.Model;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Models;
 
 namespace WPF.PresentationLayer.Views.Export;
@@ -44,6 +45,12 @@ public partial class GoodsIssueListView : UserControl
 
     private void BtnAdd_Click(object sender, RoutedEventArgs e)
     {
+        if (!PermissionHelper.CanCreateGoodsIssue)
+        {
+            MessageBox.Show("Bạn không có quyền tạo phiếu xuất.");
+            return;
+        }
+
         var win = new GoodsIssueAddWindow();
         win.ShowDialog();
         LoadData();
@@ -51,6 +58,12 @@ public partial class GoodsIssueListView : UserControl
 
     private void BtnEdit_Click(object sender, RoutedEventArgs e)
     {
+        if (!PermissionHelper.CanEditGoodsIssue)
+        {
+            MessageBox.Show("Bạn không có quyền sửa phiếu xuất.");
+            return;
+        }
+
         if (sender is Button btn && btn.DataContext is GoodsIssueListItem row)
         {
             var win = new GoodsIssueAddWindow(row.GoodsIssue);
@@ -61,6 +74,12 @@ public partial class GoodsIssueListView : UserControl
 
     private void BtnDelete_Click(object sender, RoutedEventArgs e)
     {
+        if (!PermissionHelper.CanDeleteGoodsIssue)
+        {
+            MessageBox.Show("Bạn không có quyền xóa phiếu xuất.");
+            return;
+        }
+
         if (sender is Button btn && btn.DataContext is GoodsIssueListItem row)
         {
             var issue = row.GoodsIssue;

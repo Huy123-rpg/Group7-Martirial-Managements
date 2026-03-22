@@ -6,8 +6,11 @@ using WPF.PresentationLayer.Views;
 using WPF.PresentationLayer.Views.Auth;
 using WPF.PresentationLayer.Views.Export;
 using WPF.PresentationLayer.Views.Import;
+using WPF.PresentationLayer.Helpers;
 
 namespace WPF.PresentationLayer.ViewModels;
+
+
 
 public class MainViewModel : BaseViewModel
 {
@@ -34,13 +37,28 @@ public class MainViewModel : BaseViewModel
     }
 
     public string CurrentUserName => SessionManager.CurrentUser?.FullName ?? string.Empty;
-    public string CurrentUserRole => SessionManager.CurrentUser?.Role?.RoleName ?? string.Empty;
+    public string CurrentUserRole => SessionManager.CurrentUser?.RoleId switch
+    {
+        1 => "Admin",
+        2 => "Warehouse Manager",
+        3 => "Warehouse Staff",
+        4 => "Accountant",
+        _ => "Unknown"
+    };
 
     public RelayCommand NavDashboardCommand { get; }
     public RelayCommand NavUserManagementCommand { get; }
     public RelayCommand NavGoodsReceiptCommand { get; }
     public RelayCommand NavGoodsIssueCommand { get; }
     public RelayCommand LogoutCommand { get; }
+    public bool CanViewUsers => PermissionHelper.CanViewUsers;
+    public string DebugRole => $"RoleId = {SessionManager.CurrentUser?.RoleId}";
+    public bool CanViewGoodsReceipt => PermissionHelper.CanViewGoodsReceipt;
+    public bool CanViewGoodsIssue => PermissionHelper.CanViewGoodsIssue;
+
+    public bool CanViewDashboard => PermissionHelper.CanViewDashboard;
+    public bool CanCreateGoodsReceipt => PermissionHelper.CanCreateGoodsReceipt;
+    public bool CanCreateGoodsIssue => PermissionHelper.CanCreateGoodsIssue;
 
     public MainViewModel()
     {

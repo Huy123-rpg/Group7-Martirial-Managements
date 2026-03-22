@@ -23,11 +23,17 @@ public class AuthService : IAuthService
     // ─── Login (bằng email) ───────────────────────────────────────────────────
     public User? Login(string email, string password)
     {
-        var user = _uow.Users
-            .Find(u => u.Email == email.Trim().ToLowerInvariant() && u.IsActive)
-            .FirstOrDefault();
+        email = email.Trim().ToLower();
 
-        if (user == null || !VerifyPassword(password, user.PasswordHash))
+        var user = _uow.Users.GetAll()
+            .FirstOrDefault(x => x.Email.ToLower() == email && x.IsActive);
+
+        if (user == null)
+            return null;
+
+        var hash = HashHelper.SHA256Hash(password);
+
+        if (user.PasswordHash != hash)
             return null;
 
         return user;

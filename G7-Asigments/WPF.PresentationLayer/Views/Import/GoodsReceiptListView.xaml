@@ -4,9 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             Background="#F5F7FA"
-             Height="521"
-             Width="818">
+             Background="#F5F7FA" d:DesignHeight="545.698" d:DesignWidth="924.282">
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -36,12 +34,46 @@
                   Grid.Row="2"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  CanUserAddRows="False">
+                  CanUserAddRows="False"
+                  MouseDoubleClick="dgGoodsReceipts_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Mã phiếu" Binding="{Binding GrnNumber}" Width="150"/>
-                <DataGridTextColumn Header="Ngày nhập" Binding="{Binding ReceiptDate}" Width="150"/>
-                <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount}" Width="150"/>
-                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Notes}" Width="*"/>
+                <DataGridTextColumn Header="Mã phiếu"
+                                    Binding="{Binding GrnNumber}"
+                                    Width="130"/>
+
+                <DataGridTextColumn Header="Ngày nhập"
+                                    Binding="{Binding ReceiptDate, StringFormat=dd/MM/yyyy}"
+                                    Width="140"/>
+
+                <DataGridTextColumn Header="Tổng tiền"
+                                    Binding="{Binding TotalAmount, StringFormat=N0}"
+                                    Width="140"/>
+
+                <DataGridTextColumn Header="Ghi chú"
+                                    Binding="{Binding Notes}"
+                                    Width="*"/>
+
+                <DataGridTextColumn Header="Số mặt hàng"
+                                    Binding="{Binding ItemCount}"
+                                    Width="110"/>
+
+                <DataGridTemplateColumn Header="Hành động" Width="160">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Sửa"
+                                        Width="60"
+                                        Margin="0,0,5,0"
+                                        Click="BtnEdit_Click"/>
+                                <Button Content="Xóa"
+                                        Width="60"
+                                        Background="#EF4444"
+                                        Foreground="White"
+                                        Click="BtnDelete_Click"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

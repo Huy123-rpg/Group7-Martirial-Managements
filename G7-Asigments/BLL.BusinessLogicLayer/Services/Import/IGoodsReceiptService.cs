@@ -5,10 +5,8 @@ namespace BLL.BusinessLogicLayer.Services.Import;
 public interface IGoodsReceiptService
 {
     IEnumerable<GoodsReceipt> GetAll();
-    IEnumerable<GoodsReceipt> Search(string keyword);
     GoodsReceipt? GetById(Guid id);
-    void Create(GoodsReceipt gr);
-    void Update(GoodsReceipt gr);
+    void Create(GoodsReceipt receipt);
+    void Update(GoodsReceipt receipt);
     void Delete(Guid id);
-    void Approve(Guid id, Guid approvedBy);
 }
