@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models._Core;
+using DAL.DataAccessLayer.Models;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,6 +31,17 @@ public class AuthService : IAuthService
             return null;
 
         return user;
+    }
+
+    // ─── Update Last Login ────────────────────────────────────────────────────
+    public void UpdateLastLogin(Guid userId)
+    {
+        var user = _uow.Users.GetById(userId);
+        if (user == null) return;
+        user.LastLoginAt = DateTimeOffset.UtcNow;
+        user.UpdatedAt   = DateTimeOffset.UtcNow;
+        _uow.Users.Update(user);
+        _uow.Save();
     }
 
     // ─── Change Password ─────────────────────────────────────────────────────
@@ -88,6 +99,7 @@ public class AuthService : IAuthService
             Email        = normalizedEmail,
             PasswordHash = HashPassword(password),
             RoleId       = roleId,
+            StaffCode    = $"USR-{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
             IsActive     = true,
             CreatedAt    = now,
             UpdatedAt    = now

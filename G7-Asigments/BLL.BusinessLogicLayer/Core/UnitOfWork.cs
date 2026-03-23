@@ -1,8 +1,5 @@
 using DAL.DataAccessLayer.Context;
-using DAL.DataAccessLayer.Models._Core;
-using DAL.DataAccessLayer.Models._Export;
-using DAL.DataAccessLayer.Models._Import;
-using DAL.DataAccessLayer.Models._Lookup;
+using DAL.DataAccessLayer.Models;
 using DAL.DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +33,6 @@ public sealed class UnitOfWork
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
             .UseSqlServer(ConnectionString)
-            .UseSnakeCaseNamingConvention()
             .Options;
         _context = new WarehouseDbContext(options);
     }

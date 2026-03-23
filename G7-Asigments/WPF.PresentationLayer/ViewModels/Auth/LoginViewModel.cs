@@ -1,4 +1,6 @@
 using BLL.BusinessLogicLayer.Services.Auth;
+using DAL.DataAccessLayer.Models;
+using System;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;
 
@@ -26,7 +28,10 @@ public class LoginViewModel : BaseViewModel
 
     private void Login()
     {
-        var user = _authService.Login(Email, Password);
+        User? user;
+        try { user = _authService.Login(Email, Password); }
+        catch (Exception ex) { ErrorMessage = $"Lỗi kết nối DB: {ex.Message}"; return; }
+
         if (user == null)
         {
             ErrorMessage = "Email hoặc mật khẩu không đúng.";
@@ -36,8 +41,34 @@ public class LoginViewModel : BaseViewModel
         SessionManager.Login(user);
         ErrorMessage = string.Empty;
 
-        new MainWindow().Show();
-        CloseCurrentWindow();
+        // First login → bắt buộc đổi mật khẩu
+        if (user.LastLoginAt == null)
+        {
+            var changeWin = new Views.Auth.ChangePasswordWindow();
+            if (changeWin.DataContext is ChangePasswordViewModel cpVm)
+                cpVm.UserId = user.Id;
+
+            bool changed = changeWin.ShowDialog() == true;
+            if (!changed)
+            {
+                SessionManager.Logout();
+                ErrorMessage = "Vui lòng đổi mật khẩu để tiếp tục.";
+                return;
+            }
+        }
+
+        try
+        {
+            _authService.UpdateLastLogin(user.Id);
+            var main = new MainWindow();
+            main.Show();
+            CloseCurrentWindow();
+        }
+        catch (Exception ex)
+        {
+            SessionManager.Logout();
+            ErrorMessage = $"Không thể mở ứng dụng: {ex.Message}";
+        }
     }
 
     // ─── Helper ───────────────────────────────────────────────────────────────

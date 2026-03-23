@@ -18,10 +18,10 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Tiêu đề"     Binding="{Binding Title}"      Width="200"/>
                 <DataGridTextColumn Header="Kho"         Binding="{Binding Warehouse.Name}" Width="150"/>
-                <DataGridTextColumn Header="Loại lịch"   Binding="{Binding ScheduleType.TypeName}" Width="130"/>
-                <DataGridTextColumn Header="Ngày"        Binding="{Binding ScheduledDate, StringFormat=dd/MM/yyyy}" Width="110"/>
-                <DataGridTextColumn Header="Phân công"   Binding="{Binding AssignedTo.FullName}" Width="150"/>
-                <DataGridTextColumn Header="Trạng thái"  Binding="{Binding StatusId}"   Width="100"/>
+                <DataGridTextColumn Header="Loại lịch"   Binding="{Binding ScheduleTypeNavigation.TypeName}" Width="130"/>
+                <DataGridTextColumn Header="Bắt đầu"     Binding="{Binding StartTime, StringFormat=dd/MM/yyyy HH:mm}" Width="130"/>
+                <DataGridTextColumn Header="Phân công"   Binding="{Binding AssignedToNavigation.FullName}" Width="150"/>
+                <DataGridTextColumn Header="Trạng thái"  Binding="{Binding StatusCode}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

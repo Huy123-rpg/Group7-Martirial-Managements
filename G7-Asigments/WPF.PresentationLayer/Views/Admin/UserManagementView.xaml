@@ -166,11 +166,22 @@
                     </TextBlock.Text>
                 </TextBlock>
 
-                <Button Grid.Column="1"
-                        Content="{Binding ToggleActiveLabel}"
-                        Style="{StaticResource ButtonPrimary}"
-                        Width="140"
-                        Command="{Binding ToggleActiveCommand}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                            Visibility="{Binding ActionButtonsVisible}">
+                    <Button Content="Xóa tài khoản"
+                            Width="130"
+                            Margin="0,0,8,0"
+                            Command="{Binding DeleteCommand}"
+                            Background="#B00020"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Padding="12,6"
+                            Cursor="Hand"/>
+                    <Button Content="{Binding ToggleActiveLabel}"
+                            Style="{StaticResource ButtonPrimary}"
+                            Width="140"
+                            Command="{Binding ToggleActiveCommand}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>
