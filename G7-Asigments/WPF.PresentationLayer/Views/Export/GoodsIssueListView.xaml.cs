@@ -23,10 +23,12 @@ public partial class GoodsIssueListView : UserControl
     {
         try
         {
+            bool canApprove = PermissionHelper.CanApproveGoodsIssue;
             var data = _goodsIssueService.GetAll()
                 .Select(x => new GoodsIssueListItem
                 {
-                    GoodsIssue = x
+                    GoodsIssue = x,
+                    IsApproveVisible = canApprove
                 })
                 .ToList();
 
@@ -117,6 +119,51 @@ public partial class GoodsIssueListView : UserControl
             var win = new GoodsIssueAddWindow(row.GoodsIssue);
             win.ShowDialog();
             LoadData();
+        }
+    }
+
+    private void BtnApprove_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanApproveGoodsIssue)
+        {
+            MessageBox.Show("Chỉ tài khoản Admin mới có quyền duyệt phiếu xuất.", "Không có quyền",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        if (sender is Button btn && btn.DataContext is GoodsIssueListItem row)
+        {
+            var issue = row.GoodsIssue;
+            
+            if (issue.StatusId != 1)
+            {
+                MessageBox.Show("Phiếu này đã được duyệt hoặc không ở trạng thái chờ.");
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Bạn có chắc muốn duyệt phiếu {issue.GiNumber}?",
+                "Xác nhận duyệt",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    issue.StatusId = 2; // Approved Status
+                    issue.ApprovedAt = DateTimeOffset.UtcNow;
+                    // Note: Here we'd set issue.ApprovedBy if we had the currentUser logged in globally
+                    
+                    _goodsIssueService.Update(issue);
+                    MessageBox.Show("Duyệt phiếu xuất thành công!");
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi duyệt phiếu xuất: " + ex.Message);
+                }
+            }
         }
     }
 }

@@ -116,22 +116,43 @@
             </WrapPanel>
 
             <!-- SECTION 2 -->
-            <TextBlock Text="Hoạt động hôm nay" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
+            <TextBlock Text="Hoạt động hôm nay (Phiếu đã duyệt)" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
 
             <WrapPanel>
                 <Border Style="{StaticResource DashboardCard}" Width="300">
                     <StackPanel>
                         <TextBlock Text="📥" FontSize="20"/>
-                        <TextBlock Text="{Binding TodayReceipts}" Style="{StaticResource StatValueText}"/>
-                        <TextBlock Text="Phiếu nhập hôm nay" Style="{StaticResource StatLabelText}"/>
+                        <TextBlock Text="{Binding TodayApprovedReceipts}" Style="{StaticResource StatValueText}" Foreground="#16A34A"/>
+                        <TextBlock Text="Phiếu nhập đã duyệt hôm nay" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
 
                 <Border Style="{StaticResource DashboardCard}" Width="300">
                     <StackPanel>
                         <TextBlock Text="📤" FontSize="20"/>
-                        <TextBlock Text="{Binding TodayIssues}" Style="{StaticResource StatValueText}"/>
-                        <TextBlock Text="Phiếu xuất hôm nay" Style="{StaticResource StatLabelText}"/>
+                        <TextBlock Text="{Binding TodayApprovedIssues}" Style="{StaticResource StatValueText}" Foreground="#2563EB"/>
+                        <TextBlock Text="Phiếu xuất đã duyệt hôm nay" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- PENDING -->
+            <TextBlock Text="⏳ Chờ duyệt" Style="{StaticResource SectionTitleText}" Margin="0,10,0,14"/>
+
+            <WrapPanel>
+                <Border Style="{StaticResource DashboardCard}" Width="300" Background="#FFF7ED" BorderBrush="#F97316">
+                    <StackPanel>
+                        <TextBlock Text="⚠️" FontSize="20"/>
+                        <TextBlock Text="{Binding PendingReceipts}" Style="{StaticResource StatValueText}" Foreground="#EA580C"/>
+                        <TextBlock Text="Phiếu nhập chờ Admin duyệt" Style="{StaticResource StatLabelText}"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource DashboardCard}" Width="300" Background="#FFF7ED" BorderBrush="#F97316">
+                    <StackPanel>
+                        <TextBlock Text="⚠️" FontSize="20"/>
+                        <TextBlock Text="{Binding PendingIssues}" Style="{StaticResource StatValueText}" Foreground="#EA580C"/>
+                        <TextBlock Text="Phiếu xuất chờ Admin duyệt" Style="{StaticResource StatLabelText}"/>
                     </StackPanel>
                 </Border>
             </WrapPanel>

@@ -14,7 +14,7 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public IEnumerable<T> GetAll() => _dbSet.ToList();
+    public IEnumerable<T> GetAll() => _dbSet.AsNoTracking().ToList();
 
     public T? GetById(Guid id) => _dbSet.Find(id);
 

@@ -35,6 +35,14 @@ public class GoodsIssueService : IGoodsIssueService
 
     public void Delete(Guid id)
     {
+        // 1. Xoá hết các dòng chi tiết trước để tránh lỗi khoá ngoại (FK)
+        var items = _uow.GoodsIssueItems.GetAll().Where(x => x.GiId == id).ToList();
+        foreach (var item in items)
+        {
+            _uow.GoodsIssueItems.DeleteById(item.Id);
+        }
+
+        // 2. Sau đó mới xoá phiếu xuất
         _uow.GoodsIssues.DeleteById(id);
         _uow.Save();
     }

@@ -48,11 +48,13 @@ public class MainViewModel : BaseViewModel
 
     public RelayCommand NavDashboardCommand { get; }
     public RelayCommand NavUserManagementCommand { get; }
+    public RelayCommand NavPurchaseOrderCommand { get; }
     public RelayCommand NavGoodsReceiptCommand { get; }
     public RelayCommand NavGoodsIssueCommand { get; }
     public RelayCommand LogoutCommand { get; }
     public bool CanViewUsers => PermissionHelper.CanViewUsers;
     public string DebugRole => $"RoleId = {SessionManager.CurrentUser?.RoleId}";
+    public bool CanViewPurchaseOrder => PermissionHelper.CanViewPurchaseOrder;
     public bool CanViewGoodsReceipt => PermissionHelper.CanViewGoodsReceipt;
     public bool CanViewGoodsIssue => PermissionHelper.CanViewGoodsIssue;
 
@@ -67,6 +69,9 @@ public class MainViewModel : BaseViewModel
 
         NavUserManagementCommand = new RelayCommand(() =>
             Navigate(new Views.Admin.UserManagementView(), "Quản lý người dùng", "users"));
+
+        NavPurchaseOrderCommand = new RelayCommand(() =>
+            Navigate(new PurchaseOrderListView(), "Đặt hàng", "purchaseorder"));
 
         NavGoodsReceiptCommand = new RelayCommand(() =>
             Navigate(new GoodsReceiptListView(), "Nhập kho", "goodsreceipt"));

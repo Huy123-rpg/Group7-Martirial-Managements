@@ -17,7 +17,10 @@
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                      VerticalContentAlignment="Center"
                      x:Name="txtSearch"/>
-            <!-- TODO: Add/Edit buttons -->
+            <Button Content="Thêm mới" Width="90" Margin="0,0,8,0" Click="BtnAdd_Click"/>
+            <Button Content="Sửa" Width="80" Margin="0,0,8,0" Click="BtnEdit_Click"/>
+            <Button Content="Xóa" Width="80" Command="{Binding DeleteCommand}"
+                    Background="#DC3545" Foreground="White" BorderThickness="0"/>
         </StackPanel>
 
         <!-- DataGrid -->

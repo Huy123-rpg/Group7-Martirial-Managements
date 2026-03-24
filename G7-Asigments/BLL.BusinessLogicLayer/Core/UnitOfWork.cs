@@ -52,5 +52,16 @@ public sealed class UnitOfWork
     public IRepository<GoodsIssue> GoodsIssues => new Repository<GoodsIssue>(_context);
     public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
     public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
-    public int Save() => _context.SaveChanges();
+    public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
+    public int Save()
+    {
+        try
+        {
+            return _context.SaveChanges();
+        }
+        finally
+        {
+            _context.ChangeTracker.Clear(); // Luôn xoá cache để tránh "kẹt" lệnh lỗi
+        }
+    }
 }

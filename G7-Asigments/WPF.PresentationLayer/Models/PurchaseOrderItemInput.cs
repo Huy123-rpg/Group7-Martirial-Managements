@@ -4,12 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace WPF.PresentationLayer.Models;
 
-public class GoodsIssueItemInput : INotifyPropertyChanged
+public class PurchaseOrderItemInput : INotifyPropertyChanged
 {
     private Guid _productId;
     private string _productName = string.Empty;
-    private decimal _qtyIssued;
-    private decimal _unitPrice;
+    private decimal _qtyOrdered;
+    private decimal _unitCost;
     private string? _notes;
 
     public Guid ProductId 
@@ -22,15 +22,15 @@ public class GoodsIssueItemInput : INotifyPropertyChanged
         get => _productName; 
         set { if (_productName != value) { _productName = value; OnPropertyChanged(); } } 
     }
-    public decimal QtyIssued 
+    public decimal QtyOrdered 
     { 
-        get => _qtyIssued; 
-        set { if (_qtyIssued != value) { _qtyIssued = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
+        get => _qtyOrdered; 
+        set { if (_qtyOrdered != value) { _qtyOrdered = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
     }
-    public decimal UnitPrice 
+    public decimal UnitCost 
     { 
-        get => _unitPrice; 
-        set { if (_unitPrice != value) { _unitPrice = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
+        get => _unitCost; 
+        set { if (_unitCost != value) { _unitCost = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
     }
     public string? Notes 
     { 
@@ -38,7 +38,7 @@ public class GoodsIssueItemInput : INotifyPropertyChanged
         set { if (_notes != value) { _notes = value; OnPropertyChanged(); } } 
     }
 
-    public decimal LineTotal => QtyIssued * UnitPrice;
+    public decimal LineTotal => QtyOrdered * UnitCost;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

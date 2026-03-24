@@ -11,9 +11,15 @@ public class DashboardViewModel : BaseViewModel
     public int TotalProducts { get; }
     public int TotalWarehouses { get; }
 
-    public int TodayReceipts { get; }
-    public int TodayIssues { get; }
+    // Chỉ đếm phiếu đã được Admin DUYỆT (StatusId = 2)
+    public int TodayApprovedReceipts { get; }
+    public int TodayApprovedIssues { get; }
 
+    // Phiếu đang chờ duyệt (StatusId = 1)
+    public int PendingReceipts { get; }
+    public int PendingIssues { get; }
+
+    // Tổng tiền chỉ từ phiếu đã duyệt
     public decimal TotalReceiptAmount { get; }
     public decimal TotalIssueAmount { get; }
 
@@ -22,20 +28,24 @@ public class DashboardViewModel : BaseViewModel
         var uow = UnitOfWork.Instance;
         var today = DateOnly.FromDateTime(DateTime.Now);
 
-        TotalUsers = uow.Users.GetAll().Count();
-        ActiveUsers = uow.Users.Find(u => u.IsActive).Count();
-        TotalProducts = uow.Products.GetAll().Count();
+        TotalUsers     = uow.Users.GetAll().Count();
+        ActiveUsers    = uow.Users.Find(u => u.IsActive).Count();
+        TotalProducts  = uow.Products.GetAll().Count();
         TotalWarehouses = uow.Warehouses.GetAll().Count();
 
-        TodayReceipts = uow.GoodsReceipts.GetAll().Count(x => x.ReceiptDate == today);
-        TodayIssues = uow.GoodsIssues.GetAll().Count(x => x.IssueDate == today);
+        var allReceipts = uow.GoodsReceipts.GetAll().ToList();
+        var allIssues   = uow.GoodsIssues.GetAll().ToList();
 
-        TotalReceiptAmount = uow.GoodsReceipts.GetAll().Any()
-            ? uow.GoodsReceipts.GetAll().Sum(x => x.TotalAmount)
-            : 0;
+        // Phiếu đã duyệt hôm nay (StatusId = 2)
+        TodayApprovedReceipts = allReceipts.Count(x => x.ReceiptDate == today && x.StatusId == 2);
+        TodayApprovedIssues   = allIssues.Count(x => x.IssueDate == today && x.StatusId == 2);
 
-        TotalIssueAmount = uow.GoodsIssues.GetAll().Any()
-            ? uow.GoodsIssues.GetAll().Sum(x => x.TotalAmount)
-            : 0;
+        // Phiếu đang chờ duyệt (StatusId = 1)
+        PendingReceipts = allReceipts.Count(x => x.StatusId == 1);
+        PendingIssues   = allIssues.Count(x => x.StatusId == 1);
+
+        // Tổng tiền chỉ tính phiếu đã duyệt
+        TotalReceiptAmount = allReceipts.Where(x => x.StatusId == 2).Sum(x => x.TotalAmount);
+        TotalIssueAmount   = allIssues.Where(x => x.StatusId == 2).Sum(x => x.TotalAmount);
     }
 }

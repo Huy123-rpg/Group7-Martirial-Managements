@@ -1,12 +1,48 @@
-﻿namespace WPF.PresentationLayer.Models;
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public class GoodsReceiptItemInput
+namespace WPF.PresentationLayer.Models;
+
+public class GoodsReceiptItemInput : INotifyPropertyChanged
 {
-    public Guid ProductId { get; set; }
-    public string ProductName { get; set; } = string.Empty;
-    public decimal QtyReceived { get; set; }
-    public decimal UnitCost { get; set; }
-    public string? Notes { get; set; }
+    private Guid _productId;
+    private string _productName = string.Empty;
+    private decimal _qtyReceived;
+    private decimal _unitCost;
+    private string? _notes;
+
+    public Guid ProductId 
+    { 
+        get => _productId; 
+        set { if (_productId != value) { _productId = value; OnPropertyChanged(); } } 
+    }
+    public string ProductName 
+    { 
+        get => _productName; 
+        set { if (_productName != value) { _productName = value; OnPropertyChanged(); } } 
+    }
+    public decimal QtyReceived 
+    { 
+        get => _qtyReceived; 
+        set { if (_qtyReceived != value) { _qtyReceived = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
+    }
+    public decimal UnitCost 
+    { 
+        get => _unitCost; 
+        set { if (_unitCost != value) { _unitCost = value; OnPropertyChanged(); OnPropertyChanged(nameof(LineTotal)); } } 
+    }
+    public string? Notes 
+    { 
+        get => _notes; 
+        set { if (_notes != value) { _notes = value; OnPropertyChanged(); } } 
+    }
 
     public decimal LineTotal => QtyReceived * UnitCost;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

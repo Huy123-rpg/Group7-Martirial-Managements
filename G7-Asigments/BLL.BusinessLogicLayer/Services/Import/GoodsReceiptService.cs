@@ -27,6 +27,14 @@ public class GoodsReceiptService : IGoodsReceiptService
 
     public void Delete(Guid id)
     {
+        // 1. Xoá hết các dòng chi tiết trước để tránh lỗi khoá ngoại (FK)
+        var items = _uow.GoodsReceiptItems.GetAll().Where(x => x.GrnId == id).ToList();
+        foreach (var item in items)
+        {
+            _uow.GoodsReceiptItems.DeleteById(item.Id);
+        }
+
+        // 2. Sau đó mới xoá phiếu nhập
         _uow.GoodsReceipts.DeleteById(id);
         _uow.Save();
     }

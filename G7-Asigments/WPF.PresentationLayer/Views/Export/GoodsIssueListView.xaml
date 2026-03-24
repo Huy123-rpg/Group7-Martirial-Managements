@@ -65,10 +65,17 @@
                     Width="110"/>
 
                 <!-- ACTION -->
-                <DataGridTemplateColumn Header="Hành động" Width="160">
+                <DataGridTemplateColumn Header="Hành động" Width="220">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
+                                <Button Content="Duyệt"
+                                        Width="60"
+                                        Margin="0,0,5,0"
+                                        Background="#10B981"
+                                        Foreground="White"
+                                        Visibility="{Binding IsApproveVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="BtnApprove_Click"/>
                                 <Button Content="Sửa"
                                         Width="60"
                                         Margin="0,0,5,0"

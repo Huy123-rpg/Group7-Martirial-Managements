@@ -1,4 +1,4 @@
-﻿namespace WPF.PresentationLayer.Helpers;
+namespace WPF.PresentationLayer.Helpers;
 
 public static class PermissionHelper
 {
@@ -27,6 +27,10 @@ public static class PermissionHelper
     public static bool CanDeleteGoodsIssue =>
         IsAdmin || IsManager;
 
+    /// <summary>Chỉ Admin mới được duyệt phiếu xuất</summary>
+    public static bool CanApproveGoodsIssue =>
+        IsAdmin;
+
     public static bool CanViewGoodsReceipt =>
         IsAdmin || IsManager || IsStaff || IsAccountant;
 
@@ -38,4 +42,14 @@ public static class PermissionHelper
 
     public static bool CanDeleteGoodsReceipt =>
         IsAdmin || IsManager;
+
+    /// <summary>Chỉ Admin mới được duyệt phiếu nhập</summary>
+    public static bool CanApproveGoodsReceipt =>
+        IsAdmin;
+
+    public static bool CanViewPurchaseOrder =>
+        IsAdmin || IsManager || IsStaff || IsAccountant;
+
+    public static bool CanCreatePurchaseOrder =>
+        IsAdmin || IsManager || IsStaff;
 }

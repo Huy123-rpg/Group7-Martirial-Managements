@@ -1,8 +1,10 @@
-﻿using BLL.BusinessLogicLayer.Core;
+using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Export;
 using DAL.DataAccessLayer.Model;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,11 +20,12 @@ public partial class GoodsIssueAddWindow : Window
     private GoodsIssue? _editingIssue;
 
     private ObservableCollection<GoodsIssueItemInput> _items = new();
-    private List<Product> _products = new();
+    public List<Product> Products { get; private set; } = new();
 
     public GoodsIssueAddWindow()
     {
         InitializeComponent();
+        DataContext = this;
 
         _service = new GoodsIssueService();
         _uow = UnitOfWork.Instance;
@@ -37,6 +40,7 @@ public partial class GoodsIssueAddWindow : Window
     public GoodsIssueAddWindow(GoodsIssue issue)
     {
         InitializeComponent();
+        DataContext = this;
 
         _service = new GoodsIssueService();
         _uow = UnitOfWork.Instance;
@@ -58,7 +62,7 @@ public partial class GoodsIssueAddWindow : Window
 
         foreach (var item in detailItems)
         {
-            var product = _products.FirstOrDefault(p => p.Id == item.ProductId);
+            var product = Products.FirstOrDefault(p => p.Id == item.ProductId);
 
             _items.Add(new GoodsIssueItemInput
             {
@@ -77,21 +81,47 @@ public partial class GoodsIssueAddWindow : Window
     {
         cbCustomer.ItemsSource = _uow.Customers.GetAll().ToList();
         cbWarehouse.ItemsSource = _uow.Warehouses.GetAll().ToList();
-        _products = _uow.Products.GetAll().ToList();
+        Products = _uow.Products.GetAll().ToList();
     }
 
     private void SetupItemGrid()
     {
+        _items.CollectionChanged += Items_CollectionChanged;
         dgItems.ItemsSource = _items;
-
-        var col = dgItems.Columns[0] as DataGridComboBoxColumn;
-        if (col != null)
-        {
-            col.ItemsSource = _products;
-        }
 
         dgItems.CellEditEnding += (s, e) =>
             Dispatcher.BeginInvoke(new Action(RefreshTotal));
+    }
+
+    private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems != null)
+        {
+            foreach (INotifyPropertyChanged item in e.OldItems)
+                item.PropertyChanged -= Item_PropertyChanged;
+        }
+        if (e.NewItems != null)
+        {
+            foreach (INotifyPropertyChanged item in e.NewItems)
+                item.PropertyChanged += Item_PropertyChanged;
+        }
+    }
+
+    private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GoodsIssueItemInput.ProductId) && sender is GoodsIssueItemInput item)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == item.ProductId);
+            if (product != null)
+            {
+                item.ProductName = product.ProductName;
+                item.UnitPrice = product.StandardCost ?? 0;
+            }
+        }
+        else if (e.PropertyName == nameof(GoodsIssueItemInput.LineTotal))
+        {
+            RefreshTotal();
+        }
     }
 
     private string GenerateIssueCode()
@@ -121,12 +151,6 @@ public partial class GoodsIssueAddWindow : Window
 
     private void RefreshTotal()
     {
-        foreach (var item in _items)
-        {
-            var product = _products.FirstOrDefault(p => p.Id == item.ProductId);
-            item.ProductName = product?.ProductName ?? "";
-        }
-
         var total = _items.Sum(x => x.LineTotal);
         txtTotalAmount.Text = $"Tổng tiền: {total:N0}";
     }
@@ -268,7 +292,9 @@ public partial class GoodsIssueAddWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Lỗi: " + ex.ToString());
+            var msg = "Lỗi: " + ex.Message;
+            if (ex.InnerException != null) msg += "\nChi tiết: " + ex.InnerException.Message;
+            MessageBox.Show(msg);
         }
     }
 

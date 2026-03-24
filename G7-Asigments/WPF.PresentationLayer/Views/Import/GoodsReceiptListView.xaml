@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:WPF.PresentationLayer.Helpers.Converters"
              mc:Ignorable="d"
              Background="#F5F7FA" d:DesignHeight="545.698" d:DesignWidth="924.282">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
 
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -57,10 +62,17 @@
                                     Binding="{Binding ItemCount}"
                                     Width="110"/>
 
-                <DataGridTemplateColumn Header="Hành động" Width="160">
+                <DataGridTemplateColumn Header="Hành động" Width="220">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
+                                <Button Content="Duyệt"
+                                        Width="60"
+                                        Margin="0,0,5,0"
+                                        Background="#10B981"
+                                        Foreground="White"
+                                        Visibility="{Binding IsApproveVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="BtnApprove_Click"/>
                                 <Button Content="Sửa"
                                         Width="60"
                                         Margin="0,0,5,0"

@@ -59,6 +59,10 @@
                         Style="{StaticResource SidebarMenuItem}"
                         Command="{Binding NavDashboardCommand}"
                         Visibility="{Binding CanViewDashboard, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Button Content="Đặt hàng"
+                        Style="{StaticResource SidebarMenuItem}"
+                        Command="{Binding NavPurchaseOrderCommand}"
+                        Visibility="{Binding CanViewPurchaseOrder, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 <Button Content="Nhập kho"
                         Style="{StaticResource SidebarMenuItem}"
                         Command="{Binding NavGoodsReceiptCommand}"

@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,12 +18,13 @@ public partial class GoodsReceiptAddWindow : Window
     private readonly UnitOfWork _uow;
     private GoodsReceipt? _editingReceipt;
 
-    private ObservableCollection<GoodsReceiptItemInput> _items = new();
-    private List<Product> _products = new();
+    public ObservableCollection<GoodsReceiptItemInput> Items { get; set; } = new();
+    public List<Product> Products { get; set; } = new();
 
     public GoodsReceiptAddWindow()
     {
         InitializeComponent();
+        DataContext = this;
 
         _service = new GoodsReceiptService();
         _uow = UnitOfWork.Instance;
@@ -56,9 +59,9 @@ public partial class GoodsReceiptAddWindow : Window
 
         foreach (var item in detailItems)
         {
-            var product = _products.FirstOrDefault(p => p.Id == item.ProductId);
+            var product = Products.FirstOrDefault(p => p.Id == item.ProductId);
 
-            _items.Add(new GoodsReceiptItemInput
+            Items.Add(new GoodsReceiptItemInput
             {
                 ProductId = item.ProductId,
                 ProductName = product?.ProductName ?? "",
@@ -75,23 +78,47 @@ public partial class GoodsReceiptAddWindow : Window
     {
         cbSupplier.ItemsSource = _uow.Suppliers.GetAll().ToList();
         cbWarehouse.ItemsSource = _uow.Warehouses.GetAll().ToList();
-        _products = _uow.Products.GetAll().ToList();
+        Products = _uow.Products.GetAll().ToList();
     }
 
     private void SetupItemGrid()
     {
-        dgItems.ItemsSource = _items;
-
-        var col = dgItems.Columns[0] as DataGridComboBoxColumn;
-        if (col != null)
-        {
-            col.ItemsSource = _products;
-            col.SelectedValuePath = "Id";
-            col.DisplayMemberPath = "ProductName";
-        }
+        Items.CollectionChanged += Items_CollectionChanged;
+        dgItems.ItemsSource = Items;
 
         dgItems.CellEditEnding += (s, e) =>
             Dispatcher.BeginInvoke(new Action(RefreshTotal));
+    }
+
+    private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems != null)
+        {
+            foreach (INotifyPropertyChanged item in e.OldItems)
+                item.PropertyChanged -= Item_PropertyChanged;
+        }
+        if (e.NewItems != null)
+        {
+            foreach (INotifyPropertyChanged item in e.NewItems)
+                item.PropertyChanged += Item_PropertyChanged;
+        }
+    }
+
+    private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(GoodsReceiptItemInput.ProductId) && sender is GoodsReceiptItemInput item)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == item.ProductId);
+            if (product != null)
+            {
+                item.ProductName = product.ProductName;
+                // Xoá dòng gán giá tự động: item.UnitCost = product.StandardCost ?? 0;
+            }
+        }
+        else if (e.PropertyName == nameof(GoodsReceiptItemInput.LineTotal))
+        {
+            RefreshTotal();
+        }
     }
 
     private string GenerateReceiptCode()
@@ -101,7 +128,7 @@ public partial class GoodsReceiptAddWindow : Window
 
     private void BtnAddItem_Click(object sender, RoutedEventArgs e)
     {
-        _items.Add(new GoodsReceiptItemInput
+        Items.Add(new GoodsReceiptItemInput
         {
             QtyReceived = 1,
             UnitCost = 0
@@ -114,21 +141,52 @@ public partial class GoodsReceiptAddWindow : Window
     {
         if (dgItems.SelectedItem is GoodsReceiptItemInput selected)
         {
-            _items.Remove(selected);
+            Items.Remove(selected);
             RefreshTotal();
         }
     }
 
     private void RefreshTotal()
     {
-        foreach (var item in _items)
-        {
-            var product = _products.FirstOrDefault(p => p.Id == item.ProductId);
-            item.ProductName = product?.ProductName ?? "";
-        }
-
-        var total = _items.Sum(x => x.LineTotal);
+        var total = Items.Sum(x => x.LineTotal);
         txtTotalAmount.Text = $"Tổng tiền: {total:N0}";
+    }
+
+    // Khi user gõ tay tên sản phẩm rồi click ra ngoài → lưu ProductName
+    private void ProductComboBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.DataContext is GoodsReceiptItemInput item)
+        {
+            var typed = cb.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(typed))
+            {
+                // Thử khớp với sản phẩm có sẵn
+                var matched = Products.FirstOrDefault(p =>
+                    p.ProductName.Equals(typed, StringComparison.OrdinalIgnoreCase));
+                if (matched != null)
+                {
+                    item.ProductId = matched.Id;
+                    item.ProductName = matched.ProductName;
+                }
+                else
+                {
+                    // Sản phẩm mới gõ tay
+                    item.ProductId = Guid.Empty;
+                    item.ProductName = typed;
+                }
+            }
+        }
+    }
+
+    // Khi user chọn từ dropdown → gán tên sản phẩm
+    private void ProductComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.SelectedItem is Product selected
+            && cb.DataContext is GoodsReceiptItemInput item)
+        {
+            item.ProductId = selected.Id;
+            item.ProductName = selected.ProductName;
+        }
     }
 
     private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -164,13 +222,13 @@ public partial class GoodsReceiptAddWindow : Window
                 return;
             }
 
-            if (_items.Count == 0)
+            if (Items.Count == 0)
             {
                 MessageBox.Show("Phiếu nhập phải có ít nhất 1 dòng chi tiết.");
                 return;
             }
 
-            if (_items.Any(x => x.ProductId == Guid.Empty || x.QtyReceived <= 0))
+            if (Items.Any(x => (x.ProductId == Guid.Empty && string.IsNullOrWhiteSpace(x.ProductName)) || x.QtyReceived <= 0))
             {
                 MessageBox.Show("Kiểm tra lại sản phẩm và số lượng.");
                 return;
@@ -183,7 +241,7 @@ public partial class GoodsReceiptAddWindow : Window
                 return;
             }
 
-            var total = _items.Sum(x => x.LineTotal);
+            var total = Items.Sum(x => x.LineTotal);
 
             if (_editingReceipt != null)
             {
@@ -206,7 +264,34 @@ public partial class GoodsReceiptAddWindow : Window
                     _uow.GoodsReceiptItems.DeleteById(old.Id);
                 }
 
-                foreach (var item in _items)
+                foreach (var item in Items)
+                {
+                    if (item.ProductId == Guid.Empty && !string.IsNullOrWhiteSpace(item.ProductName))
+                    {
+                        var newProd = new Product
+                        {
+                            Id = Guid.NewGuid(),
+                            Sku = "SP-" + Guid.NewGuid().ToString("N")[..8].ToUpper(),
+                            Barcode = "BC-" + Guid.NewGuid().ToString("N")[..10].ToUpper(),
+                            ProductName = item.ProductName.Trim(),
+                            IsActive = true,
+                            CreatedAt = DateTimeOffset.UtcNow,
+                            UpdatedAt = DateTimeOffset.UtcNow,
+                            StandardCost = item.UnitCost,
+                            ReorderPoint = 0,
+                            MinStock = 0,
+                            SafetyStock = 0,
+                            IsBatchTracked = false,
+                            IsExpiryTracked = false
+                        };
+                        _uow.Products.Add(newProd);
+                        item.ProductId = newProd.Id;
+                    }
+                }
+                // Lưu sản phẩm mới trước khi thêm dòng chi tiết
+                _uow.Save();
+
+                foreach (var item in Items)
                 {
                     _uow.GoodsReceiptItems.Add(new GoodsReceiptItem
                     {
@@ -243,7 +328,34 @@ public partial class GoodsReceiptAddWindow : Window
 
                 _service.Create(receipt);
 
-                foreach (var item in _items)
+                foreach (var item in Items)
+                {
+                    if (item.ProductId == Guid.Empty && !string.IsNullOrWhiteSpace(item.ProductName))
+                    {
+                        var newProd = new Product
+                        {
+                            Id = Guid.NewGuid(),
+                            Sku = "SP-" + Guid.NewGuid().ToString("N")[..8].ToUpper(),
+                            Barcode = "BC-" + Guid.NewGuid().ToString("N")[..10].ToUpper(),
+                            ProductName = item.ProductName.Trim(),
+                            IsActive = true,
+                            CreatedAt = DateTimeOffset.UtcNow,
+                            UpdatedAt = DateTimeOffset.UtcNow,
+                            StandardCost = item.UnitCost,
+                            ReorderPoint = 0,
+                            MinStock = 0,
+                            SafetyStock = 0,
+                            IsBatchTracked = false,
+                            IsExpiryTracked = false
+                        };
+                        _uow.Products.Add(newProd);
+                        item.ProductId = newProd.Id;
+                    }
+                }
+                // Lưu sản phẩm mới trước khi thêm dòng chi tiết
+                _uow.Save();
+
+                foreach (var item in Items)
                 {
                     _uow.GoodsReceiptItems.Add(new GoodsReceiptItem
                     {
@@ -266,7 +378,9 @@ public partial class GoodsReceiptAddWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Lỗi: " + ex.ToString());
+            var msg = "Lỗi: " + ex.Message;
+            if (ex.InnerException != null) msg += "\nChi tiết: " + ex.InnerException.Message;
+            MessageBox.Show(msg);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Model;
 
 namespace WPF.PresentationLayer.Models;
 
@@ -10,4 +10,7 @@ public class GoodsReceiptListItem
     public decimal TotalAmount => GoodsReceipt.TotalAmount;
     public string? Notes => GoodsReceipt.Notes;
     public int ItemCount => GoodsReceipt.GoodsReceiptItems?.Count ?? 0;
+
+    // Được set từ code-behind sau khi biết role người dùng
+    public bool IsApproveVisible { get; set; } = false;
 }
