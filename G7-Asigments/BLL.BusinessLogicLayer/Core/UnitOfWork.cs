@@ -9,7 +9,7 @@ public sealed class UnitOfWork
 {
     // ─── Connection String (set once by App before first use) ────────────────
     public static string ConnectionString { get; set; } =
-        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
+        "Server=.\\SQLEXPRESS;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
 
     // ─── Singleton ───────────────────────────────────────────────────────────
     private static UnitOfWork? _instance;
