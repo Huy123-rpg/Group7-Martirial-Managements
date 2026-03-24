@@ -1,8 +1,15 @@
 <Application x:Class="WPF.PresentationLayer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WPF.PresentationLayer">
+             xmlns:local="clr-namespace:WPF.PresentationLayer"
+             xmlns:conv="clr-namespace:WPF.PresentationLayer.Helpers.Converters">
     <Application.Resources>
+
+        <!-- ── Converters ────────────────────────────────────────── -->
+        <conv:BoolToVisibilityConverter  x:Key="BoolToVisibility"/>
+        <conv:NullToVisibilityConverter  x:Key="NullToVisibility"/>
+        <conv:StatusToBrushConverter     x:Key="StatusToBrush"/>
+        <conv:StatusToLabelConverter     x:Key="StatusToLabel"/>
 
         <!-- ── Color Tokens ──────────────────────────────────────── -->
         <SolidColorBrush x:Key="BrushBackground"    Color="#F2F2F2"/>

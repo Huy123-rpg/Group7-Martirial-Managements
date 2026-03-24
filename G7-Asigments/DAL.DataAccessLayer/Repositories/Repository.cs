@@ -14,7 +14,7 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public IEnumerable<T> GetAll() => _dbSet.ToList();
+    public IEnumerable<T> GetAll() => _dbSet.AsNoTracking().ToList();
 
     public T? GetById(Guid id) => _dbSet.Find(id);
 
@@ -30,5 +30,5 @@ public class Repository<T> : IRepository<T> where T : class
         if (entity != null) Delete(entity);
     }
 
-    public IEnumerable<T> Find(Func<T, bool> predicate) => _dbSet.Where(predicate).ToList();
+    public IEnumerable<T> Find(Func<T, bool> predicate) => _dbSet.AsNoTracking().Where(predicate).ToList();
 }

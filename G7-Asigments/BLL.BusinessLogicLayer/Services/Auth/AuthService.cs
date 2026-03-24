@@ -30,6 +30,10 @@ public class AuthService : IAuthService
         if (user == null || !VerifyPassword(password, user.PasswordHash))
             return null;
 
+        // Repository.Find() không Include navigation properties — load Role thủ công
+        if (user.Role == null)
+            user.Role = _uow.UserRoles.Find(r => r.RoleId == user.RoleId).FirstOrDefault();
+
         return user;
     }
 
