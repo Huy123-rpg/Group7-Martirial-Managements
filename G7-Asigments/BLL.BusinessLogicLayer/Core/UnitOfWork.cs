@@ -1,8 +1,5 @@
 using DAL.DataAccessLayer.Context;
-using DAL.DataAccessLayer.Models._Core;
-using DAL.DataAccessLayer.Models._Export;
-using DAL.DataAccessLayer.Models._Import;
-using DAL.DataAccessLayer.Models._Lookup;
+using DAL.DataAccessLayer.Models;
 using DAL.DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +33,6 @@ public sealed class UnitOfWork
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
             .UseSqlServer(ConnectionString)
-            .UseSnakeCaseNamingConvention()
             .Options;
         _context = new WarehouseDbContext(options);
     }
@@ -53,7 +49,25 @@ public sealed class UnitOfWork
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
     public IRepository<SalesOrder> SalesOrders => new Repository<SalesOrder>(_context);
     public IRepository<GoodsIssue> GoodsIssues => new Repository<GoodsIssue>(_context);
+    public IRepository<Notification> Notifications => new Repository<Notification>(_context);
+    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
 
     // ─── Save ────────────────────────────────────────────────────────────────
-    public int Save() => _context.SaveChanges();
+    public int Save()
+    {
+        try
+        {
+            return _context.SaveChanges();
+        }
+        catch
+        {
+            // Detach all pending changes so the context is usable after failure.
+            foreach (var entry in _context.ChangeTracker.Entries()
+                         .Where(e => e.State != Microsoft.EntityFrameworkCore.EntityState.Unchanged &&
+                                     e.State != Microsoft.EntityFrameworkCore.EntityState.Detached)
+                         .ToList())
+                entry.State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            throw;
+        }
+    }
 }

@@ -11,10 +11,14 @@ public class DashboardViewModel : BaseViewModel
 
     public DashboardViewModel()
     {
-        var uow = UnitOfWork.Instance;
-        TotalUsers      = uow.Users.GetAll().Count();
-        ActiveUsers     = uow.Users.Find(u => u.IsActive).Count();
-        TotalProducts   = uow.Products.GetAll().Count();
-        TotalWarehouses = uow.Warehouses.GetAll().Count();
+        try
+        {
+            var uow = UnitOfWork.Instance;
+            TotalUsers      = uow.Users.GetAll().Count();
+            ActiveUsers     = uow.Users.Find(u => u.IsActive).Count();
+            TotalProducts   = uow.Products.GetAll().Count();
+            TotalWarehouses = uow.Warehouses.GetAll().Count();
+        }
+        catch { /* DB chưa sẵn sàng — hiển thị 0 */ }
     }
 }

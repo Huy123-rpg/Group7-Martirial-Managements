@@ -8,10 +8,6 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BrushBackground}">
 
-    <Window.DataContext>
-        <vm:MainViewModel/>
-    </Window.DataContext>
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
@@ -30,34 +26,61 @@
             <!-- App Title -->
             <StackPanel Grid.Row="0" Margin="24,28,24,20">
                 <TextBlock Text="QUẢN LÝ KHO"
-                           Foreground="#FFFFFF"
-                           FontSize="14"
-                           FontWeight="Bold"/>
+                           Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="Warehouse Management"
-                           Foreground="#666666"
-                           FontSize="11"
-                           Margin="0,2,0,0"/>
+                           Foreground="#666666" FontSize="11" Margin="0,2,0,0"/>
             </StackPanel>
 
             <!-- Divider -->
             <Rectangle Grid.Row="1" Height="1" Fill="#2D2D2D" Margin="0,0,0,8"/>
 
             <!-- Menu Items -->
-            <StackPanel Grid.Row="2">
-                <TextBlock Text="MENU"
-                           Foreground="#555555"
-                           FontSize="10"
-                           FontWeight="SemiBold"
-                           Margin="24,12,0,8"/>
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
 
-                <Button Content="Tổng quan"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavDashboardCommand}"/>
+                    <!-- ── Tổng quan (luôn hiển thị) ─── -->
+                    <TextBlock Text="TỔNG QUAN"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"/>
+                    <Button Content="  📊  Tổng quan"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavDashboardCommand}"/>
 
-                <Button Content="Người dùng"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavUserManagementCommand}"/>
-            </StackPanel>
+                    <!-- ── Quản trị (Admin) ─── -->
+                    <TextBlock x:Name="MenuHeaderAdmin"
+                               Text="QUẢN TRỊ"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnUsers"
+                            Content="  👥  Người dùng"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavUserManagementCommand}"
+                            Visibility="Collapsed"/>
+
+                    <!-- ── Phân công (Admin + Manager) ─── -->
+                    <TextBlock x:Name="MenuHeaderSchedule"
+                               Text="PHÂN CÔNG"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnSchedule"
+                            Content="  🗓  Phân công nhiệm vụ"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavScheduleCommand}"
+                            Visibility="Collapsed"/>
+
+                    <!-- ── Lịch của tôi (Staff) ─── -->
+                    <TextBlock x:Name="MenuHeaderMySchedule"
+                               Text="CÔNG VIỆC"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnMySchedule"
+                            Content="  📅  Lịch của tôi"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavMyScheduleCommand}"
+                            Visibility="Collapsed"/>
+
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Bottom: User info + Logout -->
             <Grid Grid.Row="3">
@@ -71,14 +94,10 @@
 
                 <StackPanel Grid.Row="1" Margin="24,14,24,10">
                     <TextBlock Text="{Binding CurrentUserName}"
-                               Foreground="#EEEEEE"
-                               FontSize="12"
-                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" FontSize="12" FontWeight="SemiBold"
                                TextTrimming="CharacterEllipsis"/>
                     <TextBlock Text="{Binding CurrentUserRole}"
-                               Foreground="#777777"
-                               FontSize="11"
-                               Margin="0,2,0,0"/>
+                               Foreground="#777777" FontSize="11" Margin="0,2,0,0"/>
                 </StackPanel>
 
                 <Button Grid.Row="2"
@@ -104,15 +123,13 @@
                 <Grid Margin="24,0">
                     <TextBlock Text="{Binding CurrentPageTitle}"
                                Foreground="{StaticResource BrushTextPrimary}"
-                               FontSize="14"
-                               FontWeight="SemiBold"
+                               FontSize="14" FontWeight="SemiBold"
                                VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- Content Area -->
-            <ContentControl Grid.Row="1"
-                            Content="{Binding CurrentView}"/>
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
         </Grid>
     </Grid>
 </Window>

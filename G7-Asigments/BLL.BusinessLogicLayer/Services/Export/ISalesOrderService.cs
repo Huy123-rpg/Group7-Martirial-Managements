@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models._Export;
+using DAL.DataAccessLayer.Models;
 
 namespace BLL.BusinessLogicLayer.Services.Export;
 

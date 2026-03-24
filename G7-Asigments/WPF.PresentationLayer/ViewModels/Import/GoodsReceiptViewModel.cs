@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.Import;
-using DAL.DataAccessLayer.Models._Import;
+using DAL.DataAccessLayer.Models;
 using System.Collections.ObjectModel;
 using WPF.PresentationLayer.Helpers;
 

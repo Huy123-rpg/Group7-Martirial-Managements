@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models._Core;
+using DAL.DataAccessLayer.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;
@@ -23,7 +23,25 @@ public class UserManagementViewModel : BaseViewModel
     public User? Selected
     {
         get => _selected;
-        set { SetField(ref _selected, value); OnPropertyChanged(nameof(ToggleActiveLabel)); }
+        set
+        {
+            SetField(ref _selected, value);
+            OnPropertyChanged(nameof(ToggleActiveLabel));
+            OnPropertyChanged(nameof(ActionButtonsVisible));
+        }
+    }
+
+    // Ẩn nút khi chọn Admin
+    public Visibility ActionButtonsVisible
+    {
+        get
+        {
+            if (Selected == null) return Visibility.Visible;
+            var adminRole = _uow.UserRoles.Find(r => r.RoleCode == "ADMIN").FirstOrDefault();
+            return (adminRole != null && Selected.RoleId == adminRole.RoleId)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+        }
     }
 
     public string SearchText
@@ -37,7 +55,8 @@ public class UserManagementViewModel : BaseViewModel
 
     // ─── Commands ────────────────────────────────────────────────────────────
     public RelayCommand CreateCommand       => new(OpenCreateWindow);
-    public RelayCommand ToggleActiveCommand => new(ToggleActive, () => Selected != null);
+    public RelayCommand ToggleActiveCommand => new(ToggleActive,  () => Selected != null);
+    public RelayCommand DeleteCommand       => new(DeleteUser,    () => Selected != null);
 
     public UserManagementViewModel() => Load();
 
@@ -82,6 +101,34 @@ public class UserManagementViewModel : BaseViewModel
         _uow.Users.Update(Selected);
         _uow.Save();
         Load();
+    }
+
+    // ─── Delete ───────────────────────────────────────────────────────────────
+    private void DeleteUser()
+    {
+        if (Selected == null) return;
+
+        var result = MessageBox.Show(
+            $"Bạn chắc chắn muốn xóa tài khoản \"{Selected.Email}\"?\n" +
+            "Hành động này không thể hoàn tác.",
+            "Xác nhận xóa",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (result != MessageBoxResult.Yes) return;
+
+        try
+        {
+            _uow.Users.Delete(Selected);
+            _uow.Save();
+            Load();
+        }
+        catch (Exception ex)
+        {
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            MessageBox.Show($"Xóa thất bại: {detail}", "Lỗi",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     // ─── Create ───────────────────────────────────────────────────────────────
