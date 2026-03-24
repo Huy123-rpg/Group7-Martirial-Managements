@@ -10,7 +10,8 @@
       "Bash(powershell -command \"Get-Content ''c:/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/Db.sql'' -Encoding Unicode | Select-String -Pattern ''INSERT.*lkp_user_role|role_code.*ADMIN|role_id.*1'' | Select-Object -First 10\")",
       "Bash(powershell -command \"Get-Content ''c:/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/Seed.sql'' | Select-String -Pattern ''role_code|ADMIN|Qu'' | Select-Object -First 15\")",
       "Bash(powershell -command \"Get-Content ''c:/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/Db.sql'' -Encoding Unicode | Select-String -Pattern ''lkp_schedule_type|schedule_type|warehouse|staff_code|manager_id'' | Select-Object -First 20\")",
-      "Bash(grep -n \"class LkpScheduleType\\\\|class Warehouse\\\\|class Schedule\\\\b\" c:/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/DAL.DataAccessLayer/Models/Scaffolded/*.cs)"
+      "Bash(grep -n \"class LkpScheduleType\\\\|class Warehouse\\\\|class Schedule\\\\b\" c:/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/DAL.DataAccessLayer/Models/Scaffolded/*.cs)",
+      "Bash(find c:UserslittlOneDriveDesktopPRN212-AsG7-AsigmentsDAL.DataAccessLayerRepositories -type f -name *.cs)"
     ]
   }
 }
