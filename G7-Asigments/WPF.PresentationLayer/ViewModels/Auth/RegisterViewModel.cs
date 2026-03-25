@@ -3,6 +3,7 @@ using BLL.BusinessLogicLayer.Services.Auth;
 using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
+using BLL.BusinessLogicLayer.Services.Email;
 using WPF.PresentationLayer.Helpers;
 
 namespace WPF.PresentationLayer.ViewModels.Auth;

@@ -38,4 +38,9 @@ public class GoodsReceiptService : IGoodsReceiptService
         _uow.GoodsReceipts.DeleteById(id);
         _uow.Save();
     }
+
+    public IEnumerable<GoodsReceipt> Search(string keyword) =>
+        _uow.GoodsReceipts.Find(x => 
+            x.GrnNumber.Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+            (x.SupplierRef ?? "").Contains(keyword, StringComparison.OrdinalIgnoreCase));
 }

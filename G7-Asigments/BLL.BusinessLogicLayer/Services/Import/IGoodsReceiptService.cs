@@ -9,4 +9,5 @@ public interface IGoodsReceiptService
     void Create(GoodsReceipt receipt);
     void Update(GoodsReceipt receipt);
     void Delete(Guid id);
+    IEnumerable<GoodsReceipt> Search(string keyword);
 }

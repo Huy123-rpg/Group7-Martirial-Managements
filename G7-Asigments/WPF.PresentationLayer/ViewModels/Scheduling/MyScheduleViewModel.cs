@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.Scheduling;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;

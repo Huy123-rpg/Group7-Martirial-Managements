@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.Auth;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;
