@@ -2,15 +2,17 @@ using BLL.BusinessLogicLayer.Services.Scheduling;
 using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using WPF.PresentationLayer.Helpers;
+using System.Linq;
+using System;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
 public class ScheduleFormViewModel : BaseViewModel
 {
-    private readonly IScheduleService _service = new ScheduleService();
+    private readonly IScheduleService _service;
 
     // ─── Mode ─────────────────────────────────────────────────────────────────
-    public bool IsEditMode { get; }
+    public bool IsEditMode { get; private set; }
     public string WindowTitle => IsEditMode ? "Sửa lịch" : "Tạo lịch mới";
 
     // ─── Lookup Data ──────────────────────────────────────────────────────────
@@ -136,26 +138,31 @@ public class ScheduleFormViewModel : BaseViewModel
 
     // ─── Result ───────────────────────────────────────────────────────────────
     public bool Saved { get; private set; }
-    private readonly Guid? _editId;
+    private Guid? _editId;
 
     // ─── Commands ─────────────────────────────────────────────────────────────
     public RelayCommand SaveCommand   => new(Save,   CanSave);
     public RelayCommand CancelCommand => new(Cancel);
 
     // ─── Constructor ─────────────────────────────────────────────────────────
-    public ScheduleFormViewModel() : this(null) { }
+    public ScheduleFormViewModel(IScheduleService service)
+    {
+        _service = service;
+        LoadLookups();
+        if (SessionManager.IsManager)
+            PreSelectManagerWarehouse();
+    }
 
-    public ScheduleFormViewModel(Schedule? existing)
+    public void Initialize(Schedule? existing = null)
     {
         IsEditMode = existing != null;
         _editId    = existing?.Id;
 
-        LoadLookups();
-
         if (existing != null)
             PopulateFromExisting(existing);
-        else if (SessionManager.IsManager)
-            PreSelectManagerWarehouse();
+        
+        OnPropertyChanged(nameof(WindowTitle));
+        OnPropertyChanged(nameof(ShowRecurrence));
     }
 
     // ─── Private Methods ──────────────────────────────────────────────────────
@@ -163,7 +170,6 @@ public class ScheduleFormViewModel : BaseViewModel
     {
         foreach (var t in _service.GetScheduleTypes())  ScheduleTypes.Add(t);
         foreach (var u in _service.GetStaffUsers())     StaffUsers.Add(u);
-
         foreach (var w in _service.GetWarehouses()) Warehouses.Add(w);
     }
 

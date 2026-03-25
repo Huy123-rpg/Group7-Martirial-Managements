@@ -8,10 +8,9 @@ namespace WPF.PresentationLayer;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(MainViewModel viewModel)
     {
         InitializeComponent();
-        // DataContext is already set in XAML, but setting it again doesn't hurt.
-        // DataContext = new MainViewModel(); 
+        DataContext = viewModel;
     }
 }

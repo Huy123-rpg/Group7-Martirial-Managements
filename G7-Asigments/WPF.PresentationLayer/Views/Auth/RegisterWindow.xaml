@@ -8,9 +8,7 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BrushBackground}">
 
-    <Window.DataContext>
-        <vm:RegisterViewModel/>
-    </Window.DataContext>
+
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -45,7 +43,7 @@
 
                     <!-- Password -->
                     <Label Content="MẬT KHẨU" FontSize="11" FontWeight="SemiBold"/>
-                    <PasswordBox x:Name="PasswordBox" MaxLength="100"/>
+                    <PasswordBox x:Name="txtPassword" MaxLength="100"/>
                     <TextBlock Text="Tối thiểu 8 ký tự"
                                FontSize="11"
                                Foreground="{StaticResource BrushTextSecondary}"
@@ -53,7 +51,7 @@
 
                     <!-- Confirm Password -->
                     <Label Content="XÁC NHẬN MẬT KHẨU" FontSize="11" FontWeight="SemiBold"/>
-                    <PasswordBox x:Name="ConfirmPasswordBox" MaxLength="100"/>
+                    <PasswordBox x:Name="txtConfirmPassword" MaxLength="100"/>
 
                     <!-- Role -->
                     <Label Content="VAI TRÒ" FontSize="11" FontWeight="SemiBold"/>

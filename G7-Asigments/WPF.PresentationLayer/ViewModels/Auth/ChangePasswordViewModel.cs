@@ -7,7 +7,7 @@ namespace WPF.PresentationLayer.ViewModels.Auth;
 
 public class ChangePasswordViewModel : BaseViewModel
 {
-    private readonly IAuthService _authService = new AuthService();
+    private readonly IAuthService _authService;
 
     public Guid UserId { get; set; }
 
@@ -28,6 +28,11 @@ public class ChangePasswordViewModel : BaseViewModel
 
     public Visibility ErrorVisibility
         => string.IsNullOrEmpty(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+
+    public ChangePasswordViewModel(IAuthService authService)
+    {
+        _authService = authService;
+    }
 
     // ─── Command ──────────────────────────────────────────────────────────────
     public RelayCommand ConfirmCommand => new(Confirm, CanConfirm);

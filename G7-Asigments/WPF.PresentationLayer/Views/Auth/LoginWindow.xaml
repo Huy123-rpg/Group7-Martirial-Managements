@@ -8,9 +8,7 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BrushBackground}">
 
-    <Window.DataContext>
-        <vm:LoginViewModel/>
-    </Window.DataContext>
+
 
     <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
         <Border Background="{StaticResource BrushSurface}"
@@ -40,7 +38,7 @@
 
                 <!-- Password -->
                 <Label Content="MẬT KHẨU" FontSize="11" FontWeight="SemiBold"/>
-                <PasswordBox x:Name="PasswordBox" MaxLength="100"/>
+                <PasswordBox x:Name="txtPassword" MaxLength="100"/>
 
                 <!-- Error -->
                 <TextBlock Text="{Binding ErrorMessage}"

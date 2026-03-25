@@ -5,9 +5,10 @@ namespace WPF.PresentationLayer.Views.Auth;
 
 public partial class ChangePasswordWindow : Window
 {
-    public ChangePasswordWindow()
+    public ChangePasswordWindow(ChangePasswordViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
 
         CurrentPasswordBox.PasswordChanged += (_, _) =>
         {

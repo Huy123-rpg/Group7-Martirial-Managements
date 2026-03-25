@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  DAL.DataAccessLayer -> C:\Users\asus\source\repos\Group7-Martirial-Managements\G7-Asigments\DAL.DataAccessLayer\bin\Debug\net8.0\DAL.DataAccessLayer.dll
+  BLL.BusinessLogicLayer -> C:\Users\asus\source\repos\Group7-Martirial-Managements\G7-Asigments\BLL.BusinessLogicLayer\bin\Debug\net8.0\BLL.BusinessLogicLayer.dll
+  WPF.PresentationLayer -> C:\Users\asus\source\repos\Group7-Martirial-Managements\G7-Asigments\WPF.PresentationLayer\bin\Debug\net8.0-windows\WPF.PresentationLayer.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:07.20

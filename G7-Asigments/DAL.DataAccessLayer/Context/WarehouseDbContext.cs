@@ -10,97 +10,97 @@ public partial class WarehouseDbContext : DbContext
     {
     }
 
-    public virtual DbSet<AiAnomalyLog> AiAnomalyLogs { get; set; }
+    public virtual DbSet<AiAnomalyLog> AiAnomalyLogs { get; set; } = null!;
 
-    public virtual DbSet<AiChatSession> AiChatSessions { get; set; }
+    public virtual DbSet<AiChatSession> AiChatSessions { get; set; } = null!;
 
-    public virtual DbSet<AiForecast> AiForecasts { get; set; }
+    public virtual DbSet<AiForecast> AiForecasts { get; set; } = null!;
 
-    public virtual DbSet<AiModelVersion> AiModelVersions { get; set; }
+    public virtual DbSet<AiModelVersion> AiModelVersions { get; set; } = null!;
 
-    public virtual DbSet<AiReorderSuggestion> AiReorderSuggestions { get; set; }
+    public virtual DbSet<AiReorderSuggestion> AiReorderSuggestions { get; set; } = null!;
 
-    public virtual DbSet<AuditLog> AuditLogs { get; set; }
+    public virtual DbSet<AuditLog> AuditLogs { get; set; } = null!;
 
-    public virtual DbSet<Category> Categories { get; set; }
+    public virtual DbSet<Category> Categories { get; set; } = null!;
 
-    public virtual DbSet<Customer> Customers { get; set; }
+    public virtual DbSet<Customer> Customers { get; set; } = null!;
 
-    public virtual DbSet<DeliveryOrder> DeliveryOrders { get; set; }
+    public virtual DbSet<DeliveryOrder> DeliveryOrders { get; set; } = null!;
 
-    public virtual DbSet<DocumentSequence> DocumentSequences { get; set; }
+    public virtual DbSet<DocumentSequence> DocumentSequences { get; set; } = null!;
 
-    public virtual DbSet<GoodsIssue> GoodsIssues { get; set; }
+    public virtual DbSet<GoodsIssue> GoodsIssues { get; set; } = null!;
 
-    public virtual DbSet<GoodsIssueItem> GoodsIssueItems { get; set; }
+    public virtual DbSet<GoodsIssueItem> GoodsIssueItems { get; set; } = null!;
 
-    public virtual DbSet<GoodsReceipt> GoodsReceipts { get; set; }
+    public virtual DbSet<GoodsReceipt> GoodsReceipts { get; set; } = null!;
 
-    public virtual DbSet<GoodsReceiptItem> GoodsReceiptItems { get; set; }
+    public virtual DbSet<GoodsReceiptItem> GoodsReceiptItems { get; set; } = null!;
 
-    public virtual DbSet<Inventory> Inventories { get; set; }
+    public virtual DbSet<Inventory> Inventories { get; set; } = null!;
 
-    public virtual DbSet<LkpAnomalySeverity> LkpAnomalySeverities { get; set; }
+    public virtual DbSet<LkpAnomalySeverity> LkpAnomalySeverities { get; set; } = null!;
 
-    public virtual DbSet<LkpCostingMethod> LkpCostingMethods { get; set; }
+    public virtual DbSet<LkpCostingMethod> LkpCostingMethods { get; set; } = null!;
 
-    public virtual DbSet<LkpDeliveryStatus> LkpDeliveryStatuses { get; set; }
+    public virtual DbSet<LkpDeliveryStatus> LkpDeliveryStatuses { get; set; } = null!;
 
-    public virtual DbSet<LkpDocumentStatus> LkpDocumentStatuses { get; set; }
+    public virtual DbSet<LkpDocumentStatus> LkpDocumentStatuses { get; set; } = null!;
 
-    public virtual DbSet<LkpScheduleType> LkpScheduleTypes { get; set; }
+    public virtual DbSet<LkpScheduleType> LkpScheduleTypes { get; set; } = null!;
 
-    public virtual DbSet<LkpTransactionType> LkpTransactionTypes { get; set; }
+    public virtual DbSet<LkpTransactionType> LkpTransactionTypes { get; set; } = null!;
 
-    public virtual DbSet<LkpUserRole> LkpUserRoles { get; set; }
+    public virtual DbSet<LkpUserRole> LkpUserRoles { get; set; } = null!;
 
-    public virtual DbSet<LkpZoneType> LkpZoneTypes { get; set; }
+    public virtual DbSet<LkpZoneType> LkpZoneTypes { get; set; } = null!;
 
-    public virtual DbSet<Notification> Notifications { get; set; }
+    public virtual DbSet<Notification> Notifications { get; set; } = null!;
 
-    public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<Product> Products { get; set; } = null!;
 
-    public virtual DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+    public virtual DbSet<PurchaseOrder> PurchaseOrders { get; set; } = null!;
 
-    public virtual DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+    public virtual DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; } = null!;
 
-    public virtual DbSet<SalesOrder> SalesOrders { get; set; }
+    public virtual DbSet<SalesOrder> SalesOrders { get; set; } = null!;
 
-    public virtual DbSet<SalesOrderItem> SalesOrderItems { get; set; }
+    public virtual DbSet<SalesOrderItem> SalesOrderItems { get; set; } = null!;
 
-    public virtual DbSet<Schedule> Schedules { get; set; }
+    public virtual DbSet<Schedule> Schedules { get; set; } = null!;
 
-    public virtual DbSet<StockAdjustment> StockAdjustments { get; set; }
+    public virtual DbSet<StockAdjustment> StockAdjustments { get; set; } = null!;
 
-    public virtual DbSet<StockAdjustmentItem> StockAdjustmentItems { get; set; }
+    public virtual DbSet<StockAdjustmentItem> StockAdjustmentItems { get; set; } = null!;
 
-    public virtual DbSet<StockCountItem> StockCountItems { get; set; }
+    public virtual DbSet<StockCountItem> StockCountItems { get; set; } = null!;
 
-    public virtual DbSet<StockCountSession> StockCountSessions { get; set; }
+    public virtual DbSet<StockCountSession> StockCountSessions { get; set; } = null!;
 
-    public virtual DbSet<StockTransaction> StockTransactions { get; set; }
+    public virtual DbSet<StockTransaction> StockTransactions { get; set; } = null!;
 
-    public virtual DbSet<StockTransfer> StockTransfers { get; set; }
+    public virtual DbSet<StockTransfer> StockTransfers { get; set; } = null!;
 
-    public virtual DbSet<StockTransferItem> StockTransferItems { get; set; }
+    public virtual DbSet<StockTransferItem> StockTransferItems { get; set; } = null!;
 
-    public virtual DbSet<Supplier> Suppliers { get; set; }
+    public virtual DbSet<Supplier> Suppliers { get; set; } = null!;
 
-    public virtual DbSet<UnitsOfMeasure> UnitsOfMeasures { get; set; }
+    public virtual DbSet<UnitsOfMeasure> UnitsOfMeasures { get; set; } = null!;
 
-    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; } = null!;
 
-    public virtual DbSet<VExpiringSoon> VExpiringSoons { get; set; }
+    public virtual DbSet<VExpiringSoon> VExpiringSoons { get; set; } = null!;
 
-    public virtual DbSet<VInventorySummary> VInventorySummaries { get; set; }
+    public virtual DbSet<VInventorySummary> VInventorySummaries { get; set; } = null!;
 
-    public virtual DbSet<VPendingPoReceipt> VPendingPoReceipts { get; set; }
+    public virtual DbSet<VPendingPoReceipt> VPendingPoReceipts { get; set; } = null!;
 
-    public virtual DbSet<VSupplierPerformance> VSupplierPerformances { get; set; }
+    public virtual DbSet<VSupplierPerformance> VSupplierPerformances { get; set; } = null!;
 
-    public virtual DbSet<Warehouse> Warehouses { get; set; }
+    public virtual DbSet<Warehouse> Warehouses { get; set; } = null!;
 
-    public virtual DbSet<WarehouseZone> WarehouseZones { get; set; }
+    public virtual DbSet<WarehouseZone> WarehouseZones { get; set; } = null!;
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

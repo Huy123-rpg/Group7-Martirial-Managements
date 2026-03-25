@@ -5,12 +5,15 @@ using System.Windows;
 using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Views.Scheduling;
 using WPF.PresentationLayer.Views.Shared;
+using System.Linq;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
 public class ScheduleViewModel : BaseViewModel
 {
-    private readonly IScheduleService _service = new ScheduleService();
+    private readonly IScheduleService _service;
 
     // ─── List State ───────────────────────────────────────────────────────────
     private ObservableCollection<Schedule> _schedules = [];
@@ -113,7 +116,11 @@ public class ScheduleViewModel : BaseViewModel
     public RelayCommand MarkMissedCommand   => new(MarkMissed,     () => CanMarkMissed);
     public RelayCommand DeleteCommand       => new(Delete,         () => CanDelete);
 
-    public ScheduleViewModel() => Load();
+    public ScheduleViewModel(IScheduleService service)
+    {
+        _service = service;
+        Load();
+    }
 
     // ─── Load ────────────────────────────────────────────────────────────────
     private void Load()
@@ -148,8 +155,9 @@ public class ScheduleViewModel : BaseViewModel
     // ─── Create / Edit ────────────────────────────────────────────────────────
     private void OpenCreate()
     {
-        var vm  = new ScheduleFormViewModel();
-        var win = new ScheduleFormWindow { DataContext = vm };
+        var win = App.ServiceProvider.GetRequiredService<ScheduleFormWindow>();
+        var vm = (ScheduleFormViewModel)win.DataContext;
+        vm.Initialize();
         win.ShowDialog();
         if (vm.Saved) Load();
     }
@@ -157,8 +165,9 @@ public class ScheduleViewModel : BaseViewModel
     private void OpenEdit()
     {
         if (Selected == null) return;
-        var vm  = new ScheduleFormViewModel(Selected);
-        var win = new ScheduleFormWindow { DataContext = vm };
+        var win = App.ServiceProvider.GetRequiredService<ScheduleFormWindow>();
+        var vm = (ScheduleFormViewModel)win.DataContext;
+        vm.Initialize(Selected);
         win.ShowDialog();
         if (vm.Saved) Load();
     }

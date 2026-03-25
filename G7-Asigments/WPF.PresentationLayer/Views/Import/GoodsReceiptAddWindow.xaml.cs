@@ -39,6 +39,7 @@ public partial class GoodsReceiptAddWindow : Window
     public GoodsReceiptAddWindow(GoodsReceipt receipt)
     {
         InitializeComponent();
+        DataContext = this;
 
         _service = new GoodsReceiptService();
         _uow = UnitOfWork.Instance;

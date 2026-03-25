@@ -6,6 +6,8 @@ using WPF.PresentationLayer.Views;
 using WPF.PresentationLayer.Views.Auth;
 using WPF.PresentationLayer.Views.Export;
 using WPF.PresentationLayer.Views.Import;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace WPF.PresentationLayer.ViewModels;
 
@@ -62,17 +64,19 @@ public class MainViewModel : BaseViewModel
         ShowMySchedule   = SessionManager.IsStaff;
         OnPropertyChanged(nameof(CurrentUserName));
         OnPropertyChanged(nameof(CurrentUserRole));
+        OnPropertyChanged(nameof(CanViewDashboard));
+        OnPropertyChanged(nameof(CanViewUsers));
+        OnPropertyChanged(nameof(CanViewPurchaseOrder));
+        OnPropertyChanged(nameof(CanViewGoodsReceipt));
+        OnPropertyChanged(nameof(CanViewGoodsIssue));
     }
 
     // ─── Permission Props (HA) ────────────────────────────────────────────────
     public bool CanViewDashboard      => PermissionHelper.CanViewDashboard;
     public bool CanViewUsers          => PermissionHelper.CanViewUsers;
-    public string DebugRole           => $"RoleId = {SessionManager.CurrentUser?.RoleId}";
     public bool CanViewPurchaseOrder  => PermissionHelper.CanViewPurchaseOrder;
     public bool CanViewGoodsReceipt   => PermissionHelper.CanViewGoodsReceipt;
     public bool CanViewGoodsIssue     => PermissionHelper.CanViewGoodsIssue;
-    public bool CanCreateGoodsReceipt => PermissionHelper.CanCreateGoodsReceipt;
-    public bool CanCreateGoodsIssue   => PermissionHelper.CanCreateGoodsIssue;
 
     // ─── Nav Commands ─────────────────────────────────────────────────────────
     public RelayCommand NavDashboardCommand      { get; }
@@ -124,7 +128,7 @@ public class MainViewModel : BaseViewModel
     {
         SessionManager.Logout();
 
-        var login = new LoginWindow();
+        var login = App.ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
 
         foreach (Window w in Application.Current.Windows)

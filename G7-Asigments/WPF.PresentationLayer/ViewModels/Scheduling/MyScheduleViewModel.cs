@@ -3,12 +3,14 @@ using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;
+using System.Linq;
+using System;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
 public class MyScheduleViewModel : BaseViewModel
 {
-    private readonly IScheduleService _service = new ScheduleService();
+    private readonly IScheduleService _service;
 
     // ─── List State ───────────────────────────────────────────────────────────
     private ObservableCollection<Schedule> _schedules = [];
@@ -86,12 +88,17 @@ public class MyScheduleViewModel : BaseViewModel
         OnPropertyChanged(nameof(ToggleLabel));
     });
 
-    public MyScheduleViewModel() => Load();
+    public MyScheduleViewModel(IScheduleService service)
+    {
+        _service = service;
+        Load();
+    }
 
     // ─── Load ─────────────────────────────────────────────────────────────────
     private void Load()
     {
-        var userId = SessionManager.CurrentUser!.Id;
+        if (SessionManager.CurrentUser == null) return;
+        var userId = SessionManager.CurrentUser.Id;
         var items  = ShowHistory
             ? _service.GetAllAssignedTo(userId)
                       .Where(s => s.StatusCode == ScheduleService.StatusCompleted ||

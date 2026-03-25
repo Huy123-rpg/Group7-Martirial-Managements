@@ -12,7 +12,12 @@ public class ScheduleService : IScheduleService
     public const string StatusCancelled  = "cancelled";
     public const string StatusMissed     = "missed";
 
-    private readonly UnitOfWork _uow = UnitOfWork.Instance;
+    private readonly UnitOfWork _uow;
+
+    public ScheduleService(UnitOfWork uow)
+    {
+        _uow = uow;
+    }
 
     // ─── Queries ─────────────────────────────────────────────────────────────
     public IEnumerable<Schedule> GetAll() =>

@@ -3,12 +3,15 @@ using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;
+using System.Linq;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF.PresentationLayer.ViewModels.Admin;
 
 public class UserManagementViewModel : BaseViewModel
 {
-    private readonly UnitOfWork _uow = UnitOfWork.Instance;
+    private readonly UnitOfWork _uow;
 
     private ObservableCollection<User> _users = [];
     private User? _selected;
@@ -58,7 +61,11 @@ public class UserManagementViewModel : BaseViewModel
     public RelayCommand ToggleActiveCommand => new(ToggleActive,  () => Selected != null);
     public RelayCommand DeleteCommand       => new(DeleteUser,    () => Selected != null);
 
-    public UserManagementViewModel() => Load();
+    public UserManagementViewModel(UnitOfWork uow)
+    {
+        _uow = uow;
+        Load();
+    }
 
     // ─── Load ─────────────────────────────────────────────────────────────────
     private void Load()
@@ -134,7 +141,7 @@ public class UserManagementViewModel : BaseViewModel
     // ─── Create ───────────────────────────────────────────────────────────────
     private void OpenCreateWindow()
     {
-        var win = new Views.Auth.RegisterWindow();
+        var win = App.ServiceProvider.GetRequiredService<Views.Auth.RegisterWindow>();
 
         if (win.DataContext is ViewModels.Auth.RegisterViewModel vm)
             vm.IsStandalone = false;

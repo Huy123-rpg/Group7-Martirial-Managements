@@ -8,7 +8,12 @@ namespace BLL.BusinessLogicLayer.Services.Auth;
 
 public class AuthService : IAuthService
 {
-    private readonly UnitOfWork _uow = UnitOfWork.Instance;
+    private readonly UnitOfWork _uow;
+
+    public AuthService(UnitOfWork uow)
+    {
+        _uow = uow;
+    }
 
     // ─── Hashing ─────────────────────────────────────────────────────────────
     private static string HashPassword(string plain)
@@ -38,7 +43,7 @@ public class AuthService : IAuthService
 
         // Repository.Find() không Include navigation properties — load Role thủ công
         if (user.Role == null)
-            user.Role = _uow.UserRoles.Find(r => r.RoleId == user.RoleId).FirstOrDefault();
+            user.Role = _uow.UserRoles.Find(r => r.RoleId == user.RoleId).FirstOrDefault()!;
 
         return user;
     }

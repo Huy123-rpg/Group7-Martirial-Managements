@@ -1,4 +1,5 @@
 using BLL.BusinessLogicLayer.Services.Auth;
+using Microsoft.Extensions.DependencyInjection;
 using DAL.DataAccessLayer.Model;
 using System;
 using System.Windows;
@@ -8,7 +9,12 @@ namespace WPF.PresentationLayer.ViewModels.Auth;
 
 public class LoginViewModel : BaseViewModel
 {
-    private readonly IAuthService _authService = new AuthService();
+    private readonly IAuthService _authService;
+
+    public LoginViewModel(IAuthService authService)
+    {
+        _authService = authService;
+    }
 
     private string _email    = string.Empty;
     private string _password = string.Empty;
@@ -44,7 +50,7 @@ public class LoginViewModel : BaseViewModel
         // First login → bắt buộc đổi mật khẩu
         if (user.LastLoginAt == null)
         {
-            var changeWin = new Views.Auth.ChangePasswordWindow();
+            var changeWin = App.ServiceProvider.GetRequiredService<Views.Auth.ChangePasswordWindow>();
             if (changeWin.DataContext is ChangePasswordViewModel cpVm)
                 cpVm.UserId = user.Id;
 
@@ -60,7 +66,7 @@ public class LoginViewModel : BaseViewModel
         try
         {
             _authService.UpdateLastLogin(user.Id);
-            var main = new MainWindow();
+            var main = App.ServiceProvider.GetRequiredService<MainWindow>();
             main.Show();
             CloseCurrentWindow();
         }

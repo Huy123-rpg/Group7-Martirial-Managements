@@ -6,20 +6,21 @@ namespace WPF.PresentationLayer.Views.Auth;
 
 public partial class RegisterWindow : Window
 {
-    public RegisterWindow()
+    public RegisterWindow(RegisterViewModel viewModel)
     {
         InitializeComponent();
+        DataContext = viewModel;
 
-        PasswordBox.PasswordChanged += (_, _) =>
+        txtPassword.PasswordChanged += (_, _) =>
         {
             if (DataContext is RegisterViewModel vm)
-                vm.Password = PasswordBox.Password;
+                vm.Password = txtPassword.Password;
         };
 
-        ConfirmPasswordBox.PasswordChanged += (_, _) =>
+        txtConfirmPassword.PasswordChanged += (_, _) =>
         {
             if (DataContext is RegisterViewModel vm)
-                vm.ConfirmPassword = ConfirmPasswordBox.Password;
+                vm.ConfirmPassword = txtConfirmPassword.Password;
         };
     }
 }

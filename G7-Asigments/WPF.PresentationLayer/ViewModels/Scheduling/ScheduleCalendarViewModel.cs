@@ -3,12 +3,14 @@ using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using WPF.PresentationLayer.Helpers;
+using System.Linq;
+using System;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
 public class ScheduleCalendarViewModel : BaseViewModel
 {
-    private readonly IScheduleService _service = new ScheduleService();
+    private readonly IScheduleService _service;
     private static readonly CultureInfo _vi = new("vi-VN");
 
     private DateTime _currentMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
@@ -43,7 +45,11 @@ public class ScheduleCalendarViewModel : BaseViewModel
             SelectedSchedule = _monthSchedules.FirstOrDefault(s => s.Id == slot.Id);
     });
 
-    public ScheduleCalendarViewModel() => Reload();
+    public ScheduleCalendarViewModel(IScheduleService service)
+    {
+        _service = service;
+        Reload();
+    }
 
     public void Reload()
     {

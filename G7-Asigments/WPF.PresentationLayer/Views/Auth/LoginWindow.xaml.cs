@@ -5,13 +5,14 @@ namespace WPF.PresentationLayer.Views.Auth;
 
 public partial class LoginWindow : Window
 {
-    public LoginWindow()
+    public LoginWindow(LoginViewModel viewModel)
     {
         InitializeComponent();
-        PasswordBox.PasswordChanged += (_, _) =>
+        DataContext = viewModel;
+        txtPassword.PasswordChanged += (_, _) =>
         {
             if (DataContext is LoginViewModel vm)
-                vm.Password = PasswordBox.Password;
+                vm.Password = txtPassword.Password;
         };
     }
 }

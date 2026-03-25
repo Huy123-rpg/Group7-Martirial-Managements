@@ -5,14 +5,17 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using BLL.BusinessLogicLayer.Services.Email;
 using WPF.PresentationLayer.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
+using System;
 
 namespace WPF.PresentationLayer.ViewModels.Auth;
 
 public class RegisterViewModel : BaseViewModel
 {
-    private readonly IAuthService  _authService  = new AuthService();
-    private readonly IEmailService _emailService = new EmailService();
-    private readonly UnitOfWork    _uow          = UnitOfWork.Instance;
+    private readonly IAuthService  _authService;
+    private readonly IEmailService _emailService;
+    private readonly UnitOfWork    _uow;
 
     // ─── Fields ───────────────────────────────────────────────────────────────
     private string _fullName        = string.Empty;
@@ -54,8 +57,11 @@ public class RegisterViewModel : BaseViewModel
     public Visibility BackToLoginVisibility
         => IsStandalone ? Visibility.Visible : Visibility.Collapsed;
 
-    public RegisterViewModel()
+    public RegisterViewModel(IAuthService authService, IEmailService emailService, UnitOfWork uow)
     {
+        _authService = authService;
+        _emailService = emailService;
+        _uow = uow;
         LoadRoles();
     }
 
@@ -137,7 +143,7 @@ public class RegisterViewModel : BaseViewModel
 
     private void NavigateToLogin()
     {
-        var loginWindow = new Views.Auth.LoginWindow();
+        var loginWindow = App.ServiceProvider.GetRequiredService<Views.Auth.LoginWindow>();
         loginWindow.Show();
         CloseCurrentWindow();
     }
