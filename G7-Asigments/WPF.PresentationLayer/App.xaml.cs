@@ -8,48 +8,49 @@ using WPF.PresentationLayer.ViewModels;
 using BLL.BusinessLogicLayer;
 using System;
 
-namespace WPF.PresentationLayer;
-
-public partial class App : Application
+namespace WPF.PresentationLayer
 {
-    public static IServiceProvider ServiceProvider { get; private set; } = null!;
-
-    protected override void OnStartup(StartupEventArgs e)
+    public partial class App : Application
     {
-        base.OnStartup(e);
+        public static IServiceProvider ServiceProvider { get; private set; } = null!;
 
-        var services = new ServiceCollection();
-        ConfigureServices(services);
-        ServiceProvider = services.BuildServiceProvider();
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
 
-        // Không tự shutdown khi đóng LoginWindow — chỉ shutdown khi gọi tường minh
-        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            ServiceProvider = services.BuildServiceProvider();
 
-        var loginWindow = ServiceProvider.GetRequiredService<LoginWindow>();
-        loginWindow.Show();
-    }
+            // Không tự shutdown khi đóng LoginWindow — chỉ shutdown khi gọi tường minh
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-    private void ConfigureServices(IServiceCollection services)
-    {
-        // 1. Business Logic & Data Access (via BLL extension)
-        services.AddBusinessLogic();
+            var loginWindow = ServiceProvider.GetRequiredService<LoginWindow>();
+            loginWindow.Show();
+        }
 
-        // 2. ViewModels
-        services.AddTransient<LoginViewModel>();
-        services.AddTransient<RegisterViewModel>();
-        services.AddTransient<ChangePasswordViewModel>();
-        services.AddTransient<MainViewModel>();
-        services.AddTransient<ScheduleViewModel>();
-        services.AddTransient<MyScheduleViewModel>();
-        services.AddTransient<ScheduleFormViewModel>();
-        services.AddTransient<ScheduleCalendarViewModel>();
-        services.AddTransient<ViewModels.Admin.UserManagementViewModel>();
+        private void ConfigureServices(IServiceCollection services)
+        {
+            // 1. Business Logic & Data Access (via BLL extension)
+            services.AddBusinessLogic();
 
-        // 3. Windows
-        services.AddTransient<LoginWindow>();
-        services.AddTransient<RegisterWindow>();
-        services.AddTransient<ChangePasswordWindow>();
-        services.AddTransient<MainWindow>();
-        services.AddTransient<ScheduleFormWindow>();
+            // 2. ViewModels
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<RegisterViewModel>();
+            services.AddTransient<ChangePasswordViewModel>();
+            services.AddTransient<MainViewModel>();
+            services.AddTransient<ScheduleViewModel>();
+            services.AddTransient<MyScheduleViewModel>();
+            services.AddTransient<ScheduleFormViewModel>();
+            services.AddTransient<ScheduleCalendarViewModel>();
+            services.AddTransient<ViewModels.Admin.UserManagementViewModel>();
+
+            // 3. Windows
+            services.AddTransient<LoginWindow>();
+            services.AddTransient<RegisterWindow>();
+            services.AddTransient<ChangePasswordWindow>();
+            services.AddTransient<MainWindow>();
+            services.AddTransient<ScheduleFormWindow>();
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Windows;
 using WPF.PresentationLayer.Helpers;
 using System.Linq;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
@@ -87,6 +88,8 @@ public class MyScheduleViewModel : BaseViewModel
         ShowHistory = !ShowHistory;
         OnPropertyChanged(nameof(ToggleLabel));
     });
+
+    public MyScheduleViewModel() : this(App.ServiceProvider.GetRequiredService<IScheduleService>()) { }
 
     public MyScheduleViewModel(IScheduleService service)
     {

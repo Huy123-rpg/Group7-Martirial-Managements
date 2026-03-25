@@ -5,6 +5,7 @@ using System.Globalization;
 using WPF.PresentationLayer.Helpers;
 using System.Linq;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
@@ -44,6 +45,8 @@ public class ScheduleCalendarViewModel : BaseViewModel
         if (p is ScheduleSlot slot)
             SelectedSchedule = _monthSchedules.FirstOrDefault(s => s.Id == slot.Id);
     });
+
+    public ScheduleCalendarViewModel() : this(App.ServiceProvider.GetRequiredService<IScheduleService>()) { }
 
     public ScheduleCalendarViewModel(IScheduleService service)
     {

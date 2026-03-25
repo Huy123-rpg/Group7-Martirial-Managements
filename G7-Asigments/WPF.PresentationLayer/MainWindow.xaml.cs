@@ -1,16 +1,17 @@
 using System.Windows;
 using WPF.PresentationLayer.ViewModels;
 
-namespace WPF.PresentationLayer;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace WPF.PresentationLayer
 {
-    public MainWindow(MainViewModel viewModel)
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        DataContext = viewModel;
+        public MainWindow(MainViewModel viewModel)
+        {
+            InitializeComponent();
+            DataContext = viewModel;
+        }
     }
 }
