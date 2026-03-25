@@ -28,6 +28,7 @@ public sealed class UnitOfWork
 
     // ─── DbContext ───────────────────────────────────────────────────────────
     private readonly WarehouseDbContext _context;
+    public WarehouseDbContext Context => _context;
 
     private UnitOfWork()
     {
@@ -44,13 +45,17 @@ public sealed class UnitOfWork
     public IRepository<Product> Products => new Repository<Product>(_context);
     public IRepository<Supplier> Suppliers => new Repository<Supplier>(_context);
     public IRepository<Customer> Customers => new Repository<Customer>(_context);
+    public IRepository<Inventory> Inventories => new Repository<Inventory>(_context);
     public IRepository<Schedule> Schedules => new Repository<Schedule>(_context);
     public IRepository<PurchaseOrder> PurchaseOrders => new Repository<PurchaseOrder>(_context);
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
     public IRepository<SalesOrder> SalesOrders => new Repository<SalesOrder>(_context);
     public IRepository<GoodsIssue> GoodsIssues => new Repository<GoodsIssue>(_context);
     public IRepository<Notification> Notifications => new Repository<Notification>(_context);
-    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
+    public IRepository<LkpScheduleType>  ScheduleTypes  => new Repository<LkpScheduleType>(_context);
+    public IRepository<WarehouseZone>    WarehouseZones => new Repository<WarehouseZone>(_context);
+    public IRepository<LkpZoneType>      ZoneTypes      => new Repository<LkpZoneType>(_context);
+    public IRepository<LkpCostingMethod> CostingMethods => new Repository<LkpCostingMethod>(_context);
 
     // ─── Save ────────────────────────────────────────────────────────────────
     public int Save()

@@ -164,7 +164,13 @@ public class ScheduleFormViewModel : BaseViewModel
         foreach (var t in _service.GetScheduleTypes())  ScheduleTypes.Add(t);
         foreach (var u in _service.GetStaffUsers())     StaffUsers.Add(u);
 
-        foreach (var w in _service.GetWarehouses()) Warehouses.Add(w);
+        var allWarehouses = _service.GetWarehouses();
+        if (SessionManager.IsManager)
+        {
+            allWarehouses = allWarehouses.Where(w => w.ManagerId == SessionManager.CurrentUser!.Id);
+        }
+
+        foreach (var w in allWarehouses) Warehouses.Add(w);
     }
 
     private void PreSelectManagerWarehouse()

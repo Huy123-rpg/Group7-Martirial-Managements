@@ -57,6 +57,38 @@
                             Command="{Binding NavUserManagementCommand}"
                             Visibility="Collapsed"/>
 
+                    <!-- ── Quản lý kho (Admin + Manager) ─── -->
+                    <TextBlock x:Name="MenuHeaderWarehouse"
+                               Text="QUẢN LÝ KHO"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnWarehouseConfig"
+                            Content="  🏭  Cấu hình kho &amp; zone"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavWarehouseConfigCommand}"
+                            Visibility="Collapsed"/>
+
+                    <!-- 📦 Tra cứu tồn kho (Tất cả trừ Supplier) -->
+                    <TextBlock x:Name="MenuHeaderInventory"
+                               Text="KHO &amp; TỒN KHO"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"/>
+                    <Button x:Name="BtnInventoryLookup"
+                            Content="  📦  Tra cứu tồn kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavInventoryLookupCommand}" />
+
+                    <Button x:Name="BtnStockCountExecution"
+                            Content="  📋  Thực hiện kiểm kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavStockCountExecutionCommand}" />
+
+                    <Button x:Name="BtnStockCountApproval"
+                            Content="  📝  Duyệt kiểm kê kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavStockCountApprovalCommand}"
+                            Visibility="Collapsed"/>
+
                     <!-- ── Phân công (Admin + Manager) ─── -->
                     <TextBlock x:Name="MenuHeaderSchedule"
                                Text="PHÂN CÔNG"
@@ -121,10 +153,111 @@
                     BorderBrush="{StaticResource BrushBorder}"
                     BorderThickness="0,0,0,1">
                 <Grid Margin="24,0">
-                    <TextBlock Text="{Binding CurrentPageTitle}"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding CurrentPageTitle}"
                                Foreground="{StaticResource BrushTextPrimary}"
                                FontSize="14" FontWeight="SemiBold"
                                VerticalAlignment="Center"/>
+
+                    <!-- Notification Bell -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <ToggleButton x:Name="NotificationToggle"
+                                      Width="32" Height="32"
+                                      Background="Transparent" BorderThickness="0"
+                                      Cursor="Hand">
+                            <Grid>
+                                <TextBlock Text="🔔" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Border Background="#D32F2F" Width="8" Height="8" CornerRadius="4"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Margin="0,4,4,0"
+                                        Visibility="{Binding HasUnreadNotifications, Converter={StaticResource BoolToVisibility}}"/>
+                            </Grid>
+                        </ToggleButton>
+                        <Popup IsOpen="{Binding IsChecked, ElementName=NotificationToggle}"
+                               StaysOpen="False" PlacementTarget="{Binding ElementName=NotificationToggle}"
+                               Placement="Bottom" HorizontalOffset="-260" VerticalOffset="10">
+                            <Border Width="300" Background="{StaticResource BrushSurface}"
+                                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1"
+                                    CornerRadius="6" Padding="0,0,0,8" Margin="0,0,8,8">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#000000" Opacity="0.1" BlurRadius="10" ShadowDepth="4"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Panel Header -->
+                                    <Border Grid.Row="0" BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1" Padding="16,12">
+                                        <TextBlock Text="Thông báo mới" FontWeight="SemiBold" FontSize="14"/>
+                                    </Border>
+
+                                    <!-- Notification List -->
+                                    <ScrollViewer Grid.Row="1" MaxHeight="350" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding UnreadNotifications}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,0,0,1" Padding="16,12" Background="Transparent">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                                                                <TextBlock Text="{Binding Body}" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                                                                <TextBlock Text="{Binding CreatedAt, StringFormat='dd/MM/yyyy HH:mm'}" Foreground="#999" FontSize="11"/>
+                                                            </StackPanel>
+                                                            <!-- Buttons -->
+                                                            <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+                                                                <!-- View Detail -->
+                                                                <Button Command="{Binding DataContext.ViewNotificationDetailCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="4" Margin="0,0,0,8">
+                                                                    <TextBlock Text="👁" Foreground="#666" FontSize="14" ToolTip="Xem chi tiết"/>
+                                                                </Button>
+                                                                <!-- Mark Read -->
+                                                                <Button Command="{Binding DataContext.MarkNotificationReadCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="4">
+                                                                    <TextBlock Text="🗑" Foreground="#999" FontSize="14" ToolTip="Đánh dấu đã đọc"/>
+                                                                </Button>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            
+                                            <!-- Empty state -->
+                                            <ItemsControl.Style>
+                                                <Style TargetType="ItemsControl">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasUnreadNotifications}" Value="False">
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate>
+                                                                        <TextBlock Text="Không có thông báo mới."
+                                                                                   Foreground="{StaticResource BrushTextSecondary}"
+                                                                                   FontStyle="Italic" TextAlignment="Center" Margin="0,30"/>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ItemsControl.Style>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Popup>
+                    </StackPanel>
                 </Grid>
             </Border>
 

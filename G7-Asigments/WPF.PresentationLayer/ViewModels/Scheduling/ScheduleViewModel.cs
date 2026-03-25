@@ -115,12 +115,20 @@ public class ScheduleViewModel : BaseViewModel
 
     public ScheduleViewModel() => Load();
 
-    // ─── Load ────────────────────────────────────────────────────────────────
     private void Load()
     {
-        _allSchedules = (SessionManager.IsAdmin || SessionManager.IsManager
-            ? _service.GetAll()
-            : Enumerable.Empty<Schedule>()).ToList();
+        if (SessionManager.IsAdmin)
+        {
+            _allSchedules = _service.GetAll().ToList();
+        }
+        else if (SessionManager.IsManager)
+        {
+            _allSchedules = _service.GetByManagerWarehouse(SessionManager.CurrentUser!.Id).ToList();
+        }
+        else
+        {
+            _allSchedules = [];
+        }
         ApplyFilter();
     }
 
