@@ -9,6 +9,8 @@ public interface IAuthService
 
     bool ChangePassword(Guid userId, string oldPassword, string newPassword);
 
+    void UpdateLastLogin(Guid userId);
+
     /// <summary>Tạo tài khoản mới. Trả về User nếu thành công, null nếu lỗi.</summary>
     User? Register(string fullName, string email, string password, byte roleId, out string error);
 }

@@ -8,8 +8,7 @@ namespace BLL.BusinessLogicLayer.Core;
 
 public sealed class UnitOfWork
 {
-    private readonly WarehouseDbContext _context;
-
+    // ─── Connection String (set once by App before first use) ────────────────
     public static string ConnectionString { get; set; } =
         "Server=localhost;Database=WarehouseDB;User Id=sa;Password=hoanganh;TrustServerCertificate=True;";
 
@@ -27,13 +26,12 @@ public sealed class UnitOfWork
         }
     }
 
-
+    private readonly WarehouseDbContext _context;
 
     private UnitOfWork()
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
             .UseSqlServer(ConnectionString)
-            .UseSnakeCaseNamingConvention()
             .Options;
 
         _context = new WarehouseDbContext(options);
@@ -53,6 +51,10 @@ public sealed class UnitOfWork
     public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
     public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
+    public IRepository<Notification> Notifications => new Repository<Notification>(_context);
+    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
+
+    // ─── Save ────────────────────────────────────────────────────────────────
     public int Save()
     {
         try

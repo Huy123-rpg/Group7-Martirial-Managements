@@ -36,7 +36,22 @@ public class AuthService : IAuthService
         if (user.PasswordHash != hash)
             return null;
 
+        // Repository.Find() không Include navigation properties — load Role thủ công
+        if (user.Role == null)
+            user.Role = _uow.UserRoles.Find(r => r.RoleId == user.RoleId).FirstOrDefault();
+
         return user;
+    }
+
+    // ─── Update Last Login ────────────────────────────────────────────────────
+    public void UpdateLastLogin(Guid userId)
+    {
+        var user = _uow.Users.GetById(userId);
+        if (user == null) return;
+        user.LastLoginAt = DateTimeOffset.UtcNow;
+        user.UpdatedAt   = DateTimeOffset.UtcNow;
+        _uow.Users.Update(user);
+        _uow.Save();
     }
 
     // ─── Change Password ─────────────────────────────────────────────────────
@@ -94,6 +109,7 @@ public class AuthService : IAuthService
             Email        = normalizedEmail,
             PasswordHash = HashPassword(password),
             RoleId       = roleId,
+            StaffCode    = $"USR-{Guid.NewGuid().ToString("N")[..8].ToUpper()}",
             IsActive     = true,
             CreatedAt    = now,
             UpdatedAt    = now

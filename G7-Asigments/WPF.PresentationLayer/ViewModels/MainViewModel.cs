@@ -6,11 +6,8 @@ using WPF.PresentationLayer.Views;
 using WPF.PresentationLayer.Views.Auth;
 using WPF.PresentationLayer.Views.Export;
 using WPF.PresentationLayer.Views.Import;
-using WPF.PresentationLayer.Helpers;
 
 namespace WPF.PresentationLayer.ViewModels;
-
-
 
 public class MainViewModel : BaseViewModel
 {
@@ -46,21 +43,46 @@ public class MainViewModel : BaseViewModel
         _ => "Unknown"
     };
 
-    public RelayCommand NavDashboardCommand { get; }
-    public RelayCommand NavUserManagementCommand { get; }
-    public RelayCommand NavPurchaseOrderCommand { get; }
-    public RelayCommand NavGoodsReceiptCommand { get; }
-    public RelayCommand NavGoodsIssueCommand { get; }
-    public RelayCommand LogoutCommand { get; }
-    public bool CanViewUsers => PermissionHelper.CanViewUsers;
-    public string DebugRole => $"RoleId = {SessionManager.CurrentUser?.RoleId}";
-    public bool CanViewPurchaseOrder => PermissionHelper.CanViewPurchaseOrder;
-    public bool CanViewGoodsReceipt => PermissionHelper.CanViewGoodsReceipt;
-    public bool CanViewGoodsIssue => PermissionHelper.CanViewGoodsIssue;
+    // ─── Role Visibility ─────────────────────────────────────────────────────
+    private bool _showAdminMenu;
+    private bool _showManagerMenu;
+    private bool _showScheduleMenu;
+    private bool _showMySchedule;
 
-    public bool CanViewDashboard => PermissionHelper.CanViewDashboard;
+    public bool ShowAdminMenu    { get => _showAdminMenu;    set => SetField(ref _showAdminMenu,    value); }
+    public bool ShowManagerMenu  { get => _showManagerMenu;  set => SetField(ref _showManagerMenu,  value); }
+    public bool ShowScheduleMenu { get => _showScheduleMenu; set => SetField(ref _showScheduleMenu, value); }
+    public bool ShowMySchedule   { get => _showMySchedule;   set => SetField(ref _showMySchedule,   value); }
+
+    public void RefreshSession()
+    {
+        ShowAdminMenu    = SessionManager.IsAdmin;
+        ShowManagerMenu  = SessionManager.IsAdmin || SessionManager.IsManager;
+        ShowScheduleMenu = SessionManager.IsAdmin || SessionManager.IsManager;
+        ShowMySchedule   = SessionManager.IsStaff;
+        OnPropertyChanged(nameof(CurrentUserName));
+        OnPropertyChanged(nameof(CurrentUserRole));
+    }
+
+    // ─── Permission Props (HA) ────────────────────────────────────────────────
+    public bool CanViewDashboard      => PermissionHelper.CanViewDashboard;
+    public bool CanViewUsers          => PermissionHelper.CanViewUsers;
+    public string DebugRole           => $"RoleId = {SessionManager.CurrentUser?.RoleId}";
+    public bool CanViewPurchaseOrder  => PermissionHelper.CanViewPurchaseOrder;
+    public bool CanViewGoodsReceipt   => PermissionHelper.CanViewGoodsReceipt;
+    public bool CanViewGoodsIssue     => PermissionHelper.CanViewGoodsIssue;
     public bool CanCreateGoodsReceipt => PermissionHelper.CanCreateGoodsReceipt;
-    public bool CanCreateGoodsIssue => PermissionHelper.CanCreateGoodsIssue;
+    public bool CanCreateGoodsIssue   => PermissionHelper.CanCreateGoodsIssue;
+
+    // ─── Nav Commands ─────────────────────────────────────────────────────────
+    public RelayCommand NavDashboardCommand      { get; }
+    public RelayCommand NavUserManagementCommand { get; }
+    public RelayCommand NavPurchaseOrderCommand  { get; }
+    public RelayCommand NavGoodsReceiptCommand   { get; }
+    public RelayCommand NavGoodsIssueCommand     { get; }
+    public RelayCommand NavScheduleCommand       { get; }
+    public RelayCommand NavMyScheduleCommand     { get; }
+    public RelayCommand LogoutCommand            { get; }
 
     public MainViewModel()
     {
@@ -79,8 +101,15 @@ public class MainViewModel : BaseViewModel
         NavGoodsIssueCommand = new RelayCommand(() =>
             Navigate(new GoodsIssueListView(), "Xuất kho", "goodsissue"));
 
+        NavScheduleCommand = new RelayCommand(() =>
+            Navigate(new Views.Scheduling.ScheduleListView(), "Phân công nhiệm vụ", "schedule"));
+
+        NavMyScheduleCommand = new RelayCommand(() =>
+            Navigate(new Views.Scheduling.MyScheduleView(), "Lịch của tôi", "my-schedule"));
+
         LogoutCommand = new RelayCommand(Logout);
 
+        RefreshSession();
         Navigate(new Views.Admin.DashboardView(), "Tổng quan", "dashboard");
     }
 

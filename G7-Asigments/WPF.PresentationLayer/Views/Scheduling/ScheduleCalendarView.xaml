@@ -1,0 +1,274 @@
+<UserControl x:Class="WPF.PresentationLayer.Views.Scheduling.ScheduleCalendarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Scheduling">
+    <UserControl.DataContext>
+        <vm:ScheduleCalendarViewModel/>
+    </UserControl.DataContext>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── Navigation ── -->
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="&#9664;" Command="{Binding PrevMonthCommand}" Padding="10,4" Margin="0,0,4,0"/>
+            <Button Grid.Column="1" Content="&#9654;" Command="{Binding NextMonthCommand}" Padding="10,4" Margin="0,0,12,0"/>
+            <TextBlock Grid.Column="2" Text="{Binding MonthLabel}"
+                       FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Grid.Column="3" Content="Hôm nay" Command="{Binding TodayCommand}" Padding="12,4" Margin="0,0,8,0"/>
+            <Button Grid.Column="4" Content="Làm mới" Command="{Binding RefreshCommand}" Padding="12,4"/>
+        </Grid>
+
+        <!-- ── Day-of-week headers ── -->
+        <UniformGrid Grid.Row="1" Columns="7" Margin="0,0,0,2">
+            <TextBlock Text="Thứ 2" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555" Padding="0,4"/>
+            <TextBlock Text="Thứ 3" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555" Padding="0,4"/>
+            <TextBlock Text="Thứ 4" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555" Padding="0,4"/>
+            <TextBlock Text="Thứ 5" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555" Padding="0,4"/>
+            <TextBlock Text="Thứ 6" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555" Padding="0,4"/>
+            <TextBlock Text="Thứ 7" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#1976D2" Padding="0,4"/>
+            <TextBlock Text="CN"    HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#D32F2F" Padding="0,4"/>
+        </UniformGrid>
+
+        <!-- ── Calendar grid ── -->
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Days}"
+                 SelectedItem="{Binding SelectedDay}"
+                 BorderThickness="1,1,0,0"
+                 BorderBrush="#E0E0E0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="7" Rows="6"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding"                   Value="0"/>
+                    <Setter Property="Margin"                    Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment"   Value="Stretch"/>
+                    <Setter Property="Background"                Value="White"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Bd"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="#E0E0E0"
+                                        BorderThickness="0,0,1,1">
+                                    <ContentPresenter/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="#E3F2FD"/>
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="#1976D2"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsToday}" Value="True">
+                            <Setter Property="Background" Value="#FFFDE7"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HasConflict}" Value="True">
+                            <Setter Property="Background" Value="#FFF3F3"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid MinHeight="90" Margin="4,3" ToolTip="{Binding BusyTooltip}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="18"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Date number row -->
+                        <Grid Grid.Row="0">
+                            <TextBlock Text="{Binding Date.Day}" FontSize="12" FontWeight="SemiBold"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#212121"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCurrentMonth}" Value="False">
+                                                <Setter Property="Foreground" Value="#BDBDBD"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                <Setter Property="Foreground" Value="#E65100"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <!-- Conflict indicator dot -->
+                            <Ellipse Width="7" Height="7" Fill="#F44336"
+                                     HorizontalAlignment="Right" VerticalAlignment="Center"
+                                     Visibility="{Binding HasConflict, Converter={StaticResource BoolToVisibility}}"
+                                     ToolTip="Trung lich nhan vien"/>
+                        </Grid>
+
+                        <!-- Schedule pills -->
+                        <StackPanel Grid.Row="1">
+                            <ItemsControl ItemsSource="{Binding VisibleSlots}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding StatusCode, Converter={StaticResource StatusToBrush}}"
+                                                CornerRadius="2" Margin="0,1" Padding="3,1"
+                                                ToolTip="{Binding AssignedToName}">
+                                            <TextBlock Text="{Binding Title}" Foreground="White"
+                                                       FontSize="10" TextTrimming="CharacterEllipsis"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="{Binding ExtraLabel}" FontSize="10" Foreground="#757575"
+                                       Margin="2,1,0,0"
+                                       Visibility="{Binding HasExtra, Converter={StaticResource BoolToVisibility}}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- ── Selected Day Detail ── -->
+        <Border Grid.Row="3" Margin="0,8,0,0"
+                BorderBrush="#1976D2" BorderThickness="1"
+                CornerRadius="4" Padding="12,8" MaxHeight="180"
+                Visibility="{Binding SelectedDay, Converter={StaticResource NullToVisibility}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" FontWeight="Bold" FontSize="13" Margin="0,0,0,6"
+                           Text="{Binding SelectedDay.Date, StringFormat='Lịch ngày {0:dd/MM/yyyy}'}"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding SelectedDay.Slots}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.SelectScheduleCommand,
+                                                 RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent" BorderThickness="0"
+                                        HorizontalContentAlignment="Stretch"
+                                        Cursor="Hand" Padding="0">
+                                    <Grid Margin="0,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="4"/>
+                                            <ColumnDefinition Width="8"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" CornerRadius="2"
+                                                Background="{Binding StatusCode, Converter={StaticResource StatusToBrush}}"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Title}"
+                                                   VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding AssignedToName}"
+                                                   Foreground="#757575" FontSize="11"
+                                                   VerticalAlignment="Center" Margin="12,0,0,0"/>
+                                        <Border Grid.Column="4" Margin="8,0,0,0"
+                                                Background="{Binding StatusCode, Converter={StaticResource StatusToBrush}}"
+                                                CornerRadius="3" Padding="5,2">
+                                            <TextBlock Text="{Binding StatusCode, Converter={StaticResource StatusToLabel}}"
+                                                       Foreground="White" FontSize="10"/>
+                                        </Border>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+        <!-- ── Selected Schedule Detail ── -->
+        <Border Grid.Row="4" Margin="0,4,0,0" Padding="16,12"
+                Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
+                CornerRadius="4"
+                Visibility="{Binding SelectedSchedule, Converter={StaticResource NullToVisibility}}">
+            <StackPanel>
+                <!-- Header: badge + title -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <Border Background="{Binding SelectedSchedule.StatusCode, Converter={StaticResource StatusToBrush}}"
+                            CornerRadius="4" Padding="8,3" Margin="0,0,10,0">
+                        <TextBlock Text="{Binding SelectedSchedule.StatusCode, Converter={StaticResource StatusToLabel}}"
+                                   Foreground="White" FontWeight="SemiBold" FontSize="11"/>
+                    </Border>
+                    <TextBlock Text="{Binding SelectedSchedule.Title}"
+                               FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+                <!-- Row 1: Kho | Loại | Bắt đầu -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock Text="Kho" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.Warehouse.Name, TargetNullValue='—'}"
+                                   FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                        <TextBlock Text="Loại lịch" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.ScheduleTypeNavigation.TypeName, TargetNullValue='—'}"
+                                   FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Bắt đầu" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.StartTime, StringFormat=dd/MM/yyyy HH:mm}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+                <!-- Row 2: Phân công | Tài liệu | Nhắc nhở -->
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock Text="Phân công cho" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.AssignedToNavigation.FullName, TargetNullValue='—'}"
+                                   FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                        <TextBlock Text="Tài liệu" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.RefType, TargetNullValue='—'}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Nhắc nhở" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding SelectedSchedule.ReminderMinutes, StringFormat='{}{0} phút', TargetNullValue='—'}"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+                <!-- Ghi chú -->
+                <StackPanel Margin="0,8,0,0"
+                            Visibility="{Binding SelectedSchedule.Description, Converter={StaticResource NullToVisibility}}">
+                    <TextBlock Text="Ghi chú" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                    <TextBlock Text="{Binding SelectedSchedule.Description}"
+                               TextWrapping="Wrap" Foreground="#444" MaxHeight="48"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

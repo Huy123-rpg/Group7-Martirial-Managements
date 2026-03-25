@@ -9,8 +9,9 @@ namespace WPF.PresentationLayer.ViewModels.Auth;
 
 public class RegisterViewModel : BaseViewModel
 {
-    private readonly IAuthService _authService = new AuthService();
-    private readonly UnitOfWork _uow = UnitOfWork.Instance;
+    private readonly IAuthService  _authService  = new AuthService();
+    private readonly IEmailService _emailService = new EmailService();
+    private readonly UnitOfWork    _uow          = UnitOfWork.Instance;
 
     // ─── Fields ───────────────────────────────────────────────────────────────
     private string _fullName        = string.Empty;
@@ -80,7 +81,7 @@ public class RegisterViewModel : BaseViewModel
         && !string.IsNullOrWhiteSpace(ConfirmPassword)
         && SelectedRole != null;
 
-    private void Register()
+    private async void Register()
     {
         if (Password != ConfirmPassword)
         {
@@ -88,20 +89,39 @@ public class RegisterViewModel : BaseViewModel
             return;
         }
 
-        var user = _authService.Register(
-            FullName, Email, Password,
-            SelectedRole!.RoleId, out string error);
-
-        if (user == null)
+        User? user;
+        try
         {
-            ErrorMessage = error;
+            user = _authService.Register(FullName, Email, Password, SelectedRole!.RoleId, out string error);
+            if (user == null) { ErrorMessage = error; return; }
+        }
+        catch (Exception ex)
+        {
+            var detail = ex.InnerException?.InnerException?.Message
+                      ?? ex.InnerException?.Message
+                      ?? ex.Message;
+            ErrorMessage = $"Lỗi khi tạo tài khoản: {detail}";
             return;
         }
 
+        // Gửi email — chờ kết quả trước khi đóng cửa sổ
+        string emailNote;
+        try
+        {
+            await _emailService.SendWelcomeEmailAsync(Email, user.FullName, Password);
+            emailNote = "Hệ thống đã gửi email thông báo đến người dùng.";
+        }
+        catch (Exception ex)
+        {
+            var detail = ex.InnerException?.Message ?? ex.Message;
+            emailNote = $"(Không gửi được email: {detail})";
+        }
+
         MessageBox.Show(
-            $"Tài khoản \"{Email}\" đã được tạo thành công." +
-            (IsStandalone ? "\nVui lòng đăng nhập." : string.Empty),
-            "Đăng ký thành công",
+            $"Tài khoản \"{Email}\" đã được tạo thành công.\n" +
+            emailNote + "\n" +
+            "Người dùng sẽ được yêu cầu đổi mật khẩu khi đăng nhập lần đầu.",
+            "Tạo tài khoản thành công",
             MessageBoxButton.OK,
             MessageBoxImage.None);
 

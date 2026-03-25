@@ -1,5 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using DAL.DataAccessLayer.Model;
 
@@ -7,10 +5,6 @@ namespace DAL.DataAccessLayer.Context;
 
 public partial class WarehouseDbContext : DbContext
 {
-    public WarehouseDbContext()
-    {
-    }
-
     public WarehouseDbContext(DbContextOptions<WarehouseDbContext> options)
         : base(options)
     {
@@ -108,15 +102,17 @@ public partial class WarehouseDbContext : DbContext
 
     public virtual DbSet<WarehouseZone> WarehouseZones { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server=localhost;database= WarehouseDB;uid=sa;pwd=hoanganh;TrustServerCertificate=True");
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=localhost;Database=WarehouseDB;User Id=sa;Password=hoanganh;TrustServerCertificate=True");
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("Vietnamese_CI_AS");
+
         modelBuilder.Entity<AiAnomalyLog>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ai_anoma__3213E83F3C4A9338");
+            entity.HasKey(e => e.Id).HasName("PK__ai_anoma__3213E83F9D6F76E2");
 
             entity.ToTable("ai_anomaly_logs");
 
@@ -176,7 +172,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<AiChatSession>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ai_chat___3213E83F7D756FB9");
+            entity.HasKey(e => e.Id).HasName("PK__ai_chat___3213E83FDEEAD47B");
 
             entity.ToTable("ai_chat_sessions");
 
@@ -209,7 +205,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<AiForecast>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ai_forec__3213E83F8427E16C");
+            entity.HasKey(e => e.Id).HasName("PK__ai_forec__3213E83FDF3D7F6E");
 
             entity.ToTable("ai_forecasts");
 
@@ -271,7 +267,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<AiModelVersion>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ai_model__3213E83F87F52743");
+            entity.HasKey(e => e.Id).HasName("PK__ai_model__3213E83FA90993BD");
 
             entity.ToTable("ai_model_versions");
 
@@ -313,7 +309,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<AiReorderSuggestion>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ai_reord__3213E83FB58EDB7E");
+            entity.HasKey(e => e.Id).HasName("PK__ai_reord__3213E83FF33C1F85");
 
             entity.ToTable("ai_reorder_suggestions");
 
@@ -424,11 +420,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__categori__3213E83F571DB848");
+            entity.HasKey(e => e.Id).HasName("PK__categori__3213E83F47369A94");
 
             entity.ToTable("categories");
 
-            entity.HasIndex(e => e.CategoryCode, "UQ__categori__BC9D1E7C539077A1").IsUnique();
+            entity.HasIndex(e => e.CategoryCode, "UQ__categori__BC9D1E7CD486CB95").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -455,11 +451,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__customer__3213E83F6E5372BB");
+            entity.HasKey(e => e.Id).HasName("PK__customer__3213E83F86CE1049");
 
             entity.ToTable("customers");
 
-            entity.HasIndex(e => e.CustomerCode, "UQ__customer__6A9E4CB771A80816").IsUnique();
+            entity.HasIndex(e => e.CustomerCode, "UQ__customer__6A9E4CB78D7AAD47").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -515,11 +511,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<DeliveryOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__delivery__3213E83FBCDBB3A2");
+            entity.HasKey(e => e.Id).HasName("PK__delivery__3213E83FB97DEC55");
 
             entity.ToTable("delivery_orders");
 
-            entity.HasIndex(e => e.DoNumber, "UQ__delivery__0EAF283806BB1E07").IsUnique();
+            entity.HasIndex(e => e.DoNumber, "UQ__delivery__0EAF28386EB5607F").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -618,7 +614,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<GoodsIssue>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__goods_is__3213E83F9FC06C13");
+            entity.HasKey(e => e.Id).HasName("PK__goods_is__3213E83F2B7BFC68");
 
             entity.ToTable("goods_issues", tb =>
                 {
@@ -626,7 +622,7 @@ public partial class WarehouseDbContext : DbContext
                     tb.HasTrigger("trg_goods_issues_updated");
                 });
 
-            entity.HasIndex(e => e.GiNumber, "UQ__goods_is__2EFC9A0833F91CE3").IsUnique();
+            entity.HasIndex(e => e.GiNumber, "UQ__goods_is__2EFC9A085843A129").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -695,7 +691,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<GoodsIssueItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__goods_is__3213E83FDDAD5674");
+            entity.HasKey(e => e.Id).HasName("PK__goods_is__3213E83F8DDDEB06");
 
             entity.ToTable("goods_issue_items");
 
@@ -751,7 +747,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<GoodsReceipt>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__goods_re__3213E83F029929FD");
+            entity.HasKey(e => e.Id).HasName("PK__goods_re__3213E83F73F7B8DA");
 
             entity.ToTable("goods_receipts", tb =>
                 {
@@ -759,7 +755,7 @@ public partial class WarehouseDbContext : DbContext
                     tb.HasTrigger("trg_grn_update_inventory");
                 });
 
-            entity.HasIndex(e => e.GrnNumber, "UQ__goods_re__4C7026B239BC1858").IsUnique();
+            entity.HasIndex(e => e.GrnNumber, "UQ__goods_re__4C7026B2298FCC41").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -833,7 +829,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<GoodsReceiptItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__goods_re__3213E83F07AD4228");
+            entity.HasKey(e => e.Id).HasName("PK__goods_re__3213E83F6933ECDB");
 
             entity.ToTable("goods_receipt_items");
 
@@ -889,7 +885,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Inventory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__inventor__3213E83F173F1AB1");
+            entity.HasKey(e => e.Id).HasName("PK__inventor__3213E83F8626A2B6");
 
             entity.ToTable("inventory");
 
@@ -942,11 +938,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpAnomalySeverity>(entity =>
         {
-            entity.HasKey(e => e.SeverityId).HasName("PK__lkp_anom__08B3F2B17CDDC11A");
+            entity.HasKey(e => e.SeverityId).HasName("PK__lkp_anom__08B3F2B18D57054C");
 
             entity.ToTable("lkp_anomaly_severity");
 
-            entity.HasIndex(e => e.SeverityCode, "UQ__lkp_anom__F7A3E33114070A07").IsUnique();
+            entity.HasIndex(e => e.SeverityCode, "UQ__lkp_anom__F7A3E331B89EA6C9").IsUnique();
 
             entity.Property(e => e.SeverityId).HasColumnName("severity_id");
             entity.Property(e => e.SeverityCode)
@@ -960,11 +956,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpCostingMethod>(entity =>
         {
-            entity.HasKey(e => e.MethodId).HasName("PK__lkp_cost__747727B62CE88B81");
+            entity.HasKey(e => e.MethodId).HasName("PK__lkp_cost__747727B67FD65744");
 
             entity.ToTable("lkp_costing_methods");
 
-            entity.HasIndex(e => e.MethodCode, "UQ__lkp_cost__151BA0F085A8EC1E").IsUnique();
+            entity.HasIndex(e => e.MethodCode, "UQ__lkp_cost__151BA0F02E1DB417").IsUnique();
 
             entity.Property(e => e.MethodId).HasColumnName("method_id");
             entity.Property(e => e.MethodCode)
@@ -978,11 +974,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpDeliveryStatus>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__lkp_deli__3683B531E72587D3");
+            entity.HasKey(e => e.StatusId).HasName("PK__lkp_deli__3683B531FC671588");
 
             entity.ToTable("lkp_delivery_status");
 
-            entity.HasIndex(e => e.StatusCode, "UQ__lkp_deli__4157B02101B11114").IsUnique();
+            entity.HasIndex(e => e.StatusCode, "UQ__lkp_deli__4157B021B4CA2A9E").IsUnique();
 
             entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.StatusCode)
@@ -996,11 +992,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpDocumentStatus>(entity =>
         {
-            entity.HasKey(e => e.StatusId).HasName("PK__lkp_docu__3683B53142759BB8");
+            entity.HasKey(e => e.StatusId).HasName("PK__lkp_docu__3683B531E5AD1AE6");
 
             entity.ToTable("lkp_document_status");
 
-            entity.HasIndex(e => e.StatusCode, "UQ__lkp_docu__4157B0211377E50E").IsUnique();
+            entity.HasIndex(e => e.StatusCode, "UQ__lkp_docu__4157B02124988090").IsUnique();
 
             entity.Property(e => e.StatusId).HasColumnName("status_id");
             entity.Property(e => e.StatusCode)
@@ -1014,11 +1010,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpScheduleType>(entity =>
         {
-            entity.HasKey(e => e.TypeId).HasName("PK__lkp_sche__2C0005985DE27F3E");
+            entity.HasKey(e => e.TypeId).HasName("PK__lkp_sche__2C000598E6C54F8A");
 
             entity.ToTable("lkp_schedule_types");
 
-            entity.HasIndex(e => e.TypeCode, "UQ__lkp_sche__2CB4DBF59820C82A").IsUnique();
+            entity.HasIndex(e => e.TypeCode, "UQ__lkp_sche__2CB4DBF57C7B7959").IsUnique();
 
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.TypeCode)
@@ -1032,11 +1028,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpTransactionType>(entity =>
         {
-            entity.HasKey(e => e.TypeId).HasName("PK__lkp_tran__2C0005985E8C8D2A");
+            entity.HasKey(e => e.TypeId).HasName("PK__lkp_tran__2C000598934D81CB");
 
             entity.ToTable("lkp_transaction_types");
 
-            entity.HasIndex(e => e.TypeCode, "UQ__lkp_tran__2CB4DBF502D7397D").IsUnique();
+            entity.HasIndex(e => e.TypeCode, "UQ__lkp_tran__2CB4DBF525C88185").IsUnique();
 
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.TypeCode)
@@ -1050,11 +1046,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpUserRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__lkp_user__760965CCDAD716BA");
+            entity.HasKey(e => e.RoleId).HasName("PK__lkp_user__760965CC2A6DF789");
 
             entity.ToTable("lkp_user_roles");
 
-            entity.HasIndex(e => e.RoleCode, "UQ__lkp_user__BAE63075474EB1AB").IsUnique();
+            entity.HasIndex(e => e.RoleCode, "UQ__lkp_user__BAE63075FCB651C6").IsUnique();
 
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.RoleCode)
@@ -1068,11 +1064,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<LkpZoneType>(entity =>
         {
-            entity.HasKey(e => e.TypeId).HasName("PK__lkp_zone__2C000598A54405FF");
+            entity.HasKey(e => e.TypeId).HasName("PK__lkp_zone__2C000598EF415824");
 
             entity.ToTable("lkp_zone_types");
 
-            entity.HasIndex(e => e.TypeCode, "UQ__lkp_zone__2CB4DBF51205525F").IsUnique();
+            entity.HasIndex(e => e.TypeCode, "UQ__lkp_zone__2CB4DBF57C909B51").IsUnique();
 
             entity.Property(e => e.TypeId).HasColumnName("type_id");
             entity.Property(e => e.TypeCode)
@@ -1086,7 +1082,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__notifica__3213E83FE5C3E5A4");
+            entity.HasKey(e => e.Id).HasName("PK__notifica__3213E83FD9D86BE3");
 
             entity.ToTable("notifications");
 
@@ -1123,7 +1119,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__products__3213E83F4F2F3A82");
+            entity.HasKey(e => e.Id).HasName("PK__products__3213E83FB4B4F2C0");
 
             entity.ToTable("products", tb => tb.HasTrigger("trg_products_updated"));
 
@@ -1135,9 +1131,9 @@ public partial class WarehouseDbContext : DbContext
 
             entity.HasIndex(e => e.Sku, "IX_products_sku");
 
-            entity.HasIndex(e => e.Barcode, "UQ__products__C16E36F86E59F7CB").IsUnique();
+            entity.HasIndex(e => e.Barcode, "UQ__products__C16E36F804DDAB6F").IsUnique();
 
-            entity.HasIndex(e => e.Sku, "UQ__products__DDDF4BE7FF63151B").IsUnique();
+            entity.HasIndex(e => e.Sku, "UQ__products__DDDF4BE745CE7416").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1206,11 +1202,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<PurchaseOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F145FC7AD");
+            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F7FC813E9");
 
             entity.ToTable("purchase_orders", tb => tb.HasTrigger("trg_purchase_orders_updated"));
 
-            entity.HasIndex(e => e.PoNumber, "UQ__purchase__11307549F0B84897").IsUnique();
+            entity.HasIndex(e => e.PoNumber, "UQ__purchase__1130754902888601").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1293,7 +1289,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<PurchaseOrderItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F7DAB1054");
+            entity.HasKey(e => e.Id).HasName("PK__purchase__3213E83F2D79EB99");
 
             entity.ToTable("purchase_order_items");
 
@@ -1339,11 +1335,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<SalesOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__sales_or__3213E83FE205B33D");
+            entity.HasKey(e => e.Id).HasName("PK__sales_or__3213E83F6A9F27B3");
 
             entity.ToTable("sales_orders", tb => tb.HasTrigger("trg_sales_orders_updated"));
 
-            entity.HasIndex(e => e.SoNumber, "UQ__sales_or__52A5E19053C550F4").IsUnique();
+            entity.HasIndex(e => e.SoNumber, "UQ__sales_or__52A5E190A64E0507").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1423,7 +1419,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<SalesOrderItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__sales_or__3213E83F2A4AE1C7");
+            entity.HasKey(e => e.Id).HasName("PK__sales_or__3213E83F66547E84");
 
             entity.ToTable("sales_order_items");
 
@@ -1473,7 +1469,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Schedule>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__schedule__3213E83F1AB09DB3");
+            entity.HasKey(e => e.Id).HasName("PK__schedule__3213E83F8213E5B8");
 
             entity.ToTable("schedules");
 
@@ -1537,11 +1533,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockAdjustment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_ad__3213E83F9A1D97A2");
+            entity.HasKey(e => e.Id).HasName("PK__stock_ad__3213E83F69089D29");
 
             entity.ToTable("stock_adjustments");
 
-            entity.HasIndex(e => e.AdjNumber, "UQ__stock_ad__D9908653289DA946").IsUnique();
+            entity.HasIndex(e => e.AdjNumber, "UQ__stock_ad__D9908653602A4EF9").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1598,7 +1594,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockAdjustmentItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_ad__3213E83F00BC8135");
+            entity.HasKey(e => e.Id).HasName("PK__stock_ad__3213E83FD809B3C2");
 
             entity.ToTable("stock_adjustment_items");
 
@@ -1648,7 +1644,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockCountItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_co__3213E83F822A80D1");
+            entity.HasKey(e => e.Id).HasName("PK__stock_co__3213E83FF200D257");
 
             entity.ToTable("stock_count_items");
 
@@ -1704,11 +1700,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockCountSession>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_co__3213E83F27C6BD87");
+            entity.HasKey(e => e.Id).HasName("PK__stock_co__3213E83F4741BE63");
 
             entity.ToTable("stock_count_sessions");
 
-            entity.HasIndex(e => e.SessionCode, "UQ__stock_co__615A1EA7D427AF2A").IsUnique();
+            entity.HasIndex(e => e.SessionCode, "UQ__stock_co__615A1EA739654F66").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1769,11 +1765,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockTransaction>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83FE1DF17B9");
+            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83F95B5A6BA");
 
             entity.ToTable("stock_transactions");
 
-            entity.HasIndex(e => e.TxnCode, "UQ__stock_tr__11B3720A4E9949EC").IsUnique();
+            entity.HasIndex(e => e.TxnCode, "UQ__stock_tr__11B3720A0CD3CE99").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1843,11 +1839,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockTransfer>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83FA820DD8E");
+            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83FC3F31118");
 
             entity.ToTable("stock_transfers");
 
-            entity.HasIndex(e => e.TransferNumber, "UQ__stock_tr__51550232429CFE84").IsUnique();
+            entity.HasIndex(e => e.TransferNumber, "UQ__stock_tr__5155023278F8BFE6").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -1909,7 +1905,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<StockTransferItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83FB33AC0EB");
+            entity.HasKey(e => e.Id).HasName("PK__stock_tr__3213E83F2AA2A191");
 
             entity.ToTable("stock_transfer_items");
 
@@ -1946,11 +1942,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Supplier>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__supplier__3213E83F938FCF1A");
+            entity.HasKey(e => e.Id).HasName("PK__supplier__3213E83FBF294DAB");
 
             entity.ToTable("suppliers");
 
-            entity.HasIndex(e => e.SupplierCode, "UQ__supplier__A82CE469A2501A3D").IsUnique();
+            entity.HasIndex(e => e.SupplierCode, "UQ__supplier__A82CE469C5E40C6A").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -2015,11 +2011,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<UnitsOfMeasure>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__units_of__3213E83FD937764D");
+            entity.HasKey(e => e.Id).HasName("PK__units_of__3213E83FEF850227");
 
             entity.ToTable("units_of_measure");
 
-            entity.HasIndex(e => e.UomCode, "UQ__units_of__31E2176B4043C281").IsUnique();
+            entity.HasIndex(e => e.UomCode, "UQ__units_of__31E2176B843E24CE").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -2044,13 +2040,10 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F04F05F36");
+            entity.HasKey(e => e.Id).HasName("PK__users__3213E83F6407C975");
 
-            entity.ToTable("users", tb =>
-                {
-                    tb.HasComment("Bảng người dùng thống nhất — thay thế 4 bảng riêng lẻ trong ERD gốc");
-                    tb.HasTrigger("trg_users_updated");
-                });
+            // HasTrigger báo cho EF Core biết table có trigger → tự xử lý OUTPUT clause
+            entity.ToTable("users", tb => tb.HasTrigger("trg_users_updated"));
 
             entity.HasIndex(e => e.IsActive, "IX_users_active");
 
@@ -2058,18 +2051,20 @@ public partial class WarehouseDbContext : DbContext
 
             entity.HasIndex(e => e.RoleId, "IX_users_role");
 
-            entity.HasIndex(e => e.StaffCode, "UQ__users__097F32868662A90D").IsUnique();
+            entity.HasIndex(e => e.StaffCode, "UQ__users__097F3286A88F16F6").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__users__AB6E6164F7FA9710").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__users__AB6E61643F9308CD").IsUnique();
 
+            // ValueGeneratedNever: code luôn tự set → EF không cần đọc lại từ DB
+            // → không cần OUTPUT clause → không conflict với trigger
             entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
+                .ValueGeneratedNever()
                 .HasColumnName("id");
             entity.Property(e => e.AvatarUrl)
                 .HasMaxLength(500)
                 .HasColumnName("avatar_url");
             entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(sysdatetimeoffset())")
+                .ValueGeneratedNever()
                 .HasColumnName("created_at");
             entity.Property(e => e.Email)
                 .HasMaxLength(150)
@@ -2078,7 +2073,7 @@ public partial class WarehouseDbContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("full_name");
             entity.Property(e => e.IsActive)
-                .HasDefaultValue(true)
+                .ValueGeneratedNever()
                 .HasColumnName("is_active");
             entity.Property(e => e.LastLoginAt).HasColumnName("last_login_at");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
@@ -2087,14 +2082,14 @@ public partial class WarehouseDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("phone");
             entity.Property(e => e.RoleId)
-                .HasDefaultValue((byte)3)
+                .ValueGeneratedNever()
                 .HasColumnName("role_id");
             entity.Property(e => e.StaffCode)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("staff_code");
             entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(sysdatetimeoffset())")
+                .ValueGeneratedNever()
                 .HasColumnName("updated_at");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
@@ -2268,11 +2263,11 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<Warehouse>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__warehous__3213E83FAB2072FC");
+            entity.HasKey(e => e.Id).HasName("PK__warehous__3213E83F7FEA6947");
 
             entity.ToTable("warehouses");
 
-            entity.HasIndex(e => e.Code, "UQ__warehous__357D4CF9C56F74C7").IsUnique();
+            entity.HasIndex(e => e.Code, "UQ__warehous__357D4CF90BE1807F").IsUnique();
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
@@ -2316,7 +2311,7 @@ public partial class WarehouseDbContext : DbContext
 
         modelBuilder.Entity<WarehouseZone>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__warehous__3213E83F3A29883A");
+            entity.HasKey(e => e.Id).HasName("PK__warehous__3213E83F855206DB");
 
             entity.ToTable("warehouse_zones");
 

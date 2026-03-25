@@ -30,5 +30,5 @@ public class Repository<T> : IRepository<T> where T : class
         if (entity != null) Delete(entity);
     }
 
-    public IEnumerable<T> Find(Func<T, bool> predicate) => _dbSet.Where(predicate).ToList();
+    public IEnumerable<T> Find(Func<T, bool> predicate) => _dbSet.AsNoTracking().Where(predicate).ToList();
 }

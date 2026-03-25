@@ -35,50 +35,76 @@
             <!-- App Title -->
             <StackPanel Grid.Row="0" Margin="24,28,24,20">
                 <TextBlock Text="QUẢN LÝ KHO"
-                           Foreground="#FFFFFF"
-                           FontSize="14"
-                           FontWeight="Bold"/>
+                           Foreground="#FFFFFF" FontSize="14" FontWeight="Bold"/>
                 <TextBlock Text="Warehouse Management"
-                           Foreground="#666666"
-                           FontSize="11"
-                           Margin="0,2,0,0"/>
+                           Foreground="#666666" FontSize="11" Margin="0,2,0,0"/>
             </StackPanel>
 
             <!-- Divider -->
             <Rectangle Grid.Row="1" Height="1" Fill="#2D2D2D" Margin="0,0,0,8"/>
 
             <!-- Menu Items -->
-            <StackPanel Grid.Row="2">
-                <TextBlock Text="MENU"
-                           Foreground="#555555"
-                           FontSize="10"
-                           FontWeight="SemiBold"
-                           Margin="24,12,0,8"/>
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
 
-                <Button Content="Tổng quan"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavDashboardCommand}"
-                        Visibility="{Binding CanViewDashboard, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                <Button Content="Đặt hàng"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavPurchaseOrderCommand}"
-                        Visibility="{Binding CanViewPurchaseOrder, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                <Button Content="Nhập kho"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavGoodsReceiptCommand}"
-                        Visibility="{Binding CanViewGoodsReceipt, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <!-- ── Tổng quan ─── -->
+                    <TextBlock Text="TỔNG QUAN"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"/>
+                    <Button Content="  📊  Tổng quan"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavDashboardCommand}"
+                            Visibility="{Binding CanViewDashboard, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <Button Content="Xuất kho"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavGoodsIssueCommand}"
-                        Visibility="{Binding CanViewGoodsIssue, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <!-- ── Nhập / Xuất Kho ─── -->
+                    <TextBlock Text="KHO HÀNG"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"/>
+                    <Button Content="  📦  Đặt hàng"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavPurchaseOrderCommand}"
+                            Visibility="{Binding CanViewPurchaseOrder, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="  📥  Nhập kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavGoodsReceiptCommand}"
+                            Visibility="{Binding CanViewGoodsReceipt, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="  📤  Xuất kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavGoodsIssueCommand}"
+                            Visibility="{Binding CanViewGoodsIssue, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                <Button Content="Người dùng"
-                        Style="{StaticResource SidebarMenuItem}"
-                        Command="{Binding NavUserManagementCommand}"
-                        Visibility="{Binding CanViewUsers, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                
-            </StackPanel>
+                    <!-- ── Phân công (Admin + Manager) ─── -->
+                    <TextBlock Text="PHÂN CÔNG"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"
+                               Visibility="{Binding ShowScheduleMenu, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="  🗓  Phân công nhiệm vụ"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavScheduleCommand}"
+                            Visibility="{Binding ShowScheduleMenu, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <!-- ── Lịch của tôi (Staff) ─── -->
+                    <TextBlock Text="CÔNG VIỆC"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"
+                               Visibility="{Binding ShowMySchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="  📅  Lịch của tôi"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavMyScheduleCommand}"
+                            Visibility="{Binding ShowMySchedule, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <!-- ── Quản trị (Admin) ─── -->
+                    <TextBlock Text="QUẢN TRỊ"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6"
+                               Visibility="{Binding ShowAdminMenu, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="  👥  Người dùng"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavUserManagementCommand}"
+                            Visibility="{Binding CanViewUsers, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Bottom: User info + Logout -->
             <Grid Grid.Row="3">
@@ -92,14 +118,10 @@
 
                 <StackPanel Grid.Row="1" Margin="24,14,24,10">
                     <TextBlock Text="{Binding CurrentUserName}"
-                               Foreground="#EEEEEE"
-                               FontSize="12"
-                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" FontSize="12" FontWeight="SemiBold"
                                TextTrimming="CharacterEllipsis"/>
                     <TextBlock Text="{Binding CurrentUserRole}"
-                               Foreground="#777777"
-                               FontSize="11"
-                               Margin="0,2,0,0"/>
+                               Foreground="#777777" FontSize="11" Margin="0,2,0,0"/>
                 </StackPanel>
 
                 <Button Grid.Row="2"
@@ -125,15 +147,13 @@
                 <Grid Margin="24,0">
                     <TextBlock Text="{Binding CurrentPageTitle}"
                                Foreground="{StaticResource BrushTextPrimary}"
-                               FontSize="14"
-                               FontWeight="SemiBold"
+                               FontSize="14" FontWeight="SemiBold"
                                VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <!-- Content Area -->
-            <ContentControl Grid.Row="1"
-                            Content="{Binding CurrentView}"/>
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
         </Grid>
     </Grid>
 </Window>

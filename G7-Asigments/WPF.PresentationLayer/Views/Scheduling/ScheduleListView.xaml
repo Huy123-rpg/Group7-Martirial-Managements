@@ -1,28 +1,186 @@
 <UserControl x:Class="WPF.PresentationLayer.Views.Scheduling.ScheduleListView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Scheduling">
+             xmlns:vm="clr-namespace:WPF.PresentationLayer.ViewModels.Scheduling"
+             xmlns:views="clr-namespace:WPF.PresentationLayer.Views.Scheduling">
     <UserControl.DataContext>
         <vm:ScheduleViewModel/>
     </UserControl.DataContext>
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Width="220" Margin="0,0,0,8" HorizontalAlignment="Right"
-                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Schedules}"
-                  SelectedItem="{Binding Selected}"
-                  AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Tiêu đề"     Binding="{Binding Title}"      Width="200"/>
-                <DataGridTextColumn Header="Kho"         Binding="{Binding Warehouse.Name}" Width="150"/>
-                <DataGridTextColumn Header="Loại lịch"   Binding="{Binding ScheduleType.TypeName}" Width="130"/>
-                <DataGridTextColumn Header="Ngày"        Binding="{Binding ScheduledDate, StringFormat=dd/MM/yyyy}" Width="110"/>
-                <DataGridTextColumn Header="Phân công"   Binding="{Binding AssignedTo.FullName}" Width="150"/>
-                <DataGridTextColumn Header="Trạng thái"  Binding="{Binding StatusId}"   Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+
+    <TabControl Margin="8" TabStripPlacement="Top">
+
+        <!-- ── Tab 1: Danh sách ── -->
+        <TabItem Header="Danh sách">
+            <Grid Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Toolbar -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8" HorizontalAlignment="Left">
+                    <Button Content="+ Tạo lịch" Command="{Binding CreateCommand}"
+                            Padding="12,6" Margin="0,0,8,0"
+                            Visibility="{Binding IsManagerOrAdmin, Converter={StaticResource BoolToVisibility}}"/>
+                    <Button Content="&#x270F; Sửa" Command="{Binding EditCommand}"
+                            Padding="12,6" Margin="0,0,8,0"
+                            Visibility="{Binding IsManagerOrAdmin, Converter={StaticResource BoolToVisibility}}"/>
+                    <Button Content="&#x2715; Hủy lịch" Command="{Binding CancelScheduleCommand}"
+                            Padding="12,6" Margin="0,0,8,0"
+                            Visibility="{Binding IsManagerOrAdmin, Converter={StaticResource BoolToVisibility}}"/>
+                    <Button Content="&#x26A0; Bỏ lỡ" Command="{Binding MarkMissedCommand}"
+                            Padding="12,6" Margin="0,0,8,0"
+                            Background="#FF6F00" Foreground="White"
+                            Visibility="{Binding IsManagerOrAdmin, Converter={StaticResource BoolToVisibility}}"/>
+                    <Button Content="&#x1F5D1; Xóa" Command="{Binding DeleteCommand}"
+                            Padding="12,6"
+                            Visibility="{Binding IsManagerOrAdmin, Converter={StaticResource BoolToVisibility}}"/>
+                </StackPanel>
+
+                <!-- Filter Bar -->
+                <Grid Grid.Row="1" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="220"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Trạng thái:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox Grid.Column="1"
+                              ItemsSource="{Binding StatusDisplayOptions}"
+                              DisplayMemberPath="Label"
+                              SelectedValuePath="Code"
+                              SelectedValue="{Binding FilterStatus}"
+                              Margin="0,0,12,0"/>
+
+                    <TextBlock Grid.Column="2" Text="Từ ngày:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <DatePicker Grid.Column="3" SelectedDate="{Binding FilterFrom}" Margin="0,0,12,0"/>
+
+                    <TextBlock Grid.Column="4" Text="Đến ngày:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <DatePicker Grid.Column="5" SelectedDate="{Binding FilterTo}" Margin="0,0,12,0"/>
+
+                    <TextBox Grid.Column="7" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             Tag="Tìm kiếm..." VerticalContentAlignment="Center" Padding="6,4"/>
+                </Grid>
+
+                <!-- DataGrid -->
+                <DataGrid Grid.Row="2"
+                          ItemsSource="{Binding Schedules}"
+                          SelectedItem="{Binding Selected}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          CanUserAddRows="False" SelectionMode="Single"
+                          GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Tiêu đề"      Binding="{Binding Title}"      Width="200"/>
+                        <DataGridTextColumn Header="Kho"          Binding="{Binding Warehouse.Name}" Width="140"/>
+                        <DataGridTextColumn Header="Loại"         Binding="{Binding ScheduleTypeNavigation.TypeName}" Width="120"/>
+                        <DataGridTextColumn Header="Bắt đầu"      Binding="{Binding StartTime, StringFormat=dd/MM/yyyy HH:mm}" Width="150"/>
+                        <DataGridTextColumn Header="Phân công"    Binding="{Binding AssignedToNavigation.FullName}" Width="150"/>
+                        <DataGridTextColumn Header="Tài liệu"     Binding="{Binding RefType}" Width="80"/>
+                        <DataGridTemplateColumn Header="Trạng thái" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="4" Padding="6,2"
+                                            Background="{Binding StatusCode, Converter={StaticResource StatusToBrush}}">
+                                        <TextBlock Text="{Binding StatusCode, Converter={StaticResource StatusToLabel}}"
+                                                   Foreground="White" FontSize="11" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Status Bar + Detail -->
+                <StackPanel Grid.Row="3">
+                    <TextBlock Margin="0,6,0,4" FontSize="12" Foreground="#666"
+                               Text="{Binding Schedules.Count, StringFormat='Hiển thị {0} lịch'}"/>
+                    <Border Padding="16,12"
+                            Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
+                            CornerRadius="4"
+                            Visibility="{Binding Selected, Converter={StaticResource NullToVisibility}}">
+                        <StackPanel>
+                            <!-- Header: badge + title -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Border Background="{Binding Selected.StatusCode, Converter={StaticResource StatusToBrush}}"
+                                        CornerRadius="4" Padding="8,3" Margin="0,0,10,0">
+                                    <TextBlock Text="{Binding Selected.StatusCode, Converter={StaticResource StatusToLabel}}"
+                                               Foreground="White" FontWeight="SemiBold" FontSize="11"/>
+                                </Border>
+                                <TextBlock Text="{Binding Selected.Title}"
+                                           FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <!-- Row 1: Kho | Loại | Bắt đầu -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                    <TextBlock Text="Kho" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.Warehouse.Name, TargetNullValue='—'}"
+                                               FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                    <TextBlock Text="Loại lịch" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.ScheduleTypeNavigation.TypeName, TargetNullValue='—'}"
+                                               FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Bắt đầu" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.StartTime, StringFormat=dd/MM/yyyy\ HH:mm}"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- Row 2: Phân công | Tài liệu | Nhắc nhở -->
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                    <TextBlock Text="Phân công cho" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.AssignedToNavigation.FullName, TargetNullValue='—'}"
+                                               FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                    <TextBlock Text="Tài liệu" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.RefType, TargetNullValue='—'}"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Nhắc nhở" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding Selected.ReminderMinutes, StringFormat='{}{0} phút', TargetNullValue='—'}"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- Ghi chú -->
+                            <StackPanel Margin="0,8,0,0"
+                                        Visibility="{Binding Selected.Description, Converter={StaticResource NullToVisibility}}">
+                                <TextBlock Text="Ghi chú" Foreground="#888" FontSize="11" Margin="0,0,0,2"/>
+                                <TextBlock Text="{Binding Selected.Description}"
+                                           TextWrapping="Wrap" Foreground="#444" MaxHeight="48"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+
+        <!-- ── Tab 2: Lịch tháng ── -->
+        <TabItem Header="Lịch tháng">
+            <views:ScheduleCalendarView/>
+        </TabItem>
+
+    </TabControl>
 </UserControl>
