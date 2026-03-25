@@ -1,6 +1,7 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Email;
 using DAL.DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace BLL.BusinessLogicLayer.Services.Scheduling;
@@ -106,7 +107,10 @@ public class ScheduleService : IScheduleService
         _uow.Schedules.Add(template);
 
         if (template.AssignedTo.HasValue)
+        {
             _uow.Notifications.Add(BuildAssignNotification(template));
+            CheckAndCreateStockCount(template);
+        }
 
         _uow.Save();
 
@@ -153,13 +157,79 @@ public class ScheduleService : IScheduleService
 
             // Chỉ gửi notification cho lần đầu
             if (i == 0 && template.AssignedTo.HasValue)
+            {
                 _uow.Notifications.Add(BuildAssignNotification(instance));
+                CheckAndCreateStockCount(instance);
+            }
         }
         _uow.Save();
 
         // Chỉ gửi mail 1 lần (dùng template vì nó có đủ thông tin)
         if (template.AssignedTo.HasValue)
             SendAssignmentEmail(template);
+    }
+
+    private void CheckAndCreateStockCount(Schedule schedule)
+    {
+        if (!schedule.AssignedTo.HasValue || !schedule.WarehouseId.HasValue) return;
+
+        var type = _uow.ScheduleTypes.Find(t => t.TypeId == schedule.ScheduleType).FirstOrDefault();
+        if (type != null && (type.TypeCode == "STOCK_COUNT" || type.TypeName.Contains("Kiểm kho", StringComparison.OrdinalIgnoreCase)))
+        {
+            var sessionId = Guid.NewGuid();
+            var sessionCode = "SC-" + DateTime.Now.ToString("yyMMddHHmm") + "-" + new Random().Next(100, 999);
+
+            var session = new StockCountSession
+            {
+                Id = sessionId,
+                SessionCode = sessionCode,
+                WarehouseId = schedule.WarehouseId.Value,
+                StatusId = 2, // PENDING
+                CreatedBy = schedule.CreatedBy,
+                AssignedTo = schedule.AssignedTo,
+                PlannedDate = DateOnly.FromDateTime(schedule.StartTime.Date),
+                CreatedAt = DateTimeOffset.UtcNow,
+                Notes = $"Phiếu kiểm kho tự động tạo từ lịch công việc: {schedule.Title}"
+            };
+
+            schedule.RefType = "STOCK_COUNT";
+            schedule.RefId = sessionId;
+
+            _uow.Context.Set<StockCountSession>().Add(session);
+
+            // Add auto Stock Count items for ALL products currently in that warehouse
+            var inventories = _uow.Context.Set<Inventory>()
+                .Include(i => i.Product)
+                .Where(i => i.WarehouseId == schedule.WarehouseId.Value && i.QtyOnHand > 0)
+                .ToList();
+
+            foreach (var inv in inventories)
+            {
+                var item = new StockCountItem
+                {
+                    Id = Guid.NewGuid(),
+                    SessionId = sessionId,
+                    ProductId = inv.ProductId,
+                    ZoneId = inv.ZoneId,
+                    QtySystem = inv.QtyOnHand,
+                    UnitCost = inv.AvgCost
+                };
+                _uow.Context.Set<StockCountItem>().Add(item);
+            }
+
+            _uow.Notifications.Add(new Notification
+            {
+                Id = Guid.NewGuid(),
+                UserId = schedule.AssignedTo.Value,
+                Title = "📦 Nhiệm vụ: Thực hiện Kiểm kho",
+                Body = $"Một phiên kiểm kho ({sessionCode}) đã tự động được khởi tạo tại Kho của bạn theo lịch phân công. Vui lòng vào Cột chức năng [Thực hiện kiểm kho] để bắt đầu ghi nhận số liệu.",
+                Channel = "IN_APP",
+                RefType = "STOCK_COUNT",
+                RefId = sessionId,
+                IsRead = false,
+                CreatedAt = DateTimeOffset.UtcNow
+            });
+        }
     }
 
     public void Update(Schedule schedule)

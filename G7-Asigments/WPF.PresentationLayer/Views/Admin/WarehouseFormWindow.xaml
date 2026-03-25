@@ -1,0 +1,89 @@
+<Window x:Class="WPF.PresentationLayer.Views.Admin.WarehouseFormWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding WindowTitle}"
+        Width="460" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BrushBackground}">
+
+    <StackPanel Margin="28,24">
+
+        <!-- Error Banner -->
+        <Border Background="#FFEBEE" BorderBrush="#C62828" BorderThickness="1"
+                CornerRadius="4" Padding="12,8" Margin="0,0,0,12"
+                Visibility="{Binding ErrorVisibility}">
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#C62828" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Propose info banner -->
+        <Border Background="#E3F2FD" BorderBrush="#1565C0" BorderThickness="1"
+                CornerRadius="4" Padding="12,8" Margin="0,0,0,12"
+                Visibility="{Binding IsProposeMode, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="Chế độ đề xuất — thông tin bên dưới chỉ đọc. Nhập ghi chú để gửi đến Admin."
+                       Foreground="#1565C0" FontSize="12" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Mã kho -->
+        <TextBlock Text="Mã kho *" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+        <TextBox Text="{Binding Code, UpdateSourceTrigger=PropertyChanged}"
+                 IsReadOnly="{Binding IsReadOnly}" Margin="0,0,0,10"/>
+
+        <!-- Tên kho -->
+        <TextBlock Text="Tên kho *" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                 IsReadOnly="{Binding IsReadOnly}" Margin="0,0,0,10"/>
+
+        <!-- Địa chỉ -->
+        <TextBlock Text="Địa chỉ" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+        <TextBox Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
+                 IsReadOnly="{Binding IsReadOnly}" Margin="0,0,0,10"/>
+
+        <!-- Thành phố -->
+        <TextBlock Text="Thành phố" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+        <TextBox Text="{Binding City, UpdateSourceTrigger=PropertyChanged}"
+                 IsReadOnly="{Binding IsReadOnly}" Margin="0,0,0,10"/>
+
+        <!-- Quản lý -->
+        <TextBlock Text="Quản lý kho" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+        <ComboBox ItemsSource="{Binding Managers}"
+                  SelectedItem="{Binding SelectedManager}"
+                  IsEnabled="{Binding IsEditable}"
+                  DisplayMemberPath="FullName"
+                  Margin="0,0,0,10"/>
+
+
+
+        <!-- Ghi chú đề xuất (Manager only) -->
+        <StackPanel Visibility="{Binding IsProposeMode, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="Ghi chú đề xuất" Foreground="{StaticResource BrushTextSecondary}" FontSize="12" Margin="0,0,0,4"/>
+            <TextBox Text="{Binding ProposeNote, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" Height="80" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="0,0,0,10"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Hủy" Width="90" Margin="0,0,10,0"
+                    Command="{Binding CancelCommand}"/>
+            <Button Width="130" Style="{StaticResource ButtonPrimary}"
+                    Command="{Binding SaveCommand}">
+                <Button.Content>
+                    <TextBlock>
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="Lưu"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsProposeMode}" Value="True">
+                                        <Setter Property="Text" Value="Gửi đề xuất"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Window>
