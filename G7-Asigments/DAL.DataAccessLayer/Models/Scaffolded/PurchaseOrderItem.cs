@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-<<<<<<<< HEAD:G7-Asigments/DAL.DataAccessLayer/Model/PurchaseOrderItem.cs
-namespace DAL.DataAccessLayer.Model;
-========
-namespace DAL.DataAccessLayer.Models;
->>>>>>>> origin/main:G7-Asigments/DAL.DataAccessLayer/Models/Scaffolded/PurchaseOrderItem.cs
+namespace DAL.DataAccessLayer.Models;G7-Asigments/DAL.DataAccessLayer/Models/Scaffolded/PurchaseOrderItem.cs
 
 public partial class PurchaseOrderItem
 {
