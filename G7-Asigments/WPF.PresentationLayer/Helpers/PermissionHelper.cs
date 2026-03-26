@@ -31,12 +31,12 @@ public static class PermissionHelper
     public static bool CanCreateGoodsReceipt => IsAdmin || IsManager || IsStaff;
     public static bool CanEditGoodsReceipt => IsAdmin || IsManager || IsStaff;
     public static bool CanDeleteGoodsReceipt => IsAdmin || IsManager;
-    public static bool CanApproveGoodsReceipt => IsAdmin;
+    public static bool CanApproveGoodsReceipt => IsAdmin || IsManager || IsAccountant;
 
     // Goods Issue
     public static bool CanViewGoodsIssue => IsAdmin || IsManager || IsStaff || IsAccountant;
     public static bool CanCreateGoodsIssue => IsAdmin || IsManager || IsStaff;
     public static bool CanEditGoodsIssue => IsAdmin || IsManager || IsStaff;
     public static bool CanDeleteGoodsIssue => IsAdmin || IsManager;
-    public static bool CanApproveGoodsIssue => IsAdmin;
+    public static bool CanApproveGoodsIssue => IsAdmin || IsManager || IsAccountant;
 }
