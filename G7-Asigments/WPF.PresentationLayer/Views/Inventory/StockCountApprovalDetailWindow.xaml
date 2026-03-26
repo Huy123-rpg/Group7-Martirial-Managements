@@ -1,0 +1,107 @@
+<Window x:Class="WPF.PresentationLayer.Views.Inventory.StockCountApprovalDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chi Tiết Phiếu Kiểm Kho Đã Đếm"
+        Height="540" Width="760"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip"
+        Background="#F5F7FA">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Info -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock x:Name="TxtSessionCode" FontSize="20" FontWeight="Bold" Foreground="#2C3E50"/>
+            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                <TextBlock Text="Kho:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                <TextBlock x:Name="TxtWarehouse" Foreground="#555"/>
+                <TextBlock Text=" | Lịch kiểm:" FontWeight="SemiBold" Margin="12,0,6,0"/>
+                <TextBlock x:Name="TxtSchedule" Foreground="#3498DB" FontWeight="SemiBold"/>
+                <TextBlock Text=" | Trạng thái:" FontWeight="SemiBold" Margin="12,0,6,0"/>
+                <TextBlock x:Name="TxtStatus" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock Text="Đếm bởi:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                <TextBlock x:Name="TxtAssignedTo" Foreground="#555"/>
+                <TextBlock Text=" | Ngày hoàn thành:" FontWeight="SemiBold" Margin="12,0,6,0"/>
+                <TextBlock x:Name="TxtCompletedAt" Foreground="#555"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock x:Name="TxtApprovedInfo" Foreground="#27AE60" FontWeight="SemiBold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                <TextBlock Text="Ghi chú:" FontWeight="SemiBold" Margin="0,0,6,0"/>
+                <TextBlock x:Name="TxtNotes" Foreground="#555" TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+
+        <Rectangle Grid.Row="1" Height="1" Fill="#E2E8F0" Margin="0,0,0,12"/>
+
+        <!-- Items Grid -->
+        <DataGrid Grid.Row="2"
+                  x:Name="ItemsGrid"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="#E2E8F0"
+                  BorderBrush="#E2E8F0" BorderThickness="1"
+                  Background="White" RowHeight="36"
+                  AlternatingRowBackground="#F8FAFC">
+
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Mã SP"     Binding="{Binding Product.Sku}"         Width="100"/>
+                <DataGridTextColumn Header="Sản phẩm"  Binding="{Binding Product.ProductName}" Width="*"/>
+                <DataGridTextColumn Header="HT (Tổng)" Binding="{Binding QtySystem, StringFormat={}{0:N0}}" Width="90"/>
+                <DataGridTextColumn Header="HT (Khả dụng)" Binding="{Binding QtyAvailable, StringFormat={}{0:N0}}" Width="90">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#7F8C8D"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Tồn đếm được" Binding="{Binding QtyCounted, StringFormat={}{0:N0}}" Width="110">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Foreground" Value="#2980B9"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Lệch" Width="90">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding QtyVariance, StringFormat={}{0:N0}}"
+                                       FontWeight="Bold" HorizontalAlignment="Right" Padding="0,0,8,0"
+                                       Foreground="#2C3E50"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Giá trị lệch" Binding="{Binding VarianceValue, StringFormat={}{0:N0} ₫}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Footer -->
+        <Button Grid.Row="3" Content="Đóng"
+                Click="BtnClose_Click"
+                HorizontalAlignment="Right"
+                Background="#7F8C8D" Foreground="White"
+                BorderThickness="0" Padding="20,8"
+                Margin="0,12,0,0" Cursor="Hand" FontWeight="SemiBold"/>
+    </Grid>
+</Window>

@@ -24,6 +24,29 @@ public partial class MainWindow : Window
         MenuHeaderAdmin.Visibility = adminVis;
         BtnUsers.Visibility        = adminVis;
 
+        // Warehouse config (Admin + Manager)
+        var whConfigVis = (isAdmin || isManager) ? Visibility.Visible : Visibility.Collapsed;
+        MenuHeaderWarehouse.Visibility = whConfigVis;
+        BtnWarehouseConfig.Visibility  = whConfigVis;
+
+        // Inventory lookup (All except Supplier)
+        var isSupplier = SessionManager.IsSupplier;
+        var invVis = (!isSupplier) ? Visibility.Visible : Visibility.Collapsed;
+        MenuHeaderInventory.Visibility = invVis;
+        BtnInventoryLookup.Visibility  = invVis;
+
+        // Stock Count Approval (Admin + Manager + Accountant)
+        bool isAccountant = SessionManager.CurrentUser?.Role?.RoleCode
+            ?.Equals("ACCOUNTANT", StringComparison.OrdinalIgnoreCase) == true;
+        var adjVis = (isAdmin || isManager || isAccountant) ? Visibility.Visible : Visibility.Collapsed;
+        BtnStockCountApproval.Visibility = adjVis;
+
+        // Execute Stock Count is STRICTLY FOR STAFF
+        if (!SessionManager.IsStaff)
+        {
+            BtnStockCountExecution.Visibility = Visibility.Collapsed;
+        }
+
         // Schedule menu (Admin + Manager)
         var scheduleVis = (isAdmin || isManager) ? Visibility.Visible : Visibility.Collapsed;
         MenuHeaderSchedule.Visibility = scheduleVis;

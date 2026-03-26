@@ -11,7 +11,7 @@ public sealed class UnitOfWork
     private readonly WarehouseDbContext _context;
 
     public static string ConnectionString { get; set; } =
-        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
+        "Server=.\\SQLEXPRESS;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
 
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
@@ -27,7 +27,7 @@ public sealed class UnitOfWork
         }
     }
 
-
+    public WarehouseDbContext Context => _context;
 
     private UnitOfWork()
     {
@@ -45,6 +45,7 @@ public sealed class UnitOfWork
     public IRepository<Product> Products => new Repository<Product>(_context);
     public IRepository<Supplier> Suppliers => new Repository<Supplier>(_context);
     public IRepository<Customer> Customers => new Repository<Customer>(_context);
+    public IRepository<Inventory> Inventories => new Repository<Inventory>(_context);
     public IRepository<Schedule> Schedules => new Repository<Schedule>(_context);
     public IRepository<PurchaseOrder> PurchaseOrders => new Repository<PurchaseOrder>(_context);
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
@@ -55,7 +56,12 @@ public sealed class UnitOfWork
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
     public IRepository<SalesOrderItem> SalesOrderItems => new Repository<SalesOrderItem>(_context);
     public IRepository<Notification> Notifications => new Repository<Notification>(_context);
-    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
+    public IRepository<LkpScheduleType>  ScheduleTypes  => new Repository<LkpScheduleType>(_context);
+    public IRepository<WarehouseZone>    WarehouseZones => new Repository<WarehouseZone>(_context);
+    public IRepository<LkpZoneType>      ZoneTypes      => new Repository<LkpZoneType>(_context);
+    public IRepository<LkpCostingMethod> CostingMethods => new Repository<LkpCostingMethod>(_context);
+
+    // ─── Save ────────────────────────────────────────────────────────────────
     public int Save()
     {
         try

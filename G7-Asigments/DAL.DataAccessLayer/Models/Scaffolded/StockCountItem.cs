@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.DataAccessLayer.Models;
 
@@ -18,6 +19,9 @@ public partial class StockCountItem
     public decimal QtySystem { get; set; }
 
     public decimal? QtyCounted { get; set; }
+
+    [NotMapped]
+    public decimal QtyAvailable { get; set; }
 
     public decimal? QtyVariance { get; set; }
 
