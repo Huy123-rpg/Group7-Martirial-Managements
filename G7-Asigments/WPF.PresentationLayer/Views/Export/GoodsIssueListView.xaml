@@ -91,6 +91,13 @@
                                         Foreground="White"
                                         Visibility="{Binding IsDeleteVisible, Converter={StaticResource BoolToVisibilityConverter}}"
                                         Click="BtnDelete_Click"/>
+                                <Button Content="Hủy"
+                                        Width="60"
+                                        Margin="5,0,0,0"
+                                        Background="#EA580C"
+                                        Foreground="White"
+                                        Visibility="{Binding IsCancelVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="BtnVoid_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

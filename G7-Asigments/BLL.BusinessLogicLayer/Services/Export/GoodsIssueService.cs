@@ -51,4 +51,14 @@ public class GoodsIssueService : IGoodsIssueService
         _uow.GoodsIssues.Update(gi);
         _uow.Save();
     }
+
+    public void Cancel(Guid id, Guid cancelledBy, string reason)
+    {
+        var gi = _uow.GoodsIssues.GetById(id) ?? throw new Exception("GI not found");
+        gi.StatusId = 4;
+        gi.RejectionReason = reason;
+        gi.UpdatedAt = DateTimeOffset.UtcNow;
+        _uow.GoodsIssues.Update(gi);
+        _uow.Save();
+    }
 }

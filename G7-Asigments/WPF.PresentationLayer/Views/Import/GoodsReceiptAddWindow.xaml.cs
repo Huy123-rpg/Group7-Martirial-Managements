@@ -64,12 +64,14 @@ public partial class GoodsReceiptAddWindow : Window
             {
                 ProductId = poItem.ProductId,
                 ProductName = product?.ProductName ?? "",
+                QtyOrdered = poItem.QtyOrdered,
                 QtyReceived = poItem.QtyOrdered,
                 UnitCost = poItem.UnitCost,
                 Notes = poItem.Notes
             });
         }
         RefreshTotal();
+        LockFieldsFromPo(po);
     }
 
     public GoodsReceiptAddWindow(GoodsReceipt receipt)
@@ -109,6 +111,23 @@ public partial class GoodsReceiptAddWindow : Window
         }
 
         RefreshTotal();
+
+        if (receipt.PoId.HasValue)
+        {
+            var po = _uow.PurchaseOrders.GetById(receipt.PoId.Value);
+            if (po != null)
+            {
+                var poItemQty = _uow.PurchaseOrderItems.GetAll()
+                    .Where(x => x.PoId == po.Id)
+                    .ToDictionary(x => x.ProductId, x => x.QtyOrdered);
+                foreach (var item in Items)
+                {
+                    if (poItemQty.TryGetValue(item.ProductId, out var qty))
+                        item.QtyOrdered = qty;
+                }
+                LockFieldsFromPo(po);
+            }
+        }
     }
 
     private void LoadData()
@@ -125,6 +144,27 @@ public partial class GoodsReceiptAddWindow : Window
 
         dgItems.CellEditEnding += (s, e) =>
             Dispatcher.BeginInvoke(new Action(RefreshTotal));
+    }
+
+    private void LockFieldsFromPo(PurchaseOrder po)
+    {
+        // Show PO reference banner
+        pnlPoRef.Visibility = Visibility.Visible;
+        txtPoRef.Text = po.PoNumber;
+
+        var supplier = _uow.Suppliers.GetById(po.SupplierId);
+        txtPoSupplier.Text = supplier?.SupplierName ?? "";
+
+        var warehouse = _uow.Warehouses.GetById(po.WarehouseId);
+        txtPoWarehouse.Text = warehouse?.Name ?? "";
+
+        // Lock fields that come from PO
+        cbSupplier.IsEnabled = false;
+        cbWarehouse.IsEnabled = false;
+        pnlItemButtons.Visibility = Visibility.Collapsed;
+
+        // Lock product selection in grid (products are fixed from PO)
+        dgItems.IsReadOnly = false; // still allow qty/price edit
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

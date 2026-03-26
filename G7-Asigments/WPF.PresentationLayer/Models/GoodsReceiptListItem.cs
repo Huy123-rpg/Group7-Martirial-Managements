@@ -5,6 +5,9 @@ namespace WPF.PresentationLayer.Models;
 public class GoodsReceiptListItem
 {
     public GoodsReceipt GoodsReceipt { get; set; } = null!;
+    public string PoNumber { get; set; } = "";
+    public string SupplierName { get; set; } = "";
+    public string WarehouseName { get; set; } = "";
     public string GrnNumber => GoodsReceipt.GrnNumber;
     public DateOnly ReceiptDate => GoodsReceipt.ReceiptDate;
     public decimal TotalAmount => GoodsReceipt.TotalAmount;
@@ -23,4 +26,5 @@ public class GoodsReceiptListItem
     public bool IsApproveVisible { get; set; }
     public bool IsEditVisible { get; set; }
     public bool IsDeleteVisible { get; set; }
+    public bool IsCancelVisible { get; set; }
 }

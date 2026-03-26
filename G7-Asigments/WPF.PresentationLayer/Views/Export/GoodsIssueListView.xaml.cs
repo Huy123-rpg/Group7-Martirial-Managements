@@ -43,7 +43,8 @@ public partial class GoodsIssueListView : UserControl
                     WarehouseName = warehouses.TryGetValue(x.WarehouseId, out var wn) ? wn : "",
                     IsApproveVisible = canApprove && x.StatusId == 1,
                     IsEditVisible = canEdit && x.StatusId == 1,
-                    IsDeleteVisible = canDelete && x.StatusId == 1
+                    IsDeleteVisible = canDelete && x.StatusId == 1,
+                    IsCancelVisible = canApprove && x.StatusId == 3,
                 })
                 .ToList();
 
@@ -162,6 +163,38 @@ public partial class GoodsIssueListView : UserControl
                 {
                     MessageBox.Show("Lỗi duyệt phiếu xuất: " + ex.Message);
                 }
+            }
+        }
+    }
+
+    private void BtnVoid_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanApproveGoodsIssue)
+        {
+            MessageBox.Show("Chỉ tài khoản Admin mới có quyền hủy phiếu xuất.", "Không có quyền",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        if (sender is Button btn && btn.DataContext is GoodsIssueListItem row)
+        {
+            var dialog = new WPF.PresentationLayer.Views.Shared.InputDialog(
+                "Nhập lý do hủy phiếu:", "Xác nhận hủy phiếu");
+            if (dialog.ShowDialog() != true || string.IsNullOrWhiteSpace(dialog.Result))
+            {
+                MessageBox.Show("Vui lòng nhập lý do hủy.");
+                return;
+            }
+
+            try
+            {
+                _goodsIssueService.Cancel(row.GoodsIssue.Id, SessionManager.CurrentUser!.Id, dialog.Result);
+                MessageBox.Show("Hủy phiếu thành công!");
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi hủy phiếu: " + ex.Message);
             }
         }
     }

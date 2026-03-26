@@ -112,6 +112,23 @@ public partial class GoodsIssueAddWindow : Window
         }
 
         RefreshTotal();
+
+        if (issue.SoId.HasValue)
+        {
+            var so = _uow.SalesOrders.GetById(issue.SoId.Value);
+            if (so != null)
+            {
+                var soItemQty = _uow.SalesOrderItems.GetAll()
+                    .Where(x => x.SoId == so.Id)
+                    .ToDictionary(x => x.ProductId, x => x.QtyOrdered);
+                foreach (var item in _items)
+                {
+                    if (soItemQty.TryGetValue(item.ProductId, out var qty))
+                        item.QtyOrdered = qty;
+                }
+                LockFieldsFromSo(so);
+            }
+        }
     }
 
     private void LoadData()

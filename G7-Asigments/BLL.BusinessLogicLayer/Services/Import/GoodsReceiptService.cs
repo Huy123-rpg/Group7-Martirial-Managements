@@ -53,4 +53,14 @@ public class GoodsReceiptService : IGoodsReceiptService
         _uow.GoodsReceipts.Update(gr);
         _uow.Save();
     }
+
+    public void Cancel(Guid id, Guid cancelledBy, string reason)
+    {
+        var gr = _uow.GoodsReceipts.GetById(id) ?? throw new Exception("GR not found");
+        gr.StatusId = 4;
+        gr.RejectionReason = reason;
+        gr.UpdatedAt = DateTimeOffset.UtcNow;
+        _uow.GoodsReceipts.Update(gr);
+        _uow.Save();
+    }
 }
