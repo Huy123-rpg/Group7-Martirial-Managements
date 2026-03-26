@@ -1,0 +1,108 @@
+<UserControl x:Class="WPF.PresentationLayer.Views.Inventory.StockCountApprovalView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900"
+             Background="#F5F7FA">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,15">
+            <TextBlock Text="Duyệt Kiểm Kê Kho" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+        </StackPanel>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15"
+                BorderBrush="#E2E8F0" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Filters -->
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Tìm kiếm:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                    <TextBox Width="200" Margin="0,0,16,0"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center" Padding="6,4"/>
+
+                    <TextBlock Text="Trạng thái:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                    <ComboBox Width="140" Margin="0,0,0,0"
+                              ItemsSource="{Binding StatusOptions}"
+                              SelectedValuePath="Code"
+                              DisplayMemberPath="Label"
+                              SelectedValue="{Binding FilterStatus}"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!-- Manager: Approve -->
+                    <Button Content="✅ Duyệt (Cập nhật Tồn kho)"
+                            Command="{Binding ApproveCommand}"
+                            Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibility}}"
+                            Background="#27AE60" Foreground="White" BorderThickness="0"
+                            Padding="14,8" Margin="0,0,8,0" Cursor="Hand" FontWeight="SemiBold"/>
+
+                    <!-- Manager: Reject -->
+                    <Button Content="❌ Từ chối"
+                            Command="{Binding RejectCommand}"
+                            Visibility="{Binding IsManager, Converter={StaticResource BoolToVisibility}}"
+                            Background="#E74C3C" Foreground="White" BorderThickness="0"
+                            Padding="14,8" Margin="0,0,8,0" Cursor="Hand" FontWeight="SemiBold"/>
+
+                    <!-- All: View Detail -->
+                    <Button Content="👁 Chi tiết phiếu đếm"
+                            Command="{Binding ViewDetailCommand}"
+                            Background="#8E44AD" Foreground="White" BorderThickness="0"
+                            Padding="14,8" Cursor="Hand" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Sessions}"
+                  SelectedItem="{Binding SelectedSession}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="#E2E8F0"
+                  BorderBrush="#E2E8F0" BorderThickness="1"
+                  RowHeight="40"
+                  Background="White"
+                  AlternatingRowBackground="#F8FAFC">
+
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Session Code"  Binding="{Binding SessionCode}"                        Width="140"/>
+                <DataGridTextColumn Header="Kho"           Binding="{Binding Warehouse.Name}"                     Width="*"/>
+                <DataGridTextColumn Header="Trạng thái"    Binding="{Binding Status.StatusName}"                  Width="120"/>
+                <DataGridTextColumn Header="Nhân viên đếm" Binding="{Binding AssignedToNavigation.FullName}"      Width="150"/>
+                <DataGridTextColumn Header="Ngày hoàn thành" Binding="{Binding CompletedAt, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Width="140"/>
+                <DataGridTextColumn Header="Duyệt bởi"     Binding="{Binding ApprovedByNavigation.FullName}"      Width="130"/>
+                <DataGridTextColumn Header="Ngày duyệt"    Binding="{Binding ApprovedAt, StringFormat={}{0:dd/MM/yyyy}}"     Width="110"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

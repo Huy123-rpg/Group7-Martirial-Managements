@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models._Import;
+using DAL.DataAccessLayer.Models;
 
 namespace BLL.BusinessLogicLayer.Services.Import;
 
@@ -11,4 +11,5 @@ public interface IGoodsReceiptService
     void Update(GoodsReceipt gr);
     void Delete(Guid id);
     void Approve(Guid id, Guid approvedBy);
+    void Cancel(Guid id, Guid cancelledBy, string reason);
 }

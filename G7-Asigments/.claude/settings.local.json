@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(iconv -f UTF-16 -t UTF-8 /c/Users/littl/OneDrive/Desktop/PRN212-As/G7-Asigments/Seed.sql)",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -i \"c:\\\\Users\\\\littl\\\\OneDrive\\\\Desktop\\\\PRN212-As\\\\G7-Asigments\\\\add_warehouse_staff.sql\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT type_id, type_code, type_name FROM lkp_transaction_types ORDER BY type_id\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 3 id, grn_number, warehouse_id, status_id FROM goods_receipts ORDER BY created_at DESC\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 1 * FROM goods_receipt_items\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 1 * FROM sales_order_items\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 1 * FROM purchase_order_items\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 1 id, so_number, warehouse_id, status_id FROM sales_orders\")",
+      "Bash(sqlcmd -S \".\" -d WarehouseDB -Q \"SELECT TOP 1 id, po_number, warehouse_id, status_id FROM purchase_orders\")",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}

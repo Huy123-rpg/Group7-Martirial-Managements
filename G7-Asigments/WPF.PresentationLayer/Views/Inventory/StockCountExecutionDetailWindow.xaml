@@ -1,0 +1,112 @@
+<Window x:Class="WPF.PresentationLayer.Views.Inventory.StockCountExecutionDetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding WindowTitle}" Height="550" Width="900"
+        WindowStartupLocation="CenterScreen" Background="#F5F7FA">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Info -->
+        <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15" BorderBrush="#E2E8F0" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Chi Tiết Phiếu Kiểm Kho" FontSize="18" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,10"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Text="{Binding Session.SessionCode, StringFormat='Mã phiếu: {0}'}" Margin="0,0,20,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="{Binding Session.Warehouse.Name, StringFormat='Kho: {0}'}" Margin="0,0,20,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Session.PlannedDate, StringFormat='Ngày dự kiến: {0:dd/MM/yyyy}'}" Margin="0,0,20,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <DockPanel Grid.Column="3">
+                        <TextBlock Text="Ghi chú: " VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBox Text="{Binding Session.Notes, UpdateSourceTrigger=PropertyChanged}" 
+                                 IsEnabled="{Binding CanEdit}"
+                                 VerticalContentAlignment="Center" 
+                                 Padding="5,0"
+                                 Background="Transparent" 
+                                 BorderThickness="1" 
+                                 BorderBrush="#CBD5E0"/>
+                    </DockPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Editable DataGrid -->
+        <!-- QtyCounted column is editable! -->
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Items}" 
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  SelectionUnit="Cell"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="All"
+                  HorizontalGridLinesBrush="#E2E8F0"
+                  VerticalGridLinesBrush="#E2E8F0"
+                  BorderBrush="#E2E8F0" BorderThickness="1"
+                  RowHeight="35"
+                  Background="White"
+                  AlternatingRowBackground="#F8FAFC">
+            
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#F1F5F9"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Mã SP" Binding="{Binding Product.Sku}" IsReadOnly="True" Width="100"/>
+                <DataGridTextColumn Header="Tên Sản Phẩm" Binding="{Binding Product.ProductName}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="Lô (Batch)" Binding="{Binding BatchNumber}" IsReadOnly="True" Width="90"/>
+                <DataGridTextColumn Header="Zone" Binding="{Binding Zone.ZoneCode}" IsReadOnly="True" Width="80"/>
+                <DataGridTextColumn Header="SL Hệ Thống" Binding="{Binding QtySystem, StringFormat={}{0:N0}}" IsReadOnly="True" Width="100">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="SL Khả Dụng" Binding="{Binding QtyAvailable, StringFormat={}{0:N0}}" IsReadOnly="True" Width="100">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#7F8C8D"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                
+                <!-- This column is Editable for Staff -->
+                <DataGridTextColumn Header="SL Thực Đếm" Binding="{Binding QtyCounted, UpdateSourceTrigger=LostFocus}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Foreground" Value="#2980B9"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Footer Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <TextBlock Text="Lưu ý: Chỉ có thể Cập Nhật / Lưu Nháp khi phiếu Chưa Chốt." VerticalAlignment="Center" Margin="0,0,20,0" FontStyle="Italic" Foreground="Gray"/>
+            
+            <Button Content="Lưu Nháp" Command="{Binding SaveDraftCommand}" 
+                    Background="#F39C12" Foreground="White" BorderThickness="0" Width="100" Height="35" Margin="0,0,10,0" FontWeight="SemiBold" Cursor="Hand"/>
+            <Button Content="Hoàn Thành" Command="{Binding CompleteCommand}" 
+                    Click="BtnComplete_Click"
+                    Background="#27AE60" Foreground="White" BorderThickness="0" Width="120" Height="35" FontWeight="SemiBold" Cursor="Hand"/>
+        </StackPanel>
+    </Grid>
+</Window>
