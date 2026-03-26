@@ -36,6 +36,10 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="2">
+                                <Button Content="Gửi duyệt" Width="80" Margin="0,0,4,0"
+                                        Background="#F59E0B" Foreground="White"
+                                        Visibility="{Binding IsSubmitVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="BtnSubmit_Click"/>
                                 <Button Content="Duyệt" Width="60" Margin="0,0,4,0"
                                         Background="#10B981" Foreground="White"
                                         Visibility="{Binding IsApproveVisible, Converter={StaticResource BoolToVisibilityConverter}}"

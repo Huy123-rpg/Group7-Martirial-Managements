@@ -30,11 +30,17 @@ public partial class SalesOrderListView : UserControl
             bool canCreate = PermissionHelper.CanCreateSalesOrder;
             bool canDelete = PermissionHelper.CanDeleteSalesOrder;
 
+            var customers = _uow.Customers.GetAll().ToDictionary(c => c.Id, c => c.CustomerName);
+            var warehouses = _uow.Warehouses.GetAll().ToDictionary(w => w.Id, w => w.Name);
+
             var data = _service.GetAll()
                 .Select(so => new SalesOrderListItem
                 {
                     SalesOrder = so,
-                    IsApproveVisible = canApprove && so.StatusId == 1,
+                    CustomerName = customers.TryGetValue(so.CustomerId, out var cn) ? cn : "",
+                    WarehouseName = warehouses.TryGetValue(so.WarehouseId, out var wn) ? wn : "",
+                    IsSubmitVisible = canCreate && so.StatusId == 1,
+                    IsApproveVisible = canApprove && so.StatusId == 2,
                     IsCreateIssueVisible = canCreate && so.StatusId == 3,
                     IsEditVisible = canCreate && so.StatusId == 1,
                     IsDeleteVisible = canDelete && so.StatusId == 1
@@ -61,6 +67,30 @@ public partial class SalesOrderListView : UserControl
         var win = new SalesOrderAddWindow();
         win.ShowDialog();
         LoadData();
+    }
+
+    private void BtnSubmit_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanCreateSalesOrder)
+        {
+            MessageBox.Show("Bạn không có quyền gửi duyệt đơn bán hàng.");
+            return;
+        }
+        if (sender is Button btn && btn.DataContext is SalesOrderListItem row)
+        {
+            var result = MessageBox.Show($"Gửi duyệt đơn {row.SoNumber}?", "Xác nhận",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _service.Submit(row.SalesOrder.Id);
+                    MessageBox.Show("Đã gửi duyệt! Chờ quản lý phê duyệt.");
+                    LoadData();
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
+            }
+        }
     }
 
     private void BtnApprove_Click(object sender, RoutedEventArgs e)

@@ -3,17 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:WPF.PresentationLayer.Helpers"
              xmlns:conv="clr-namespace:WPF.PresentationLayer.Helpers.Converters"
              mc:Ignorable="d"
-             Background="#F5F7FA"
-             Height="521"
-             Width="818">
+             Background="#F5F7FA">
 
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
-    
+
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -44,26 +41,35 @@
                         Binding="{Binding GiNumber}"
                         Width="120"/>
 
+                <DataGridTextColumn Header="Mã SO"
+                        Binding="{Binding SoNumber}"
+                        Width="120"/>
+
+                <DataGridTextColumn Header="Khách hàng"
+                        Binding="{Binding CustomerName}"
+                        Width="150"/>
+
+                <DataGridTextColumn Header="Kho"
+                        Binding="{Binding WarehouseName}"
+                        Width="110"/>
+
                 <DataGridTextColumn Header="Ngày xuất"
                         Binding="{Binding IssueDate, StringFormat=dd/MM/yyyy}"
-                        Width="140"/>
+                        Width="100"/>
 
                 <DataGridTextColumn Header="Tổng tiền"
                         Binding="{Binding TotalAmount, StringFormat=N0}"
-                        Width="140"/>
+                        Width="120"/>
 
-                <DataGridTextColumn Header="Ghi chú"
-                        Binding="{Binding Notes}"
-                        Width="*"/>
                 <DataGridTextColumn Header="Số mặt hàng"
                     Binding="{Binding ItemCount}"
-                    Width="100"/>
+                    Width="90"/>
 
                 <DataGridTextColumn Header="Trạng thái"
                     Binding="{Binding StatusText}"
-                    Width="100"/>
+                    Width="90"/>
 
-                <DataGridTemplateColumn Header="Hành động" Width="200">
+                <DataGridTemplateColumn Header="Hành động" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

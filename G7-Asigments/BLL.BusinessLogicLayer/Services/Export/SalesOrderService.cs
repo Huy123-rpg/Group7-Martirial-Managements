@@ -38,6 +38,15 @@ public class SalesOrderService : ISalesOrderService
         _uow.Save();
     }
 
+    public void Submit(Guid id)
+    {
+        var so = _uow.SalesOrders.GetById(id) ?? throw new Exception("SO not found");
+        so.StatusId = 2;
+        so.UpdatedAt = DateTimeOffset.UtcNow;
+        _uow.SalesOrders.Update(so);
+        _uow.Save();
+    }
+
     public void Approve(Guid id, Guid approvedBy)
     {
         var so = _uow.SalesOrders.GetById(id) ?? throw new Exception("SO not found");

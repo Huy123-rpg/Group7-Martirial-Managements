@@ -6,8 +6,8 @@ public class SalesOrderListItem
 {
     public SalesOrder SalesOrder { get; set; } = null!;
     public string SoNumber => SalesOrder.SoNumber;
-    public string CustomerName => SalesOrder.Customer?.CustomerName ?? "";
-    public string WarehouseName => SalesOrder.Warehouse?.Name ?? "";
+    public string CustomerName { get; set; } = "";
+    public string WarehouseName { get; set; } = "";
     public DateOnly OrderDate => SalesOrder.OrderDate;
     public decimal TotalAmount => SalesOrder.TotalAmount;
     public string StatusText => SalesOrder.StatusId switch
@@ -20,6 +20,7 @@ public class SalesOrderListItem
         _ => SalesOrder.StatusId.ToString()
     };
 
+    public bool IsSubmitVisible { get; set; }
     public bool IsApproveVisible { get; set; }
     public bool IsCreateIssueVisible { get; set; }
     public bool IsEditVisible { get; set; }

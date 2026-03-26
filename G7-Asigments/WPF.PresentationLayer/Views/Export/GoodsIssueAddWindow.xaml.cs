@@ -64,12 +64,14 @@ public partial class GoodsIssueAddWindow : Window
             {
                 ProductId = soItem.ProductId,
                 ProductName = product?.ProductName ?? "",
+                QtyOrdered = soItem.QtyOrdered,
                 QtyIssued = soItem.QtyOrdered,
                 UnitPrice = soItem.UnitPrice,
                 Notes = soItem.Notes
             });
         }
         RefreshTotal();
+        LockFieldsFromSo(so);
     }
 
     public GoodsIssueAddWindow(GoodsIssue issue)
@@ -117,6 +119,22 @@ public partial class GoodsIssueAddWindow : Window
         cbCustomer.ItemsSource = _uow.Customers.GetAll().ToList();
         cbWarehouse.ItemsSource = _uow.Warehouses.GetAll().ToList();
         Products = _uow.Products.GetAll().ToList();
+    }
+
+    private void LockFieldsFromSo(SalesOrder so)
+    {
+        pnlSoRef.Visibility = Visibility.Visible;
+        txtSoRef.Text = so.SoNumber;
+
+        var customer = _uow.Customers.GetById(so.CustomerId);
+        txtSoCustomer.Text = customer?.CustomerName ?? "";
+
+        var warehouse = _uow.Warehouses.GetById(so.WarehouseId);
+        txtSoWarehouse.Text = warehouse?.Name ?? "";
+
+        cbCustomer.IsEnabled = false;
+        cbWarehouse.IsEnabled = false;
+        pnlItemButtons.Visibility = Visibility.Collapsed;
     }
 
     private void SetupItemGrid()

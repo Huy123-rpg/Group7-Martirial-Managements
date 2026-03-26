@@ -11,10 +11,14 @@ public class GoodsIssueListItem
     public string? Notes => GoodsIssue.Notes;
     public int ItemCount => GoodsIssue.GoodsIssueItems?.Count ?? 0;
 
+    public string SoNumber { get; set; } = "";
+    public string CustomerName { get; set; } = "";
+    public string WarehouseName { get; set; } = "";
+
     public string StatusText => GoodsIssue.StatusId switch
     {
         1 => "Nháp",
-        2 => "Đã duyệt",
+        2 => "Chờ duyệt",
         3 => "Đã duyệt",
         4 => "Từ chối",
         _ => GoodsIssue.StatusId.ToString()
