@@ -19,10 +19,9 @@ public partial class MainWindow : Window
         bool isManager = SessionManager.IsManager;
         bool isStaff   = SessionManager.IsStaff;
 
-        // Admin menu
-        var adminVis = isAdmin ? Visibility.Visible : Visibility.Collapsed;
-        MenuHeaderAdmin.Visibility = adminVis;
-        BtnUsers.Visibility        = adminVis;
+        // Admin menu - handled by binding in XAML
+        // MenuHeaderAdmin.Visibility = adminVis;
+        // BtnUsers.Visibility        = adminVis;
 
         // Warehouse config (Admin + Manager)
         var whConfigVis = (isAdmin || isManager) ? Visibility.Visible : Visibility.Collapsed;
@@ -47,15 +46,13 @@ public partial class MainWindow : Window
             BtnStockCountExecution.Visibility = Visibility.Collapsed;
         }
 
-        // Schedule menu (Admin + Manager)
-        var scheduleVis = (isAdmin || isManager) ? Visibility.Visible : Visibility.Collapsed;
-        MenuHeaderSchedule.Visibility = scheduleVis;
-        BtnSchedule.Visibility        = scheduleVis;
+        // Schedule menu (Admin + Manager) - handled by binding in XAML
+        // MenuHeaderSchedule.Visibility = scheduleVis;
+        // BtnSchedule.Visibility        = scheduleVis;
 
-        // My schedule (Staff)
-        var myScheduleVis = isStaff ? Visibility.Visible : Visibility.Collapsed;
-        MenuHeaderMySchedule.Visibility = myScheduleVis;
-        BtnMySchedule.Visibility        = myScheduleVis;
+        // My schedule (Staff) - handled by binding in XAML
+        // MenuHeaderMySchedule.Visibility = myScheduleVis;
+        // BtnMySchedule.Visibility        = myScheduleVis;
 
         // Import menu (Admin + Manager + Staff)
         var importVis = (isAdmin || isManager || isStaff) ? Visibility.Visible : Visibility.Collapsed;

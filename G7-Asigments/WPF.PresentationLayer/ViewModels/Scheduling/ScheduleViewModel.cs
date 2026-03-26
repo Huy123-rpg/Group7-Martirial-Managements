@@ -166,9 +166,8 @@ public class ScheduleViewModel : BaseViewModel
     // ─── Create / Edit ────────────────────────────────────────────────────────
     private void OpenCreate()
     {
-        var win = App.ServiceProvider.GetRequiredService<ScheduleFormWindow>();
-        var vm = (ScheduleFormViewModel)win.DataContext;
-        vm.Initialize();
+        var vm = new ScheduleFormViewModel();
+        var win = new ScheduleFormWindow(vm);
         win.ShowDialog();
         if (vm.Saved) Load();
     }
@@ -176,9 +175,8 @@ public class ScheduleViewModel : BaseViewModel
     private void OpenEdit()
     {
         if (Selected == null) return;
-        var win = App.ServiceProvider.GetRequiredService<ScheduleFormWindow>();
-        var vm = (ScheduleFormViewModel)win.DataContext;
-        vm.Initialize(Selected);
+        var vm = new ScheduleFormViewModel(Selected);
+        var win = new ScheduleFormWindow(vm);
         win.ShowDialog();
         if (vm.Saved) Load();
     }

@@ -5,6 +5,7 @@ using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Views.Auth;
 using DAL.DataAccessLayer.Model;
 using BLL.BusinessLogicLayer.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF.PresentationLayer.ViewModels;
 
@@ -177,7 +178,7 @@ public class MainViewModel : BaseViewModel
     private void Logout()
     {
         SessionManager.Logout();
-        var login = new LoginWindow();
+        var login = App.ServiceProvider.GetRequiredService<LoginWindow>();
         login.Show();
 
         foreach (Window w in Application.Current.Windows)
