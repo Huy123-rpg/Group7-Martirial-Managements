@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 
 namespace BLL.BusinessLogicLayer.Services.Import;
 
@@ -8,44 +8,34 @@ public class GoodsReceiptService : IGoodsReceiptService
     private readonly UnitOfWork _uow = UnitOfWork.Instance;
 
     public IEnumerable<GoodsReceipt> GetAll() =>
-        _uow.GoodsReceipts.GetAll().OrderByDescending(g => g.ReceiptDate);
+        _uow.GoodsReceipts.GetAll().OrderByDescending(x => x.ReceiptDate);
 
-    public IEnumerable<GoodsReceipt> Search(string keyword) =>
-        _uow.GoodsReceipts.Find(g =>
-            g.GrnNumber.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+    public GoodsReceipt? GetById(Guid id) =>
+        _uow.GoodsReceipts.GetById(id);
 
-    public GoodsReceipt? GetById(Guid id) => _uow.GoodsReceipts.GetById(id);
-
-    public void Create(GoodsReceipt gr)
+    public void Create(GoodsReceipt receipt)
     {
-        gr.Id = Guid.NewGuid();
-        gr.CreatedAt = DateTimeOffset.UtcNow;
-        gr.UpdatedAt = DateTimeOffset.UtcNow;
-        _uow.GoodsReceipts.Add(gr);
+        _uow.GoodsReceipts.Add(receipt);
         _uow.Save();
     }
 
-    public void Update(GoodsReceipt gr)
+    public void Update(GoodsReceipt receipt)
     {
-        gr.UpdatedAt = DateTimeOffset.UtcNow;
-        _uow.GoodsReceipts.Update(gr);
+        _uow.GoodsReceipts.Update(receipt);
         _uow.Save();
     }
 
     public void Delete(Guid id)
     {
-        _uow.GoodsReceipts.DeleteById(id);
-        _uow.Save();
-    }
+        // 1. Xoá hết các dòng chi tiết trước để tránh lỗi khoá ngoại (FK)
+        var items = _uow.GoodsReceiptItems.GetAll().Where(x => x.GrnId == id).ToList();
+        foreach (var item in items)
+        {
+            _uow.GoodsReceiptItems.DeleteById(item.Id);
+        }
 
-    public void Approve(Guid id, Guid approvedBy)
-    {
-        var gr = _uow.GoodsReceipts.GetById(id) ?? throw new Exception("GR not found");
-        gr.StatusId = 3;
-        gr.ApprovedBy = approvedBy;
-        gr.ApprovedAt = DateTimeOffset.UtcNow;
-        gr.UpdatedAt = DateTimeOffset.UtcNow;
-        _uow.GoodsReceipts.Update(gr);
+        // 2. Sau đó mới xoá phiếu nhập
+        _uow.GoodsReceipts.DeleteById(id);
         _uow.Save();
     }
 }

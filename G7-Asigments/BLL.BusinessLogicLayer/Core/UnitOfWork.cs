@@ -1,17 +1,18 @@
 using DAL.DataAccessLayer.Context;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using DAL.DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
+using DbContextAlias = DAL.DataAccessLayer.Context.WarehouseDbContext;
 
 namespace BLL.BusinessLogicLayer.Core;
 
 public sealed class UnitOfWork
 {
-    // ─── Connection String (set once by App before first use) ────────────────
-    public static string ConnectionString { get; set; } =
-        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
+    private readonly WarehouseDbContext _context;
 
-    // ─── Singleton ───────────────────────────────────────────────────────────
+    public static string ConnectionString { get; set; } =
+        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=hoanganh;TrustServerCertificate=True;";
+
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
 
@@ -26,18 +27,18 @@ public sealed class UnitOfWork
         }
     }
 
-    // ─── DbContext ───────────────────────────────────────────────────────────
-    private readonly WarehouseDbContext _context;
+
 
     private UnitOfWork()
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
             .UseSqlServer(ConnectionString)
+            .UseSnakeCaseNamingConvention()
             .Options;
+
         _context = new WarehouseDbContext(options);
     }
 
-    // ─── Repositories ────────────────────────────────────────────────────────
     public IRepository<User> Users => new Repository<User>(_context);
     public IRepository<LkpUserRole> UserRoles => new Repository<LkpUserRole>(_context);
     public IRepository<Warehouse> Warehouses => new Repository<Warehouse>(_context);
@@ -49,25 +50,18 @@ public sealed class UnitOfWork
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
     public IRepository<SalesOrder> SalesOrders => new Repository<SalesOrder>(_context);
     public IRepository<GoodsIssue> GoodsIssues => new Repository<GoodsIssue>(_context);
-    public IRepository<Notification> Notifications => new Repository<Notification>(_context);
-    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
-
-    // ─── Save ────────────────────────────────────────────────────────────────
+    public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
+    public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
+    public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
     public int Save()
     {
         try
         {
             return _context.SaveChanges();
         }
-        catch
+        finally
         {
-            // Detach all pending changes so the context is usable after failure.
-            foreach (var entry in _context.ChangeTracker.Entries()
-                         .Where(e => e.State != Microsoft.EntityFrameworkCore.EntityState.Unchanged &&
-                                     e.State != Microsoft.EntityFrameworkCore.EntityState.Detached)
-                         .ToList())
-                entry.State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            throw;
+            _context.ChangeTracker.Clear(); // Luôn xoá cache để tránh "kẹt" lệnh lỗi
         }
     }
 }
