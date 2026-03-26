@@ -1,6 +1,6 @@
 using System;
 
-namespace DAL.DataAccessLayer.Models;
+namespace DAL.DataAccessLayer.Model;
 
 public class WarehouseStaff
 {

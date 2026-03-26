@@ -1,6 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Email;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
