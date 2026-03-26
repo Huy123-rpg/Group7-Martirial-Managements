@@ -8,6 +8,8 @@ namespace BLL.BusinessLogicLayer.Core;
 
 public sealed class UnitOfWork
 {
+    private readonly WarehouseDbContext _context;
+
     // ─── Connection String (set once by App before first use) ────────────────
     public static string ConnectionString { get; set; } =
         "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
@@ -26,12 +28,13 @@ public sealed class UnitOfWork
         }
     }
 
-    private readonly WarehouseDbContext _context;
+    public WarehouseDbContext Context => _context;
 
     private UnitOfWork()
     {
         var options = new DbContextOptionsBuilder<WarehouseDbContext>()
             .UseSqlServer(ConnectionString)
+            .UseSnakeCaseNamingConvention()
             .Options;
 
         _context = new WarehouseDbContext(options);
@@ -43,6 +46,7 @@ public sealed class UnitOfWork
     public IRepository<Product> Products => new Repository<Product>(_context);
     public IRepository<Supplier> Suppliers => new Repository<Supplier>(_context);
     public IRepository<Customer> Customers => new Repository<Customer>(_context);
+    public IRepository<Inventory> Inventories => new Repository<Inventory>(_context);
     public IRepository<Schedule> Schedules => new Repository<Schedule>(_context);
     public IRepository<PurchaseOrder> PurchaseOrders => new Repository<PurchaseOrder>(_context);
     public IRepository<GoodsReceipt> GoodsReceipts => new Repository<GoodsReceipt>(_context);
@@ -51,8 +55,14 @@ public sealed class UnitOfWork
     public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
     public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
+    public IRepository<SalesOrderItem> SalesOrderItems => new Repository<SalesOrderItem>(_context);
     public IRepository<Notification> Notifications => new Repository<Notification>(_context);
-    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
+    public IRepository<LkpScheduleType>  ScheduleTypes   => new Repository<LkpScheduleType>(_context);
+    public IRepository<WarehouseZone>    WarehouseZones  => new Repository<WarehouseZone>(_context);
+    public IRepository<LkpZoneType>      ZoneTypes       => new Repository<LkpZoneType>(_context);
+    public IRepository<LkpCostingMethod> CostingMethods  => new Repository<LkpCostingMethod>(_context);
+    public IRepository<WarehouseStaff>     WarehouseStaffs    => new Repository<WarehouseStaff>(_context);
+    public IRepository<StockTransaction>   StockTransactions  => new Repository<StockTransaction>(_context);
 
     // ─── Custom Queries ───────────────────────────────────────────────────────
     public IEnumerable<Schedule> GetSchedulesWithIncludes() =>

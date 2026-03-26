@@ -11,4 +11,5 @@ public interface IGoodsIssueService
     void Update(GoodsIssue gi);
     void Delete(Guid id);
     void Approve(Guid id, Guid approvedBy);
+    void Cancel(Guid id, Guid cancelledBy, string reason);
 }

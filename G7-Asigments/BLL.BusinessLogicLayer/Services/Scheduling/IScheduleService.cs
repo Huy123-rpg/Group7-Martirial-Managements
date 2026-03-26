@@ -41,4 +41,6 @@ public interface IScheduleService
     IEnumerable<LkpScheduleType> GetScheduleTypes();
     IEnumerable<Warehouse> GetWarehouses();
     IEnumerable<User> GetStaffUsers();
+    /// <summary>Trả về staff được gán vào kho. Nếu chưa có ai được gán, fallback về tất cả staff active.</summary>
+    IEnumerable<User> GetStaffByWarehouse(Guid warehouseId);
 }

@@ -10,6 +10,8 @@ public interface ISalesOrderService
     void Create(SalesOrder so);
     void Update(SalesOrder so);
     void Delete(Guid id);
+    void Submit(Guid id);
     void Approve(Guid id, Guid approvedBy);
     void Reject(Guid id, string reason);
+    void Cancel(Guid id, Guid cancelledBy);
 }

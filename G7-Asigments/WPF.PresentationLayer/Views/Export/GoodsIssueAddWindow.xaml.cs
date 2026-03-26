@@ -1,6 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Export;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -18,6 +18,7 @@ public partial class GoodsIssueAddWindow : Window
     private readonly IGoodsIssueService _service;
     private readonly UnitOfWork _uow;
     private GoodsIssue? _editingIssue;
+    private SalesOrder? _sourceSo;
 
     private ObservableCollection<GoodsIssueItemInput> _items = new();
     public List<Product> Products { get; private set; } = new();
@@ -35,6 +36,42 @@ public partial class GoodsIssueAddWindow : Window
 
         LoadData();
         SetupItemGrid();
+    }
+
+    public GoodsIssueAddWindow(SalesOrder so)
+    {
+        InitializeComponent();
+        DataContext = this;
+        _service = new GoodsIssueService();
+        _uow = UnitOfWork.Instance;
+        _sourceSo = so;
+
+        dpDate.SelectedDate = DateTime.Now;
+        txtCode.Text = GenerateIssueCode();
+
+        LoadData();
+        SetupItemGrid();
+
+        cbWarehouse.SelectedValue = so.WarehouseId;
+        cbCustomer.SelectedValue = so.CustomerId;
+
+        var soItems = _uow.SalesOrderItems.GetAll()
+            .Where(x => x.SoId == so.Id).ToList();
+        foreach (var soItem in soItems)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == soItem.ProductId);
+            _items.Add(new GoodsIssueItemInput
+            {
+                ProductId = soItem.ProductId,
+                ProductName = product?.ProductName ?? "",
+                QtyOrdered = soItem.QtyOrdered,
+                QtyIssued = soItem.QtyOrdered,
+                UnitPrice = soItem.UnitPrice,
+                Notes = soItem.Notes
+            });
+        }
+        RefreshTotal();
+        LockFieldsFromSo(so);
     }
 
     public GoodsIssueAddWindow(GoodsIssue issue)
@@ -75,6 +112,23 @@ public partial class GoodsIssueAddWindow : Window
         }
 
         RefreshTotal();
+
+        if (issue.SoId.HasValue)
+        {
+            var so = _uow.SalesOrders.GetById(issue.SoId.Value);
+            if (so != null)
+            {
+                var soItemQty = _uow.SalesOrderItems.GetAll()
+                    .Where(x => x.SoId == so.Id)
+                    .ToDictionary(x => x.ProductId, x => x.QtyOrdered);
+                foreach (var item in _items)
+                {
+                    if (soItemQty.TryGetValue(item.ProductId, out var qty))
+                        item.QtyOrdered = qty;
+                }
+                LockFieldsFromSo(so);
+            }
+        }
     }
 
     private void LoadData()
@@ -82,6 +136,22 @@ public partial class GoodsIssueAddWindow : Window
         cbCustomer.ItemsSource = _uow.Customers.GetAll().ToList();
         cbWarehouse.ItemsSource = _uow.Warehouses.GetAll().ToList();
         Products = _uow.Products.GetAll().ToList();
+    }
+
+    private void LockFieldsFromSo(SalesOrder so)
+    {
+        pnlSoRef.Visibility = Visibility.Visible;
+        txtSoRef.Text = so.SoNumber;
+
+        var customer = _uow.Customers.GetById(so.CustomerId);
+        txtSoCustomer.Text = customer?.CustomerName ?? "";
+
+        var warehouse = _uow.Warehouses.GetById(so.WarehouseId);
+        txtSoWarehouse.Text = warehouse?.Name ?? "";
+
+        cbCustomer.IsEnabled = false;
+        cbWarehouse.IsEnabled = false;
+        pnlItemButtons.Visibility = Visibility.Collapsed;
     }
 
     private void SetupItemGrid()
@@ -194,10 +264,10 @@ public partial class GoodsIssueAddWindow : Window
                 return;
             }
 
-            var currentUser = _uow.Users.GetAll().FirstOrDefault();
+            var currentUser = SessionManager.CurrentUser;
             if (currentUser == null)
             {
-                MessageBox.Show("Không có user.");
+                MessageBox.Show("Chưa đăng nhập.");
                 return;
             }
             if (_editingIssue == null && !PermissionHelper.CanCreateGoodsIssue)
@@ -236,14 +306,15 @@ public partial class GoodsIssueAddWindow : Window
                 {
                     _uow.GoodsIssueItems.Add(new GoodsIssueItem
                     {
-                        Id = Guid.NewGuid(),
-                        GiId = _editingIssue.Id,
-                        ProductId = item.ProductId,
-                        QtyIssued = item.QtyIssued,
+                        Id           = Guid.NewGuid(),
+                        GiId         = _editingIssue.Id,
+                        ProductId    = item.ProductId,
+                        QtyIssued    = item.QtyIssued,
                         QtyRequested = item.QtyIssued,
-                        UnitPrice = item.UnitPrice,
-                        UnitCost = 0,
-                        Notes = item.Notes
+                        UnitPrice    = item.UnitPrice,
+                        UnitCost     = 0,
+                        LineTotal    = item.LineTotal,
+                        Notes        = item.Notes
                     });
                 }
 
@@ -264,7 +335,8 @@ public partial class GoodsIssueAddWindow : Window
                     CreatedBy = currentUser.Id,
                     WarehouseId = (Guid)cbWarehouse.SelectedValue,
                     CustomerId = cbCustomer.SelectedValue != null ? (Guid?)cbCustomer.SelectedValue : null,
-                    StatusId = 1
+                    StatusId = 1,
+                    SoId = _sourceSo?.Id
                 };
 
                 _service.Create(issue);

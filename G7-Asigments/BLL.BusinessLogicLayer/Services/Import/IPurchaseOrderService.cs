@@ -10,6 +10,8 @@ public interface IPurchaseOrderService
     void Create(PurchaseOrder po);
     void Update(PurchaseOrder po);
     void Delete(Guid id);
+    void Submit(Guid id);
     void Approve(Guid id, Guid approvedBy);
     void Reject(Guid id, string reason);
+    void Cancel(Guid id, Guid cancelledBy);
 }

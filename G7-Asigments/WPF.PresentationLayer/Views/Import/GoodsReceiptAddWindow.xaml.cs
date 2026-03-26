@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Import;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
+using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Models;
 
 namespace WPF.PresentationLayer.Views.Import;
@@ -17,6 +18,7 @@ public partial class GoodsReceiptAddWindow : Window
     private readonly IGoodsReceiptService _service;
     private readonly UnitOfWork _uow;
     private GoodsReceipt? _editingReceipt;
+    private PurchaseOrder? _sourcePo;
 
     public ObservableCollection<GoodsReceiptItemInput> Items { get; set; } = new();
     public List<Product> Products { get; set; } = new();
@@ -34,6 +36,42 @@ public partial class GoodsReceiptAddWindow : Window
 
         LoadData();
         SetupItemGrid();
+    }
+
+    public GoodsReceiptAddWindow(PurchaseOrder po)
+    {
+        InitializeComponent();
+        DataContext = this;
+        _service = new GoodsReceiptService();
+        _uow = UnitOfWork.Instance;
+        _sourcePo = po;
+
+        dpDate.SelectedDate = DateTime.Now;
+        txtCode.Text = GenerateReceiptCode();
+
+        LoadData();
+        SetupItemGrid();
+
+        cbSupplier.SelectedValue = po.SupplierId;
+        cbWarehouse.SelectedValue = po.WarehouseId;
+
+        var poItems = _uow.PurchaseOrderItems.GetAll()
+            .Where(x => x.PoId == po.Id).ToList();
+        foreach (var poItem in poItems)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == poItem.ProductId);
+            Items.Add(new GoodsReceiptItemInput
+            {
+                ProductId = poItem.ProductId,
+                ProductName = product?.ProductName ?? "",
+                QtyOrdered = poItem.QtyOrdered,
+                QtyReceived = poItem.QtyOrdered,
+                UnitCost = poItem.UnitCost,
+                Notes = poItem.Notes
+            });
+        }
+        RefreshTotal();
+        LockFieldsFromPo(po);
     }
 
     public GoodsReceiptAddWindow(GoodsReceipt receipt)
@@ -73,6 +111,23 @@ public partial class GoodsReceiptAddWindow : Window
         }
 
         RefreshTotal();
+
+        if (receipt.PoId.HasValue)
+        {
+            var po = _uow.PurchaseOrders.GetById(receipt.PoId.Value);
+            if (po != null)
+            {
+                var poItemQty = _uow.PurchaseOrderItems.GetAll()
+                    .Where(x => x.PoId == po.Id)
+                    .ToDictionary(x => x.ProductId, x => x.QtyOrdered);
+                foreach (var item in Items)
+                {
+                    if (poItemQty.TryGetValue(item.ProductId, out var qty))
+                        item.QtyOrdered = qty;
+                }
+                LockFieldsFromPo(po);
+            }
+        }
     }
 
     private void LoadData()
@@ -89,6 +144,27 @@ public partial class GoodsReceiptAddWindow : Window
 
         dgItems.CellEditEnding += (s, e) =>
             Dispatcher.BeginInvoke(new Action(RefreshTotal));
+    }
+
+    private void LockFieldsFromPo(PurchaseOrder po)
+    {
+        // Show PO reference banner
+        pnlPoRef.Visibility = Visibility.Visible;
+        txtPoRef.Text = po.PoNumber;
+
+        var supplier = _uow.Suppliers.GetById(po.SupplierId);
+        txtPoSupplier.Text = supplier?.SupplierName ?? "";
+
+        var warehouse = _uow.Warehouses.GetById(po.WarehouseId);
+        txtPoWarehouse.Text = warehouse?.Name ?? "";
+
+        // Lock fields that come from PO
+        cbSupplier.IsEnabled = false;
+        cbWarehouse.IsEnabled = false;
+        pnlItemButtons.Visibility = Visibility.Collapsed;
+
+        // Lock product selection in grid (products are fixed from PO)
+        dgItems.IsReadOnly = false; // still allow qty/price edit
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -235,10 +311,10 @@ public partial class GoodsReceiptAddWindow : Window
                 return;
             }
 
-            var currentUser = _uow.Users.GetAll().FirstOrDefault();
+            var currentUser = SessionManager.CurrentUser;
             if (currentUser == null)
             {
-                MessageBox.Show("Không có user.");
+                MessageBox.Show("Chưa đăng nhập.");
                 return;
             }
 
@@ -303,6 +379,7 @@ public partial class GoodsReceiptAddWindow : Window
                         QtyAccepted = item.QtyReceived,
                         QtyRejected = 0,
                         UnitCost = item.UnitCost,
+                        LineTotal = item.LineTotal,
                         Notes = item.Notes
                     });
                 }
@@ -324,7 +401,8 @@ public partial class GoodsReceiptAddWindow : Window
                     CreatedBy = currentUser.Id,
                     WarehouseId = (Guid)cbWarehouse.SelectedValue,
                     SupplierId = (Guid)cbSupplier.SelectedValue,
-                    StatusId = 1
+                    StatusId = 1,
+                    PoId = _sourcePo?.Id
                 };
 
                 _service.Create(receipt);

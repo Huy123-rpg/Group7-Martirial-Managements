@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.DataAccessLayer.Model;
 
@@ -32,6 +33,9 @@ public partial class StockCountSession
     public DateTimeOffset? CompletedAt { get; set; }
 
     public string? Notes { get; set; }
+    
+    [NotMapped]
+    public string? ScheduleTitle { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
 

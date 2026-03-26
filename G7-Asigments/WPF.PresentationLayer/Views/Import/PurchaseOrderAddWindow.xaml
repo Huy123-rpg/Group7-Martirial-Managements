@@ -35,7 +35,7 @@
 
             <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,12">
                 <TextBlock Text="Mã PO"/>
-                <TextBox x:Name="txtCode" Height="34"/>
+                <TextBox x:Name="txtCode" Height="34" IsReadOnly="True" Background="#F3F4F6"/>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Grid.Row="0" Margin="0,0,0,12">
@@ -112,11 +112,11 @@
 
                         <DataGridTextColumn Header="SL đặt"
                                             Width="120"
-                                            Binding="{Binding QtyOrdered, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding QtyOrdered, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
 
                         <DataGridTextColumn Header="Đơn giá"
                                             Width="120"
-                                            Binding="{Binding UnitCost, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding UnitCost, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
 
                         <DataGridTextColumn Header="Thành tiền"
                                             Width="140"

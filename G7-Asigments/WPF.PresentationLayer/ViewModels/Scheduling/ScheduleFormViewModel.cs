@@ -1,18 +1,16 @@
 using BLL.BusinessLogicLayer.Services.Scheduling;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
 using System.Collections.ObjectModel;
 using WPF.PresentationLayer.Helpers;
-using System.Linq;
-using System;
 
 namespace WPF.PresentationLayer.ViewModels.Scheduling;
 
 public class ScheduleFormViewModel : BaseViewModel
 {
-    private readonly IScheduleService _service;
+    private readonly IScheduleService _service = new ScheduleService();
 
     // ─── Mode ─────────────────────────────────────────────────────────────────
-    public bool IsEditMode { get; private set; }
+    public bool IsEditMode { get; }
     public string WindowTitle => IsEditMode ? "Sửa lịch" : "Tạo lịch mới";
 
     // ─── Lookup Data ──────────────────────────────────────────────────────────
@@ -50,7 +48,12 @@ public class ScheduleFormViewModel : BaseViewModel
     public Warehouse? Warehouse
     {
         get => _warehouse;
-        set { SetField(ref _warehouse, value); RefreshConflicts(); }
+        set
+        {
+            SetField(ref _warehouse, value);
+            RefreshStaffList();
+            RefreshConflicts();
+        }
     }
 
     private DateTime _startDate = DateTime.Today;
@@ -138,39 +141,56 @@ public class ScheduleFormViewModel : BaseViewModel
 
     // ─── Result ───────────────────────────────────────────────────────────────
     public bool Saved { get; private set; }
-    private Guid? _editId;
+    private readonly Guid? _editId;
 
     // ─── Commands ─────────────────────────────────────────────────────────────
     public RelayCommand SaveCommand   => new(Save,   CanSave);
     public RelayCommand CancelCommand => new(Cancel);
 
     // ─── Constructor ─────────────────────────────────────────────────────────
-    public ScheduleFormViewModel(IScheduleService service)
-    {
-        _service = service;
-        LoadLookups();
-        if (SessionManager.IsManager)
-            PreSelectManagerWarehouse();
-    }
+    public ScheduleFormViewModel() : this(null) { }
 
-    public void Initialize(Schedule? existing = null)
+    public ScheduleFormViewModel(Schedule? existing)
     {
         IsEditMode = existing != null;
         _editId    = existing?.Id;
 
+        LoadLookups();
+
         if (existing != null)
             PopulateFromExisting(existing);
-        
-        OnPropertyChanged(nameof(WindowTitle));
-        OnPropertyChanged(nameof(ShowRecurrence));
+        else if (SessionManager.IsManager)
+            PreSelectManagerWarehouse();
     }
 
     // ─── Private Methods ──────────────────────────────────────────────────────
     private void LoadLookups()
     {
-        foreach (var t in _service.GetScheduleTypes())  ScheduleTypes.Add(t);
-        foreach (var u in _service.GetStaffUsers())     StaffUsers.Add(u);
-        foreach (var w in _service.GetWarehouses()) Warehouses.Add(w);
+        foreach (var t in _service.GetScheduleTypes()) ScheduleTypes.Add(t);
+
+        var allWarehouses = _service.GetWarehouses();
+        if (SessionManager.IsManager)
+            allWarehouses = allWarehouses.Where(w => w.ManagerId == SessionManager.CurrentUser!.Id);
+
+        foreach (var w in allWarehouses) Warehouses.Add(w);
+
+        // Staff list nạp sau khi có kho (RefreshStaffList sẽ dùng kho đang chọn)
+        RefreshStaffList();
+    }
+
+    private void RefreshStaffList()
+    {
+        var currentAssigned = AssignedTo;
+        StaffUsers.Clear();
+
+        var users = _warehouse != null
+            ? _service.GetStaffByWarehouse(_warehouse.Id)
+            : _service.GetStaffUsers();
+
+        foreach (var u in users) StaffUsers.Add(u);
+
+        // Giữ lại người đã chọn nếu vẫn còn trong danh sách
+        AssignedTo = StaffUsers.FirstOrDefault(u => u.Id == currentAssigned?.Id);
     }
 
     private void PreSelectManagerWarehouse()
