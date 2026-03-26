@@ -18,6 +18,20 @@ namespace WPF.PresentationLayer
         {
             base.OnStartup(e);
 
+            // Global exception handlers để bắt lỗi crash
+            DispatcherUnhandledException += (s, ex) =>
+            {
+                MessageBox.Show($"Lỗi UI:\n{ex.Exception.Message}\n\n{ex.Exception.InnerException?.Message}\n\nStack:\n{ex.Exception.StackTrace}",
+                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                ex.Handled = true;
+            };
+            AppDomain.CurrentDomain.UnhandledException += (s, ex) =>
+            {
+                var err = ex.ExceptionObject as Exception;
+                MessageBox.Show($"Lỗi nghiêm trọng:\n{err?.Message}\n\n{err?.InnerException?.Message}\n\nStack:\n{err?.StackTrace}",
+                    "Lỗi nghiêm trọng", MessageBoxButton.OK, MessageBoxImage.Error);
+            };
+
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();

@@ -72,7 +72,11 @@ public class WarehouseStaffViewModel : BaseViewModel
     public RelayCommand AssignCommand  => new(Assign,  () => SelectedWarehouse != null && SelectedAvailable != null);
     public RelayCommand RemoveCommand  => new(Remove,  () => SelectedWarehouse != null && SelectedAssigned  != null);
 
-    public WarehouseStaffViewModel() => LoadWarehouses();
+    public WarehouseStaffViewModel()
+    {
+        try { LoadWarehouses(); }
+        catch { /* bảng warehouse_staff chưa tồn tại trong DB */ }
+    }
 
     // ─── Load ─────────────────────────────────────────────────────────────────
     private void LoadWarehouses()
