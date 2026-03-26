@@ -117,7 +117,7 @@ public class ScheduleViewModel : BaseViewModel
     public RelayCommand MarkMissedCommand   => new(MarkMissed,     () => CanMarkMissed);
     public RelayCommand DeleteCommand       => new(Delete,         () => CanDelete);
 
-    public ScheduleViewModel() : this(App.ServiceProvider.GetRequiredService<IScheduleService>()) { }
+    public ScheduleViewModel() : this(new ScheduleService()) { }
 
     public ScheduleViewModel(IScheduleService service)
     {

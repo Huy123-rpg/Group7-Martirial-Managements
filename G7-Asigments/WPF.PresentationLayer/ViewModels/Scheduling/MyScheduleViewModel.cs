@@ -89,7 +89,7 @@ public class MyScheduleViewModel : BaseViewModel
         OnPropertyChanged(nameof(ToggleLabel));
     });
 
-    public MyScheduleViewModel() : this(App.ServiceProvider.GetRequiredService<IScheduleService>()) { }
+    public MyScheduleViewModel() : this(new ScheduleService()) { }
 
     public MyScheduleViewModel(IScheduleService service)
     {

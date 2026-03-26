@@ -46,7 +46,7 @@ public class ScheduleCalendarViewModel : BaseViewModel
             SelectedSchedule = _monthSchedules.FirstOrDefault(s => s.Id == slot.Id);
     });
 
-    public ScheduleCalendarViewModel() : this(App.ServiceProvider.GetRequiredService<IScheduleService>()) { }
+    public ScheduleCalendarViewModel() : this(new ScheduleService()) { }
 
     public ScheduleCalendarViewModel(IScheduleService service)
     {
