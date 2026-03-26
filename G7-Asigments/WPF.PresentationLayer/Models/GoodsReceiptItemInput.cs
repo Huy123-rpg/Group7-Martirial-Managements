@@ -38,6 +38,13 @@ public class GoodsReceiptItemInput : INotifyPropertyChanged
         set { if (_notes != value) { _notes = value; OnPropertyChanged(); } }
     }
 
+    private decimal _qtyOrdered;
+    public decimal QtyOrdered
+    {
+        get => _qtyOrdered;
+        set { if (_qtyOrdered != value) { _qtyOrdered = value; OnPropertyChanged(); } }
+    }
+
     public decimal LineTotal => QtyReceived * UnitCost;
 
     public event PropertyChangedEventHandler? PropertyChanged;

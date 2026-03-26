@@ -71,6 +71,7 @@
                 <DataGridTextColumn Header="Kho" Binding="{Binding Warehouse.Name}" Width="150"/>
                 
                 <DataGridTextColumn Header="Tồn (Thực tế)" Binding="{Binding QtyOnHand, StringFormat={}{0:N0}}" Width="100"/>
+                <DataGridTextColumn Header="Đã đặt" Binding="{Binding QtyReserved, StringFormat={}{0:N0}}" Width="90"/>
                 <DataGridTextColumn Header="Khả dụng" Binding="{Binding QtyAvailable, StringFormat={}{0:N0}}" Width="100"/>
                 <DataGridTextColumn Header="Đang về" Binding="{Binding QtyIncoming, StringFormat={}{0:N0}}" Width="100"/>
                 

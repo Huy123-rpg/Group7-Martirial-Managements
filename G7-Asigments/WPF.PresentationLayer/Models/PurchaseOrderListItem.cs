@@ -25,4 +25,6 @@ public class PurchaseOrderListItem
     public bool IsCreateReceiptVisible { get; set; }
     public bool IsEditVisible { get; set; }
     public bool IsDeleteVisible { get; set; }
+    public bool IsSubmitVisible { get; set; }
+    public bool IsCancelVisible { get; set; }
 }

@@ -25,4 +25,5 @@ public class SalesOrderListItem
     public bool IsCreateIssueVisible { get; set; }
     public bool IsEditVisible { get; set; }
     public bool IsDeleteVisible { get; set; }
+    public bool IsCancelVisible { get; set; }
 }

@@ -21,13 +21,12 @@ public class InventoryLookupService : IInventoryLookupService
         {
             query = query.Where(w => w.ManagerId == userId);
         }
-        else if (roleId == 3) // Staff
+        else if (roleId == 3) // Staff — dùng warehouse_staff làm nguồn phân quyền
         {
-            // Được phân công = Có Schedule tại kho đó
-            var permittedWarehouseIds = _uow.Context.Set<Schedule>()
+            var permittedWarehouseIds = _uow.Context.Set<WarehouseStaff>()
                 .AsNoTracking()
-                .Where(s => s.AssignedTo == userId && s.WarehouseId.HasValue)
-                .Select(s => s.WarehouseId.Value)
+                .Where(ws => ws.UserId == userId)
+                .Select(ws => ws.WarehouseId)
                 .Distinct();
 
             query = query.Where(w => permittedWarehouseIds.Contains(w.Id));
@@ -56,12 +55,12 @@ public class InventoryLookupService : IInventoryLookupService
         {
             query = query.Where(i => i.Warehouse.ManagerId == userId);
         }
-        else if (roleId == 3) // Staff
+        else if (roleId == 3) // Staff — dùng warehouse_staff làm nguồn phân quyền
         {
-            var permittedWarehouseIds = _uow.Context.Set<Schedule>()
+            var permittedWarehouseIds = _uow.Context.Set<WarehouseStaff>()
                 .AsNoTracking()
-                .Where(s => s.AssignedTo == userId && s.WarehouseId.HasValue)
-                .Select(s => s.WarehouseId.Value)
+                .Where(ws => ws.UserId == userId)
+                .Select(ws => ws.WarehouseId)
                 .Distinct();
 
             query = query.Where(i => permittedWarehouseIds.Contains(i.WarehouseId));

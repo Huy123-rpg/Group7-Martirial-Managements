@@ -64,6 +64,7 @@ public class ScheduleViewModel : BaseViewModel
     }
 
     // ─── Permission Computed Properties ──────────────────────────────────────
+    public bool IsAdmin          => SessionManager.IsAdmin;
     public bool IsManagerOrAdmin => SessionManager.IsAdmin || SessionManager.IsManager;
 
     public bool CanCancel =>

@@ -100,6 +100,8 @@ public partial class WarehouseDbContext : DbContext
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
+    public virtual DbSet<WarehouseStaff> WarehouseStaffs { get; set; }
+
     public virtual DbSet<WarehouseZone> WarehouseZones { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -2344,6 +2346,37 @@ public partial class WarehouseDbContext : DbContext
                 .HasForeignKey(d => d.ZoneType)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__warehouse__zone___6A30C649");
+        });
+
+        modelBuilder.Entity<WarehouseStaff>(entity =>
+        {
+            entity.HasKey(e => new { e.WarehouseId, e.UserId })
+                  .HasName("PK_warehouse_staff");
+
+            entity.ToTable("warehouse_staff");
+
+            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.AssignedBy).HasColumnName("assigned_by");
+            entity.Property(e => e.AssignedAt).HasColumnName("assigned_at")
+                  .HasDefaultValueSql("SYSDATETIMEOFFSET()");
+
+            entity.HasOne(d => d.Warehouse)
+                  .WithMany()
+                  .HasForeignKey(d => d.WarehouseId)
+                  .HasConstraintName("FK_whs_warehouse");
+
+            entity.HasOne(d => d.User)
+                  .WithMany()
+                  .HasForeignKey(d => d.UserId)
+                  .OnDelete(DeleteBehavior.ClientSetNull)
+                  .HasConstraintName("FK_whs_user");
+
+            entity.HasOne(d => d.AssignedByNavigation)
+                  .WithMany()
+                  .HasForeignKey(d => d.AssignedBy)
+                  .OnDelete(DeleteBehavior.ClientSetNull)
+                  .HasConstraintName("FK_whs_assigned");
         });
 
         OnModelCreatingPartial(modelBuilder);

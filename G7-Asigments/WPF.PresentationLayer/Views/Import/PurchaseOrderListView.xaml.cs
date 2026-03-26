@@ -34,10 +34,12 @@ public partial class PurchaseOrderListView : UserControl
                 .Select(po => new PurchaseOrderListItem
                 {
                     PurchaseOrder = po,
-                    IsApproveVisible = canApprove && po.StatusId == 1,
+                    IsSubmitVisible = canCreate && po.StatusId == 1,
+                    IsApproveVisible = canApprove && po.StatusId == 2,
                     IsCreateReceiptVisible = canCreate && po.StatusId == 3,
                     IsEditVisible = canCreate && po.StatusId == 1,
-                    IsDeleteVisible = canDelete && po.StatusId == 1
+                    IsDeleteVisible = canDelete && po.StatusId == 1,
+                    IsCancelVisible = canApprove && (po.StatusId == 2 || po.StatusId == 3)
                 })
                 .ToList();
 
@@ -61,6 +63,30 @@ public partial class PurchaseOrderListView : UserControl
         var win = new PurchaseOrderAddWindow();
         win.ShowDialog();
         LoadData();
+    }
+
+    private void BtnSubmit_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanCreatePurchaseOrder)
+        {
+            MessageBox.Show("Bạn không có quyền gửi duyệt đơn đặt hàng.");
+            return;
+        }
+        if (sender is Button btn && btn.DataContext is PurchaseOrderListItem row)
+        {
+            var result = MessageBox.Show($"Gửi duyệt đơn {row.PoNumber}?", "Xác nhận",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _service.Submit(row.PurchaseOrder.Id);
+                    MessageBox.Show("Đã gửi duyệt! Chờ quản lý phê duyệt.");
+                    LoadData();
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
+            }
+        }
     }
 
     private void BtnApprove_Click(object sender, RoutedEventArgs e)
@@ -124,6 +150,30 @@ public partial class PurchaseOrderListView : UserControl
                     _uow.Save();
                     _service.Delete(row.PurchaseOrder.Id);
                     MessageBox.Show("Xóa thành công!");
+                    LoadData();
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
+            }
+        }
+    }
+
+    private void BtnCancel_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanApprovePurchaseOrder)
+        {
+            MessageBox.Show("Bạn không có quyền hủy đơn đặt hàng.");
+            return;
+        }
+        if (sender is Button btn && btn.DataContext is PurchaseOrderListItem row)
+        {
+            var result = MessageBox.Show($"Hủy đơn {row.PoNumber}? Thao tác này không thể hoàn tác.",
+                "Xác nhận hủy", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _service.Cancel(row.PurchaseOrder.Id, SessionManager.CurrentUser!.Id);
+                    MessageBox.Show("Đã hủy đơn đặt hàng.");
                     LoadData();
                 }
                 catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }

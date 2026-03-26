@@ -22,72 +22,108 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="28">
 
-            <!-- Section title -->
-            <TextBlock Text="Tổng quan hệ thống"
-                       FontSize="13"
-                       FontWeight="SemiBold"
+            <!-- Section: Hệ thống -->
+            <TextBlock Text="Hệ thống"
+                       FontSize="12" FontWeight="SemiBold"
                        Foreground="{StaticResource BrushTextSecondary}"
-                       Margin="0,0,0,16"/>
+                       Margin="0,0,0,10"/>
+            <WrapPanel Margin="0,0,0,8">
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding TotalUsers}" FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                        <TextBlock Text="Tổng người dùng" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding ActiveUsers}" FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                        <TextBlock Text="Tài khoản hoạt động" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding TotalProducts}" FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                        <TextBlock Text="Sản phẩm" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding TotalWarehouses}" FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource BrushTextPrimary}"/>
+                        <TextBlock Text="Kho hàng" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
 
-            <!-- Stat Cards Row -->
+            <!-- Section: Chờ xử lý -->
+            <TextBlock Text="Chờ xử lý"
+                       FontSize="12" FontWeight="SemiBold"
+                       Foreground="{StaticResource BrushTextSecondary}"
+                       Margin="0,8,0,10"/>
+            <WrapPanel Margin="0,0,0,8">
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding PendingPO}" FontSize="32" FontWeight="Bold"
+                                   Foreground="#F59E0B"/>
+                        <TextBlock Text="PO chờ duyệt" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding PendingSO}" FontSize="32" FontWeight="Bold"
+                                   Foreground="#F59E0B"/>
+                        <TextBlock Text="SO chờ duyệt" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding PendingGRN}" FontSize="32" FontWeight="Bold"
+                                   Foreground="#F59E0B"/>
+                        <TextBlock Text="Phiếu nhập chờ duyệt" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding PendingGI}" FontSize="32" FontWeight="Bold"
+                                   Foreground="#F59E0B"/>
+                        <TextBlock Text="Phiếu xuất chờ duyệt" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- Section: Tồn kho -->
+            <TextBlock Text="Tồn kho"
+                       FontSize="12" FontWeight="SemiBold"
+                       Foreground="{StaticResource BrushTextSecondary}"
+                       Margin="0,8,0,10"/>
             <WrapPanel>
-
-                <!-- Tổng người dùng -->
                 <Border Style="{StaticResource StatCard}">
                     <StackPanel>
-                        <TextBlock Text="{Binding TotalUsers}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Tổng người dùng"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding LowStockCount}" FontSize="32" FontWeight="Bold"
+                                   Foreground="#EF4444"/>
+                        <TextBlock Text="Sản phẩm sắp hết (≤10)" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
-
-                <!-- Đang hoạt động -->
-                <Border Style="{StaticResource StatCard}">
+                <Border Style="{StaticResource StatCard}" Width="260">
                     <StackPanel>
-                        <TextBlock Text="{Binding ActiveUsers}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Tài khoản hoạt động"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="{Binding TotalInventoryValue}" FontSize="20" FontWeight="Bold"
+                                   Foreground="#10B981" TextWrapping="Wrap"/>
+                        <TextBlock Text="Tổng giá trị tồn kho" FontSize="12"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
-
-                <!-- Sản phẩm -->
-                <Border Style="{StaticResource StatCard}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding TotalProducts}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Sản phẩm"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Kho -->
-                <Border Style="{StaticResource StatCard}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding TotalWarehouses}"
-                                   FontSize="32"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource BrushTextPrimary}"/>
-                        <TextBlock Text="Kho hàng"
-                                   FontSize="12"
-                                   Foreground="{StaticResource BrushTextSecondary}"
-                                   Margin="0,4,0,0"/>
-                    </StackPanel>
-                </Border>
-
             </WrapPanel>
         </StackPanel>
     </ScrollViewer>

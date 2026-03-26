@@ -149,9 +149,37 @@ public class StockCountApprovalService : IStockCountApprovalService
             }
         }
 
+        // Ghi StockTransaction cho mỗi chênh lệch (variance)
+        var txnDb = _uow.Context.Set<StockTransaction>();
+        var now   = DateTimeOffset.UtcNow;
+        foreach (var item in session.StockCountItems.Where(i => i.QtyCounted.HasValue))
+        {
+            var variance = item.QtyCounted!.Value - item.QtySystem;
+            if (variance == 0) continue;
+
+            txnDb.Add(new StockTransaction
+            {
+                Id          = Guid.NewGuid(),
+                TxnCode     = $"TXN-VAR-{now:yyMMddHHmmss}-{item.ProductId.ToString()[..4].ToUpper()}",
+                TxnTypeId   = 3, // stock_adjustment
+                ProductId   = item.ProductId,
+                WarehouseId = session.WarehouseId,
+                ZoneId      = item.ZoneId,
+                QtyChange   = variance,
+                QtyBalance  = item.QtyCounted.Value,
+                UnitCost    = item.UnitCost,
+                RefType     = "STOCK_COUNT",
+                RefId       = session.Id,
+                RefItemId   = item.Id,
+                PerformedBy = managerId,
+                TxnAt       = now,
+                Note        = $"Điều chỉnh kiểm kho {session.SessionCode}: chênh lệch {variance:+#;-#;0}",
+            });
+        }
+
         session.StatusId   = StatusApproved;
         session.ApprovedBy = managerId;
-        session.ApprovedAt = DateTimeOffset.UtcNow;
+        session.ApprovedAt = now;
 
         _uow.Context.Set<StockCountSession>().Update(session);
         _uow.Save();

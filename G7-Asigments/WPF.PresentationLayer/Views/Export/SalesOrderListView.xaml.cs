@@ -43,7 +43,8 @@ public partial class SalesOrderListView : UserControl
                     IsApproveVisible = canApprove && so.StatusId == 2,
                     IsCreateIssueVisible = canCreate && so.StatusId == 3,
                     IsEditVisible = canCreate && so.StatusId == 1,
-                    IsDeleteVisible = canDelete && so.StatusId == 1
+                    IsDeleteVisible = canDelete && so.StatusId == 1,
+                    IsCancelVisible = canApprove && (so.StatusId == 2 || so.StatusId == 3)
                 })
                 .ToList();
 
@@ -154,6 +155,30 @@ public partial class SalesOrderListView : UserControl
                     _uow.Save();
                     _service.Delete(row.SalesOrder.Id);
                     MessageBox.Show("Xóa thành công!");
+                    LoadData();
+                }
+                catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }
+            }
+        }
+    }
+
+    private void BtnCancel_Click(object sender, RoutedEventArgs e)
+    {
+        if (!PermissionHelper.CanApproveSalesOrder)
+        {
+            MessageBox.Show("Bạn không có quyền hủy đơn bán hàng.");
+            return;
+        }
+        if (sender is Button btn && btn.DataContext is SalesOrderListItem row)
+        {
+            var result = MessageBox.Show($"Hủy đơn {row.SoNumber}? Thao tác này không thể hoàn tác.",
+                "Xác nhận hủy", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _service.Cancel(row.SalesOrder.Id, SessionManager.CurrentUser!.Id);
+                    MessageBox.Show("Đã hủy đơn bán hàng.");
                     LoadData();
                 }
                 catch (Exception ex) { MessageBox.Show("Lỗi: " + ex.Message); }

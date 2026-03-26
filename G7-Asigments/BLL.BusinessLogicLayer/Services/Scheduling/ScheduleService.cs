@@ -376,6 +376,22 @@ public class ScheduleService : IScheduleService
         _uow.Users.Find(u => u.IsActive && u.RoleId == 3)
                   .OrderBy(u => u.FullName);
 
+    public IEnumerable<User> GetStaffByWarehouse(Guid warehouseId)
+    {
+        var assignedUserIds = _uow.WarehouseStaffs
+            .Find(ws => ws.WarehouseId == warehouseId)
+            .Select(ws => ws.UserId)
+            .ToHashSet();
+
+        if (assignedUserIds.Count == 0)
+            // Fallback: chưa có ai được gán → hiện tất cả staff active
+            return GetStaffUsers();
+
+        return _uow.Users
+            .Find(u => u.IsActive && assignedUserIds.Contains(u.Id))
+            .OrderBy(u => u.FullName);
+    }
+
     // ─── Private Helpers ──────────────────────────────────────────────────────
     private IEnumerable<Schedule> Enrich(IEnumerable<Schedule> items)
     {

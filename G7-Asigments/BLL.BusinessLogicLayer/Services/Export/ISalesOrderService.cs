@@ -13,4 +13,5 @@ public interface ISalesOrderService
     void Submit(Guid id);
     void Approve(Guid id, Guid approvedBy);
     void Reject(Guid id, string reason);
+    void Cancel(Guid id, Guid cancelledBy);
 }

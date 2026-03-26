@@ -11,7 +11,7 @@ public sealed class UnitOfWork
     private readonly WarehouseDbContext _context;
 
     public static string ConnectionString { get; set; } =
-        "Server=.\\SQLEXPRESS;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
+        "Server=.;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
 
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
@@ -56,10 +56,12 @@ public sealed class UnitOfWork
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
     public IRepository<SalesOrderItem> SalesOrderItems => new Repository<SalesOrderItem>(_context);
     public IRepository<Notification> Notifications => new Repository<Notification>(_context);
-    public IRepository<LkpScheduleType>  ScheduleTypes  => new Repository<LkpScheduleType>(_context);
-    public IRepository<WarehouseZone>    WarehouseZones => new Repository<WarehouseZone>(_context);
-    public IRepository<LkpZoneType>      ZoneTypes      => new Repository<LkpZoneType>(_context);
-    public IRepository<LkpCostingMethod> CostingMethods => new Repository<LkpCostingMethod>(_context);
+    public IRepository<LkpScheduleType>  ScheduleTypes   => new Repository<LkpScheduleType>(_context);
+    public IRepository<WarehouseZone>    WarehouseZones  => new Repository<WarehouseZone>(_context);
+    public IRepository<LkpZoneType>      ZoneTypes       => new Repository<LkpZoneType>(_context);
+    public IRepository<LkpCostingMethod> CostingMethods  => new Repository<LkpCostingMethod>(_context);
+    public IRepository<WarehouseStaff>     WarehouseStaffs    => new Repository<WarehouseStaff>(_context);
+    public IRepository<StockTransaction>   StockTransactions  => new Repository<StockTransaction>(_context);
 
     // ─── Save ────────────────────────────────────────────────────────────────
     public int Save()

@@ -9,6 +9,7 @@
 
     <TabControl Margin="8" TabStripPlacement="Top">
 
+
         <!-- ── Tab 1: Danh sách ── -->
         <TabItem Header="Danh sách">
             <Grid Margin="16">
@@ -180,6 +181,96 @@
         <!-- ── Tab 2: Lịch tháng ── -->
         <TabItem Header="Lịch tháng">
             <views:ScheduleCalendarView/>
+        </TabItem>
+
+        <!-- ── Tab 3: Phân công nhân viên kho (chỉ Admin) ── -->
+        <TabItem Header="Phân công nhân viên kho"
+                 Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibility}}">
+            <TabItem.DataContext>
+                <vm:WarehouseStaffViewModel/>
+            </TabItem.DataContext>
+
+            <Grid Margin="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Cột 1: Danh sách kho -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Kho" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ListBox ItemsSource="{Binding Warehouses}"
+                             SelectedItem="{Binding SelectedWarehouse}"
+                             DisplayMemberPath="Name"
+                             Height="400"
+                             BorderBrush="#CCC" BorderThickness="1"/>
+                </StackPanel>
+
+                <!-- Cột 3: Staff đã gán -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" FontWeight="SemiBold" Margin="0,0,0,6">
+                        <Run Text="Nhân viên đang được gán vào: "/>
+                        <Run Text="{Binding SelectedWarehouse.Name, TargetNullValue='(chọn kho)'}"/>
+                    </TextBlock>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding AssignedStaff}"
+                              SelectedItem="{Binding SelectedAssigned}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" SelectionMode="Single"
+                              GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
+                              MinHeight="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Họ tên"    Binding="{Binding User.FullName}"  Width="*"/>
+                            <DataGridTextColumn Header="Email"     Binding="{Binding User.Email}"     Width="*"/>
+                            <DataGridTextColumn Header="Gán lúc"   Binding="{Binding AssignedAt, StringFormat=dd/MM/yyyy}" Width="110"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Grid.Row="2" Content="&#x2715; Gỡ nhân viên"
+                            Command="{Binding RemoveCommand}"
+                            HorizontalAlignment="Left" Padding="12,6" Margin="0,8,0,0"
+                            Background="#E53935" Foreground="White"/>
+                </Grid>
+
+                <!-- Cột 5: Staff có thể thêm -->
+                <Grid Grid.Column="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Nhân viên chưa được gán"
+                               FontWeight="SemiBold" Margin="0,0,0,6"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding AvailableStaff}"
+                              SelectedItem="{Binding SelectedAvailable}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" SelectionMode="Single"
+                              GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
+                              MinHeight="200">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Họ tên"  Binding="{Binding FullName}" Width="*"/>
+                            <DataGridTextColumn Header="Email"   Binding="{Binding Email}"    Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Grid.Row="2" Content="&#x2190; Gán vào kho"
+                            Command="{Binding AssignCommand}"
+                            HorizontalAlignment="Left" Padding="12,6" Margin="0,8,0,0"/>
+                </Grid>
+            </Grid>
         </TabItem>
 
     </TabControl>
