@@ -10,7 +10,7 @@ public sealed class UnitOfWork
 {
     // ─── Connection String (set once by App before first use) ────────────────
     public static string ConnectionString { get; set; } =
-        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=hoanganh;TrustServerCertificate=True;";
+        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
 
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
@@ -53,6 +53,15 @@ public sealed class UnitOfWork
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
     public IRepository<Notification> Notifications => new Repository<Notification>(_context);
     public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
+
+    // ─── Custom Queries ───────────────────────────────────────────────────────
+    public IEnumerable<Schedule> GetSchedulesWithIncludes() =>
+        _context.Schedules
+            .Include(s => s.AssignedToNavigation)
+            .Include(s => s.ScheduleTypeNavigation)
+            .Include(s => s.Warehouse)
+            .AsNoTracking()
+            .ToList();
 
     // ─── Save ────────────────────────────────────────────────────────────────
     public int Save()

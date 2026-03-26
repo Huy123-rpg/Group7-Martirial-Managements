@@ -21,7 +21,7 @@ public class ScheduleService : IScheduleService
 
     // ─── Queries ─────────────────────────────────────────────────────────────
     public IEnumerable<Schedule> GetAll() =>
-        _uow.Schedules.GetAll().OrderBy(s => s.StartTime);
+        _uow.GetSchedulesWithIncludes().OrderBy(s => s.StartTime);
 
     public IEnumerable<Schedule> GetByWarehouse(Guid warehouseId) =>
         _uow.Schedules.Find(s => s.WarehouseId == warehouseId)
