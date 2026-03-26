@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace BLL.BusinessLogicLayer.Services.WarehouseConfig;
@@ -93,7 +93,7 @@ public class WarehouseConfigService : IWarehouseConfigService
         ctx.Set<StockAdjustment>().Where(s => s.WarehouseId == id).ExecuteDelete();
         ctx.Set<StockCountSession>().Where(s => s.WarehouseId == id).ExecuteDelete();
         ctx.Set<StockTransaction>().Where(s => s.WarehouseId == id).ExecuteDelete();
-        ctx.Set<DAL.DataAccessLayer.Models.StockTransfer>().Where(s => s.FromWarehouseId == id || s.ToWarehouseId == id).ExecuteDelete();
+        ctx.Set<DAL.DataAccessLayer.Model.StockTransfer>().Where(s => s.FromWarehouseId == id || s.ToWarehouseId == id).ExecuteDelete();
         
         ctx.Set<Schedule>().Where(s => s.WarehouseId == id).ExecuteDelete();
         ctx.Set<WarehouseZone>().Where(z => z.WarehouseId == id).ExecuteDelete();

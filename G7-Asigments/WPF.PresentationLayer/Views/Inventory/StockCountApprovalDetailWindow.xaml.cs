@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System.Windows;
 
 namespace WPF.PresentationLayer.Views.Inventory;

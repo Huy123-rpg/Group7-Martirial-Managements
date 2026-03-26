@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.InventoryManagement;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -14,7 +14,7 @@ public class InventoryLookupViewModel : BaseViewModel
     // Default filter choice
     private readonly Warehouse _allWarehousesOption = new Warehouse { Id = Guid.Empty, Name = "--- Tất cả kho ---" };
 
-    public ObservableCollection<DAL.DataAccessLayer.Models.Inventory> Inventories { get; set; } = new();
+    public ObservableCollection<DAL.DataAccessLayer.Model.Inventory> Inventories { get; set; } = new();
     public ObservableCollection<Warehouse> Warehouses { get; set; } = new();
 
     private Warehouse? _selectedWarehouse;

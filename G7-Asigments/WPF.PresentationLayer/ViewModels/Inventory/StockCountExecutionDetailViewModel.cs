@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.InventoryManagement;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows;

@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Views.Auth;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using BLL.BusinessLogicLayer.Core;
 
 namespace WPF.PresentationLayer.ViewModels;

@@ -1,6 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.WarehouseConfig;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using WPF.PresentationLayer.Helpers;

@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Import;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Models;
 

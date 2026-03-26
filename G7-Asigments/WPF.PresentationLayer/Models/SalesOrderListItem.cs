@@ -1,4 +1,4 @@
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 
 namespace WPF.PresentationLayer.Models;
 

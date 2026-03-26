@@ -1,6 +1,6 @@
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Export;
-using DAL.DataAccessLayer.Models;
+using DAL.DataAccessLayer.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
