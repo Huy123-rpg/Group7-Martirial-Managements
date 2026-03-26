@@ -103,12 +103,13 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="SL xuất"
                                             Width="120"
-                                            Binding="{Binding QtyIssued, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding QtyIssued, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
                         <DataGridTextColumn Header="Đơn giá"
                                             Width="120"
-                                            Binding="{Binding UnitPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding UnitPrice, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
                         <DataGridTextColumn Header="Thành tiền"
                                             Width="140"
+                                            IsReadOnly="True"
                                             Binding="{Binding LineTotal, StringFormat=N0}"/>
                         <DataGridTextColumn Header="Ghi chú"
                                             Width="*"

@@ -34,6 +34,9 @@ public class GoodsIssueService : IGoodsIssueService
 
     public void Delete(Guid id)
     {
+        var items = _uow.GoodsIssueItems.GetAll().Where(x => x.GiId == id).ToList();
+        foreach (var item in items)
+            _uow.GoodsIssueItems.DeleteById(item.Id);
         _uow.GoodsIssues.DeleteById(id);
         _uow.Save();
     }

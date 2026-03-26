@@ -105,14 +105,15 @@
 
                         <DataGridTextColumn Header="SL nhập"
                                             Width="120"
-                                            Binding="{Binding QtyReceived, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding QtyReceived, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
 
                         <DataGridTextColumn Header="Đơn giá"
                                             Width="120"
-                                            Binding="{Binding UnitCost, UpdateSourceTrigger=PropertyChanged}"/>
+                                            Binding="{Binding UnitCost, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
 
                         <DataGridTextColumn Header="Thành tiền"
                                             Width="140"
+                                            IsReadOnly="True"
                                             Binding="{Binding LineTotal, StringFormat=N0}"/>
 
                         <DataGridTextColumn Header="Ghi chú"

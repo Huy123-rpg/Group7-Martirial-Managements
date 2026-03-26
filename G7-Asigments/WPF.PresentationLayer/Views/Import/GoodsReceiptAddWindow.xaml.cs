@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Import;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
+using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Models;
 
 namespace WPF.PresentationLayer.Views.Import;
@@ -17,6 +18,7 @@ public partial class GoodsReceiptAddWindow : Window
     private readonly IGoodsReceiptService _service;
     private readonly UnitOfWork _uow;
     private GoodsReceipt? _editingReceipt;
+    private PurchaseOrder? _sourcePo;
 
     public ObservableCollection<GoodsReceiptItemInput> Items { get; set; } = new();
     public List<Product> Products { get; set; } = new();
@@ -36,9 +38,44 @@ public partial class GoodsReceiptAddWindow : Window
         SetupItemGrid();
     }
 
+    public GoodsReceiptAddWindow(PurchaseOrder po)
+    {
+        InitializeComponent();
+        DataContext = this;
+        _service = new GoodsReceiptService();
+        _uow = UnitOfWork.Instance;
+        _sourcePo = po;
+
+        dpDate.SelectedDate = DateTime.Now;
+        txtCode.Text = GenerateReceiptCode();
+
+        LoadData();
+        SetupItemGrid();
+
+        cbSupplier.SelectedValue = po.SupplierId;
+        cbWarehouse.SelectedValue = po.WarehouseId;
+
+        var poItems = _uow.PurchaseOrderItems.GetAll()
+            .Where(x => x.PoId == po.Id).ToList();
+        foreach (var poItem in poItems)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == poItem.ProductId);
+            Items.Add(new GoodsReceiptItemInput
+            {
+                ProductId = poItem.ProductId,
+                ProductName = product?.ProductName ?? "",
+                QtyReceived = poItem.QtyOrdered,
+                UnitCost = poItem.UnitCost,
+                Notes = poItem.Notes
+            });
+        }
+        RefreshTotal();
+    }
+
     public GoodsReceiptAddWindow(GoodsReceipt receipt)
     {
         InitializeComponent();
+        DataContext = this;
 
         _service = new GoodsReceiptService();
         _uow = UnitOfWork.Instance;
@@ -234,10 +271,10 @@ public partial class GoodsReceiptAddWindow : Window
                 return;
             }
 
-            var currentUser = _uow.Users.GetAll().FirstOrDefault();
+            var currentUser = SessionManager.CurrentUser;
             if (currentUser == null)
             {
-                MessageBox.Show("Không có user.");
+                MessageBox.Show("Chưa đăng nhập.");
                 return;
             }
 
@@ -302,6 +339,7 @@ public partial class GoodsReceiptAddWindow : Window
                         QtyAccepted = item.QtyReceived,
                         QtyRejected = 0,
                         UnitCost = item.UnitCost,
+                        LineTotal = item.LineTotal,
                         Notes = item.Notes
                     });
                 }
@@ -323,7 +361,8 @@ public partial class GoodsReceiptAddWindow : Window
                     CreatedBy = currentUser.Id,
                     WarehouseId = (Guid)cbWarehouse.SelectedValue,
                     SupplierId = (Guid)cbSupplier.SelectedValue,
-                    StatusId = 1
+                    StatusId = 1,
+                    PoId = _sourcePo?.Id
                 };
 
                 _service.Create(receipt);

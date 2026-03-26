@@ -46,6 +46,10 @@ public class MainViewModel : BaseViewModel
     public RelayCommand NavUserManagementCommand  => new(() => Navigate(new Views.Admin.UserManagementView(),        "Quản lý người dùng",    "users"));
     public RelayCommand NavScheduleCommand        => new(() => Navigate(new Views.Scheduling.ScheduleListView(),     "Phân công nhiệm vụ",    "schedule"));
     public RelayCommand NavMyScheduleCommand      => new(() => Navigate(new Views.Scheduling.MyScheduleView(),       "Lịch của tôi",          "my-schedule"));
+    public RelayCommand NavPurchaseOrderCommand   => new(() => Navigate(new Views.Import.PurchaseOrderListView(),    "Đơn đặt hàng",          "purchase-order"));
+    public RelayCommand NavGoodsReceiptCommand    => new(() => Navigate(new Views.Import.GoodsReceiptListView(),     "Phiếu nhập kho",        "goods-receipt"));
+    public RelayCommand NavSalesOrderCommand      => new(() => Navigate(new Views.Export.SalesOrderListView(),       "Đơn bán hàng",          "sales-order"));
+    public RelayCommand NavGoodsIssueCommand      => new(() => Navigate(new Views.Export.GoodsIssueListView(),       "Phiếu xuất kho",        "goods-issue"));
 
     // ─── Logout ───────────────────────────────────────────────────────────────
     public RelayCommand LogoutCommand => new(Logout);

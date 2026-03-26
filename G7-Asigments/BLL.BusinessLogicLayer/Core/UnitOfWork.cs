@@ -1,5 +1,5 @@
 using DAL.DataAccessLayer.Context;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
 using DAL.DataAccessLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DbContextAlias = DAL.DataAccessLayer.Context.WarehouseDbContext;
@@ -11,7 +11,7 @@ public sealed class UnitOfWork
     private readonly WarehouseDbContext _context;
 
     public static string ConnectionString { get; set; } =
-        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=hoanganh;TrustServerCertificate=True;";
+        "Server=localhost;Database=WarehouseDB;User Id=sa;Password=123;TrustServerCertificate=True;";
 
     private static UnitOfWork? _instance;
     private static readonly object _lock = new();
@@ -53,6 +53,9 @@ public sealed class UnitOfWork
     public IRepository<GoodsIssueItem> GoodsIssueItems => new Repository<GoodsIssueItem>(_context);
     public IRepository<GoodsReceiptItem> GoodsReceiptItems => new Repository<GoodsReceiptItem>(_context);
     public IRepository<PurchaseOrderItem> PurchaseOrderItems => new Repository<PurchaseOrderItem>(_context);
+    public IRepository<SalesOrderItem> SalesOrderItems => new Repository<SalesOrderItem>(_context);
+    public IRepository<Notification> Notifications => new Repository<Notification>(_context);
+    public IRepository<LkpScheduleType> ScheduleTypes => new Repository<LkpScheduleType>(_context);
     public int Save()
     {
         try

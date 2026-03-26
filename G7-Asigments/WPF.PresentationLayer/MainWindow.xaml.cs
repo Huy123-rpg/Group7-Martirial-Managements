@@ -33,5 +33,17 @@ public partial class MainWindow : Window
         var myScheduleVis = isStaff ? Visibility.Visible : Visibility.Collapsed;
         MenuHeaderMySchedule.Visibility = myScheduleVis;
         BtnMySchedule.Visibility        = myScheduleVis;
+
+        // Import menu (Admin + Manager + Staff)
+        var importVis = (isAdmin || isManager || isStaff) ? Visibility.Visible : Visibility.Collapsed;
+        MenuHeaderImport.Visibility = importVis;
+        BtnPurchaseOrder.Visibility = importVis;
+        BtnGoodsReceipt.Visibility  = importVis;
+
+        // Export menu (Admin + Manager + Staff)
+        var exportVis = (isAdmin || isManager || isStaff) ? Visibility.Visible : Visibility.Collapsed;
+        MenuHeaderExport.Visibility = exportVis;
+        BtnSalesOrder.Visibility    = exportVis;
+        BtnGoodsIssue.Visibility    = exportVis;
     }
 }

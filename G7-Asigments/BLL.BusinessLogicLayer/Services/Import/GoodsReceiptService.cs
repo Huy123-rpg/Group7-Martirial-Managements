@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Core;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
 
 namespace BLL.BusinessLogicLayer.Services.Import;
 
@@ -25,6 +25,10 @@ public class GoodsReceiptService : IGoodsReceiptService
         _uow.Save();
     }
 
+    public IEnumerable<GoodsReceipt> Search(string keyword) =>
+        _uow.GoodsReceipts.Find(g =>
+            g.GrnNumber.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+
     public void Delete(Guid id)
     {
         // 1. Xoá hết các dòng chi tiết trước để tránh lỗi khoá ngoại (FK)
@@ -36,6 +40,17 @@ public class GoodsReceiptService : IGoodsReceiptService
 
         // 2. Sau đó mới xoá phiếu nhập
         _uow.GoodsReceipts.DeleteById(id);
+        _uow.Save();
+    }
+
+    public void Approve(Guid id, Guid approvedBy)
+    {
+        var gr = _uow.GoodsReceipts.GetById(id) ?? throw new Exception("GR not found");
+        gr.StatusId = 3;
+        gr.ApprovedBy = approvedBy;
+        gr.ApprovedAt = DateTimeOffset.UtcNow;
+        gr.UpdatedAt = DateTimeOffset.UtcNow;
+        _uow.GoodsReceipts.Update(gr);
         _uow.Save();
     }
 }

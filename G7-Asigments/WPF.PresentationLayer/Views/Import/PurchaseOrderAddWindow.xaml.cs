@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using BLL.BusinessLogicLayer.Core;
 using BLL.BusinessLogicLayer.Services.Import;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
+using WPF.PresentationLayer.Helpers;
 using WPF.PresentationLayer.Models;
 
 namespace WPF.PresentationLayer.Views.Import;
@@ -56,18 +57,6 @@ public partial class PurchaseOrderAddWindow : Window
 
         cbWarehouse.SelectedValue = po.WarehouseId;
         cbSupplier.SelectedValue = po.SupplierId;
-
-        var detailItems = _uow.PurchaseOrders.GetById(po.Id)?.PurchaseOrderItems.ToList()
-                          ?? _uow.PurchaseOrders.GetAll().FirstOrDefault(x => x.Id == po.Id)?.PurchaseOrderItems.ToList()
-                          ?? new System.Collections.Generic.List<PurchaseOrderItem>();
-
-        // Cần truy vấn trực tiếp items nếu navigation property chưa load
-        if (detailItems.Count == 0)
-        {
-            // Dùng dbcontext vì uow ko expose trực tiếp PurchaseOrderItems
-            // Tuy nhiên model PO ko expose DbSet cho item trực tiếp mà nằm trong UOW thì không thấy, thôi kệ, cứ load qua list chung
-            var allPoItems = _uow.Products.GetAll().ToList(); // just a trigger to load
-        }
 
         var loadedItems = _uow.PurchaseOrderItems.GetAll().Where(x => x.PoId == po.Id).ToList();
 
@@ -246,10 +235,10 @@ public partial class PurchaseOrderAddWindow : Window
                 return;
             }
 
-            var currentUser = _uow.Users.GetAll().FirstOrDefault(u => u.IsActive);
+            var currentUser = SessionManager.CurrentUser;
             if (currentUser == null)
             {
-                MessageBox.Show("Không có user.");
+                MessageBox.Show("Chưa đăng nhập.");
                 return;
             }
 

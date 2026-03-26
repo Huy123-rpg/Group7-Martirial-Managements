@@ -25,11 +25,16 @@ public partial class GoodsReceiptListView : UserControl
         try
         {
             bool canApprove = PermissionHelper.CanApproveGoodsReceipt;
+            bool canEdit = PermissionHelper.CanEditGoodsReceipt;
+            bool canDelete = PermissionHelper.CanDeleteGoodsReceipt;
+
             var data = _goodsReceiptService.GetAll()
                 .Select(x => new GoodsReceiptListItem
                 {
                     GoodsReceipt = x,
-                    IsApproveVisible = canApprove
+                    IsApproveVisible = canApprove && x.StatusId == 1,
+                    IsEditVisible = canEdit && x.StatusId == 1,
+                    IsDeleteVisible = canDelete && x.StatusId == 1
                 })
                 .ToList();
 
@@ -43,13 +48,6 @@ public partial class GoodsReceiptListView : UserControl
 
     private void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {
-        LoadData();
-    }
-
-    private void BtnAdd_Click(object sender, RoutedEventArgs e)
-    {
-        var win = new GoodsReceiptAddWindow();
-        win.ShowDialog();
         LoadData();
     }
 
@@ -95,6 +93,11 @@ public partial class GoodsReceiptListView : UserControl
     {
         if (dgGoodsReceipts.SelectedItem is GoodsReceiptListItem row)
         {
+            if (row.GoodsReceipt.StatusId != 1)
+            {
+                MessageBox.Show("Phiếu đã duyệt, không thể chỉnh sửa.");
+                return;
+            }
             var win = new GoodsReceiptAddWindow(row.GoodsReceipt);
             win.ShowDialog();
             LoadData();
@@ -130,11 +133,7 @@ public partial class GoodsReceiptListView : UserControl
             {
                 try
                 {
-                    receipt.StatusId = 2; // Approved Status
-                    receipt.ApprovedAt = DateTimeOffset.UtcNow;
-                    // Note: Here we'd set receipt.ApprovedBy if we had the currentUser logged in globally
-                    
-                    _goodsReceiptService.Update(receipt);
+                    _goodsReceiptService.Approve(receipt.Id, SessionManager.CurrentUser!.Id);
                     MessageBox.Show("Duyệt phiếu thành công!");
                     LoadData();
                 }

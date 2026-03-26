@@ -79,6 +79,38 @@
                             Command="{Binding NavMyScheduleCommand}"
                             Visibility="Collapsed"/>
 
+                    <!-- ── Nhập kho (Admin + Manager + Staff) ─── -->
+                    <TextBlock x:Name="MenuHeaderImport"
+                               Text="NHẬP KHO"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnPurchaseOrder"
+                            Content="  📋  Đơn đặt hàng"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavPurchaseOrderCommand}"
+                            Visibility="Collapsed"/>
+                    <Button x:Name="BtnGoodsReceipt"
+                            Content="  📦  Phiếu nhập kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavGoodsReceiptCommand}"
+                            Visibility="Collapsed"/>
+
+                    <!-- ── Xuất kho (Admin + Manager + Staff) ─── -->
+                    <TextBlock x:Name="MenuHeaderExport"
+                               Text="XUẤT KHO"
+                               Foreground="#555555" FontSize="10" FontWeight="SemiBold"
+                               Margin="24,12,0,6" Visibility="Collapsed"/>
+                    <Button x:Name="BtnSalesOrder"
+                            Content="  🧾  Đơn bán hàng"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavSalesOrderCommand}"
+                            Visibility="Collapsed"/>
+                    <Button x:Name="BtnGoodsIssue"
+                            Content="  🚚  Phiếu xuất kho"
+                            Style="{StaticResource SidebarMenuItem}"
+                            Command="{Binding NavGoodsIssueCommand}"
+                            Visibility="Collapsed"/>
+
                 </StackPanel>
             </ScrollViewer>
 

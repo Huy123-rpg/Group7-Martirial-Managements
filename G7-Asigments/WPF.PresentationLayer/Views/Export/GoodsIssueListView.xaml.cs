@@ -1,5 +1,5 @@
 using BLL.BusinessLogicLayer.Services.Export;
-using DAL.DataAccessLayer.Model;
+using DAL.DataAccessLayer.Models;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,11 +24,16 @@ public partial class GoodsIssueListView : UserControl
         try
         {
             bool canApprove = PermissionHelper.CanApproveGoodsIssue;
+            bool canEdit = PermissionHelper.CanEditGoodsIssue;
+            bool canDelete = PermissionHelper.CanDeleteGoodsIssue;
+
             var data = _goodsIssueService.GetAll()
                 .Select(x => new GoodsIssueListItem
                 {
                     GoodsIssue = x,
-                    IsApproveVisible = canApprove
+                    IsApproveVisible = canApprove && x.StatusId == 1,
+                    IsEditVisible = canEdit && x.StatusId == 1,
+                    IsDeleteVisible = canDelete && x.StatusId == 1
                 })
                 .ToList();
 
@@ -42,19 +47,6 @@ public partial class GoodsIssueListView : UserControl
 
     private void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {
-        LoadData();
-    }
-
-    private void BtnAdd_Click(object sender, RoutedEventArgs e)
-    {
-        if (!PermissionHelper.CanCreateGoodsIssue)
-        {
-            MessageBox.Show("Bạn không có quyền tạo phiếu xuất.");
-            return;
-        }
-
-        var win = new GoodsIssueAddWindow();
-        win.ShowDialog();
         LoadData();
     }
 
@@ -116,6 +108,11 @@ public partial class GoodsIssueListView : UserControl
     {
         if (dgGoodsIssues.SelectedItem is GoodsIssueListItem row)
         {
+            if (row.GoodsIssue.StatusId != 1)
+            {
+                MessageBox.Show("Phiếu đã duyệt, không thể chỉnh sửa.");
+                return;
+            }
             var win = new GoodsIssueAddWindow(row.GoodsIssue);
             win.ShowDialog();
             LoadData();
@@ -151,11 +148,7 @@ public partial class GoodsIssueListView : UserControl
             {
                 try
                 {
-                    issue.StatusId = 2; // Approved Status
-                    issue.ApprovedAt = DateTimeOffset.UtcNow;
-                    // Note: Here we'd set issue.ApprovedBy if we had the currentUser logged in globally
-                    
-                    _goodsIssueService.Update(issue);
+                    _goodsIssueService.Approve(issue.Id, SessionManager.CurrentUser!.Id);
                     MessageBox.Show("Duyệt phiếu xuất thành công!");
                     LoadData();
                 }

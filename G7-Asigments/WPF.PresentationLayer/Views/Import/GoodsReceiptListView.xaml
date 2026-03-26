@@ -28,11 +28,6 @@
                     Width="100"
                     Height="36"
                     Click="BtnRefresh_Click"/>
-            <Button Content="Thêm phiếu nhập"
-                    Width="140"
-                    Height="36"
-                    Margin="12,0,0,0"
-                    Click="BtnAdd_Click"/>
         </StackPanel>
 
         <DataGrid x:Name="dgGoodsReceipts"
@@ -60,9 +55,13 @@
 
                 <DataGridTextColumn Header="Số mặt hàng"
                                     Binding="{Binding ItemCount}"
-                                    Width="110"/>
+                                    Width="100"/>
 
-                <DataGridTemplateColumn Header="Hành động" Width="220">
+                <DataGridTextColumn Header="Trạng thái"
+                                    Binding="{Binding StatusText}"
+                                    Width="100"/>
+
+                <DataGridTemplateColumn Header="Hành động" Width="200">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -76,11 +75,13 @@
                                 <Button Content="Sửa"
                                         Width="60"
                                         Margin="0,0,5,0"
+                                        Visibility="{Binding IsEditVisible, Converter={StaticResource BoolToVisibilityConverter}}"
                                         Click="BtnEdit_Click"/>
                                 <Button Content="Xóa"
                                         Width="60"
                                         Background="#EF4444"
                                         Foreground="White"
+                                        Visibility="{Binding IsDeleteVisible, Converter={StaticResource BoolToVisibilityConverter}}"
                                         Click="BtnDelete_Click"/>
                             </StackPanel>
                         </DataTemplate>
