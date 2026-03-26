@@ -61,6 +61,8 @@ public class UserManagementViewModel : BaseViewModel
     public RelayCommand ToggleActiveCommand => new(ToggleActive,  () => Selected != null);
     public RelayCommand DeleteCommand       => new(DeleteUser,    () => Selected != null);
 
+    public UserManagementViewModel() : this(UnitOfWork.Instance) { }
+
     public UserManagementViewModel(UnitOfWork uow)
     {
         _uow = uow;
