@@ -185,10 +185,13 @@ public partial class GoodsIssueAddWindow : Window
             if (product != null)
             {
                 item.ProductName = product.ProductName;
+                // Tự động điền giá từ StandardCost của sản phẩm
                 item.UnitPrice = product.StandardCost ?? 0;
             }
         }
-        else if (e.PropertyName == nameof(GoodsIssueItemInput.LineTotal))
+        else if (e.PropertyName == nameof(GoodsIssueItemInput.QtyIssued) || 
+                 e.PropertyName == nameof(GoodsIssueItemInput.UnitPrice) ||
+                 e.PropertyName == nameof(GoodsIssueItemInput.LineTotal))
         {
             RefreshTotal();
         }

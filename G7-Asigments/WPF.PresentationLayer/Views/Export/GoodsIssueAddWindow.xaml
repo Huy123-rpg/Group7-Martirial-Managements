@@ -111,7 +111,7 @@
                                     <ComboBox ItemsSource="{Binding DataContext.Products, RelativeSource={RelativeSource AncestorType=Window}}"
                                               DisplayMemberPath="ProductName"
                                               SelectedValuePath="Id"
-                                              SelectedValue="{Binding ProductId, UpdateSourceTrigger=PropertyChanged}"
+                                              SelectedValue="{Binding ProductId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                               IsEditable="False"
                                               IsTextSearchEnabled="True" />
                                 </DataTemplate>
@@ -132,10 +132,10 @@
 
                         <DataGridTextColumn Header="SL xuất"
                                             Width="100"
-                                            Binding="{Binding QtyIssued, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
+                                            Binding="{Binding QtyIssued, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}"/>
                         <DataGridTextColumn Header="Đơn giá"
                                             Width="110"
-                                            Binding="{Binding UnitPrice, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
+                                            Binding="{Binding UnitPrice, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0, StringFormat=N0}"/>
                         <DataGridTextColumn Header="Thành tiền"
                                             Width="120"
                                             IsReadOnly="True"
