@@ -138,6 +138,7 @@ public partial class SalesOrderAddWindow : Window
                 {
                     item.ProductId = matched.Id;
                     item.ProductName = matched.ProductName;
+                    item.UnitPrice = matched.StandardCost ?? 0;
                 }
                 else
                 {
@@ -155,6 +156,7 @@ public partial class SalesOrderAddWindow : Window
         {
             item.ProductId = selected.Id;
             item.ProductName = selected.ProductName;
+            item.UnitPrice = selected.StandardCost ?? 0;
         }
     }
 

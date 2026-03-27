@@ -99,12 +99,40 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="SL đặt" Width="120"
-                                            Binding="{Binding QtyOrdered, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
-                        <DataGridTextColumn Header="Đơn giá" Width="120"
-                                            Binding="{Binding UnitPrice, ValidatesOnExceptions=True, TargetNullValue=0, FallbackValue=0}"/>
+                        <DataGridTemplateColumn Header="SL đặt" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding QtyOrdered, StringFormat=N2}" TextAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding QtyOrdered, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTemplateColumn Header="Đơn giá" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding UnitPrice, StringFormat=N0}" TextAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding UnitPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        
                         <DataGridTextColumn Header="Thành tiền" Width="140" IsReadOnly="True"
-                                            Binding="{Binding LineTotal, StringFormat=N0}"/>
+                                            Binding="{Binding LineTotal, StringFormat=N0}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="Ghi chú" Width="*"
                                             Binding="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"/>
                     </DataGrid.Columns>
