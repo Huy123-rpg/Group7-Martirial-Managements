@@ -9,11 +9,22 @@ public class PurchaseOrderService : IPurchaseOrderService
     private readonly UnitOfWork _uow = UnitOfWork.Instance;
 
     public IEnumerable<PurchaseOrder> GetAll() =>
-        _uow.PurchaseOrders.GetAll().OrderByDescending(p => p.OrderDate);
+        _uow.Context.Set<PurchaseOrder>()
+            .Include(p => p.Supplier)
+            .Include(p => p.Warehouse)
+            .Include(p => p.Status)
+            .AsNoTracking()
+            .OrderByDescending(p => p.OrderDate)
+            .ToList();
 
     public IEnumerable<PurchaseOrder> Search(string keyword) =>
-        _uow.PurchaseOrders.Find(p =>
-            p.PoNumber.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+        _uow.Context.Set<PurchaseOrder>()
+            .Include(p => p.Supplier)
+            .Include(p => p.Warehouse)
+            .Include(p => p.Status)
+            .AsNoTracking()
+            .Where(p => p.PoNumber.Contains(keyword))
+            .ToList();
 
     public PurchaseOrder? GetById(Guid id) => _uow.PurchaseOrders.GetById(id);
 
